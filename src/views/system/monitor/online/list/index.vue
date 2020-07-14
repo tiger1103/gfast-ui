@@ -27,12 +27,12 @@
 
     <el-table
       v-loading="loading"
-      :data="list.slice((pageNum-1)*pageSize,pageNum*pageSize)"
+      :data="list"
       style="width: 100%;"
     >
       <el-table-column label="序号" type="index" align="center">
         <template slot-scope="scope">
-          <span>{{(pageNum - 1) * pageSize + scope.$index + 1}}</span>
+          <span>{{(queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1}}</span>
         </template>
       </el-table-column>
       <el-table-column label="会话编号" align="center" prop="uuid" :show-overflow-tooltip="true" />
@@ -57,7 +57,7 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="pageNum" :limit.sync="pageSize" />
+    <pagination v-show="total>0" :total="total" :page.sync="queryParams.pageNum" :limit.sync="queryParams.pageSize" @pagination="getList"/>
   </div>
 </template>
 
@@ -74,10 +74,10 @@ export default {
       total: 0,
       // 表格数据
       list: [],
-      pageNum: 1,
-      pageSize: 10,
       // 查询参数
       queryParams: {
+        pageNum: 1,
+        pageSize: 10,
         ipaddr: undefined,
         userName: undefined
       }
@@ -98,7 +98,7 @@ export default {
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.pageNum = 1;
+      this.queryParams.pageNum = 1;
       this.getList();
     },
     /** 重置按钮操作 */
