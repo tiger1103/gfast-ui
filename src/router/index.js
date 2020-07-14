@@ -99,7 +99,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'log',
-        component: (resolve) => require(['@/views/monitor/job/log'], resolve),
+        component: (resolve) => require(['@/views/system/monitor/job/log'], resolve),
         name: 'JobLog',
         meta: { title: '调度日志' }
       }
@@ -121,7 +121,7 @@ export const constantRoutes = [
 ]
 
 export default new Router({
-  //mode: 'history', // 去掉url中的#
+  mode: 'history', // 去掉url中的#
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
