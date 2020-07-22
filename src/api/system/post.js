@@ -39,7 +39,7 @@ export function updatePost(data) {
 export function delPost(postId) {
   return request({
     url: '/system/post/delete',
-    method: 'post',
+    method: 'delete',
     data:{
       ids:postId
     }

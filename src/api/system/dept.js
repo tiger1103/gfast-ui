@@ -63,6 +63,6 @@ export function updateDept(data) {
 export function delDept(deptId) {
   return request({
     url: '/system/dept/delDept?id=' + deptId,
-    method: 'get'
+    method: 'delete'
   })
 }

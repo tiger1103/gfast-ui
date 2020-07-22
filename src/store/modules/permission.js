@@ -1,6 +1,7 @@
 import { constantRoutes } from '@/router'
 import { getRouters } from '@/api/menu'
 import Layout from '@/layout/index'
+import LayoutChildren from '@/layout/children'
 
 const permission = {
   state: {
@@ -35,7 +36,11 @@ function filterAsyncRouter(asyncRouterMap) {
     if (route.component) {
       // Layout组件特殊处理
       if (route.component === 'Layout') {
-        route.component = Layout
+        if(route.pid===0){
+          route.component = Layout
+        }else{
+          route.component=LayoutChildren
+        }        
       } else {
         route.component = loadView(route.component)
       }
