@@ -119,13 +119,28 @@
                 调用方法
                 <el-tooltip placement="top">
                   <div slot="content">
+                    示例：demo1
+                  </div>
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+              </span>
+              <el-input v-model="form.invoke_target" placeholder="请输入调用方法字符串" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="24">
+            <el-form-item prop="job_params">
+              <span slot="label">
+                执行参数
+                <el-tooltip placement="top">
+                  <div slot="content">
                     以|分隔多个参数 示例：param1|param1
                     <br />参数说明：支持字符串，布尔类型，长整型，浮点型，整型
                   </div>
                   <i class="el-icon-question"></i>
                 </el-tooltip>
               </span>
-              <el-input v-model="form.invoke_target" placeholder="请输入调用目标字符串" />
+              <el-input v-model="form.job_params" placeholder="若有参数，请输入。" />
             </el-form-item>
           </el-col>
 
@@ -252,7 +267,7 @@ export default {
   created() {
     this.getList();
  
-    // this.getDicts("sysNormalDisable").then(response => {
+    // this.getDicts("sys_normal_disable").then(response => {
     //   this.statusOptions = response.data.values || []
     // });
 
@@ -292,6 +307,7 @@ export default {
       this.form = {
         job_id: undefined,
         job_name: undefined,
+        job_params:undefined,
         job_group: undefined,
         invoke_target: undefined,
         cron_expression: undefined,

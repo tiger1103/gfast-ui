@@ -112,7 +112,7 @@
           <span>{{ parseTime(scope.row.login_time) }}</span>
         </template>
       </el-table-column>
-
+      <el-table-column label="登录模块" alian="center" prop="module"></el-table-column>
     </el-table>
 
     <pagination
