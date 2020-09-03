@@ -39,7 +39,8 @@
         </template>
       </el-table-column>
       <el-table-column prop="weigh" label="排序" width="60"></el-table-column>
-      <el-table-column prop="name" label="组件路径" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="name" label="权限标识" :show-overflow-tooltip="true"></el-table-column>
+      <el-table-column prop="component" label="组件路径" :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="status" label="状态" :formatter="statusFormat" width="80"></el-table-column>
       <el-table-column label="创建时间" align="center" prop="createtime">
         <template slot-scope="scope">
@@ -48,25 +49,25 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" 
-            type="text" 
-            icon="el-icon-edit" 
-            @click="handleUpdate(scope.row)"         
+          <el-button size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
           >修改</el-button>
 
-          <el-button 
+          <el-button
             v-if="scope.row.menu_type!=2"
-            size="mini" 
-            type="text" 
-            icon="el-icon-plus" 
-            @click="handleAdd(scope.row)"            
+            size="mini"
+            type="text"
+            icon="el-icon-plus"
+            @click="handleAdd(scope.row)"
           >新增</el-button>
 
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
-            @click="handleDelete(scope.row)"            
+            @click="handleDelete(scope.row)"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -142,11 +143,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="12" >
-            <el-form-item label="权限规则" prop="component">
-              <el-input v-model="form.component" placeholder="请输入权限规则" />
+            <el-form-item label="权限规则" prop="name">
+              <el-input v-model="form.name" placeholder="请输入权限规则" />
             </el-form-item>
           </el-col>
-          
+
           <el-col :span="12">
             <el-form-item v-if="form.menuType != '2'" label="显示状态">
               <el-radio-group v-model="form.visible">
@@ -167,6 +168,11 @@
                   :label="dict.key"
                 >{{dict.value}}</el-radio>
               </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12"  v-if="form.menuType == '1'">
+            <el-form-item label="组件路径" prop="component">
+              <el-input v-model="form.component" placeholder="请输入组件路径" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -287,13 +293,16 @@ export default {
       this.form = {
         menuId: undefined,
         parentId: 0,
+        name:'',
         menuName: undefined,
         icon: undefined,
         menuType: "0",
         orderNum: "0",
         isFrame: "0",
         visible: "1",
-        status: "1"
+        status: "1",
+        path:'',
+        component:'',
       };
       this.resetForm("form");
     },
@@ -323,6 +332,7 @@ export default {
         this.form = {
           menuId: menuInfo.id,
           parentId: menuInfo.pid,
+          name:menuInfo.name,
           menuName: menuInfo.title,
           icon: menuInfo.icon,
           menuType: ""+menuInfo.menu_type,
@@ -331,7 +341,7 @@ export default {
           visible: ""+menuInfo.alwaysShow,
           status: ""+menuInfo.status,
           path:menuInfo.path,
-          component:menuInfo.name,
+          component:menuInfo.component,
         }
         this.open = true;
         this.title = "修改菜单";
