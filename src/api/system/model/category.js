@@ -9,6 +9,14 @@ export function listData(query) {
     })
   }
 
+  // 查询模型分类
+export function getCategoryAll() {
+  return request({
+    url: '/system/model/category/all',
+    method: 'get'
+  })
+}
+
 
   // 添加
 export function addCategory(data) {

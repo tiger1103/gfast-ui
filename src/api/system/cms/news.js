@@ -15,7 +15,7 @@ export function addNews(params){
     return request({
       url: '/system/cms/news/add',
       method: 'post',
-      params:params
+      data:params
     })
   }
 
@@ -33,7 +33,7 @@ export function addNews(params){
     return request({
       url :'/system/cms/news/edit',
       method:'post',
-      params:data
+      data:data
     })
   }
 
@@ -44,5 +44,14 @@ export function delNews(cateId){
       url:'/system/cms/news/delete',
       method:'delete',
       data:{ids:cateId}
+    })
+  }
+
+  //获取文章模型数据
+  export function loadNewsModel(cateId,newsId){
+    return request({
+      url:'/system/cms/news/getModelFields',
+      method:'get',
+      params:{cateIds:cateId,newsId:newsId}
     })
   }

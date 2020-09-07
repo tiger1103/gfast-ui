@@ -34,7 +34,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-         
+
         >新增</el-button>
       </el-form-item>
     </el-form>
@@ -56,19 +56,19 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button 
-            size="mini" 
-            type="text" 
-            icon="el-icon-edit" 
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-           
+
           >修改</el-button>
-          <el-button 
-            size="mini" 
-            type="text" 
-            icon="el-icon-plus" 
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-plus"
             @click="handleAdd(scope.row)"
-            
+
           >新增</el-button>
           <el-button
             v-if="scope.row.parentId != 0"
@@ -76,7 +76,7 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-           
+
           >删除</el-button>
         </template>
       </el-table-column>
@@ -196,7 +196,7 @@ export default {
   },
   created() {
     this.getList();
-    this.getDicts("sysNormalDisable").then(response => {
+    this.getDicts("sys_normal_disable").then(response => {
       this.statusOptions = response.data.values || []
     });
   },
@@ -222,10 +222,10 @@ export default {
     },
     // 字典状态字典翻译
     statusFormat(row, column) {
-      
+
       //return this.selectDictLabel(this.statusOptions, row.status);
-  
-      let find = this.statusOptions.find((v)=>{ 
+
+      let find = this.statusOptions.find((v)=>{
         return ("" + v.key) == ("" + row.status)}
       )
       if (find){
@@ -260,7 +260,7 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd(row) {
-   
+
       this.reset();
       if (row != undefined) {
         this.form.parentId = row.deptId;

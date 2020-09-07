@@ -1,6 +1,6 @@
 <template>
-    <div id="app">
-        <ckeditor :config="editorConfig" v-model="dataValue" ref="ckdt"></ckeditor>
+    <div class="ck-content">
+        <ckeditor :config="editorConfig" v-model="dataValue" ref="ckdt" :editor-url="editorUrl"></ckeditor>
     </div>
 </template>
 <script>
@@ -13,7 +13,7 @@ export default {
             ckeditor: CKEditor.component
         },
         props:{
-            editorData:String,
+            value:String,
             editorConfig:{
                 type:Object,
                 default:function(){
@@ -22,8 +22,8 @@ export default {
                         // filebrowserUploadUrl:"/aaa",
                         // filebrowserImageUploadUrl:_this.apiUrl+"/system/upload/ckEditorUpImg",
                         // imageUploadUrl:_this.apiUrl+"/system/upload/ckEditorUpImg?token="+encodeURIComponent(getToken()),
-                        
-                        
+
+
                         toolbar: [{
                             name: 'document',
                                 items: ['Print']
@@ -90,20 +90,21 @@ export default {
                         width:'auto',
                         height: 420,
 
-                        removeDialogTabs: 'image:advanced;link:advanced'
+                        removeDialogTabs: 'image:advanced;link:advanced',
+
                     }
                 },
             }
         },
         data() {
             return {
-                
+                editorUrl: "/js/ckeditor/ckeditor.js"
             };
         },
         computed:{
             dataValue:{
                 get(){
-                    return this.editorData
+                    return this.value
                 },
                 set(data){
                     this.$emit('setEditContent',data)
@@ -111,8 +112,20 @@ export default {
             }
         },
         methods:{
-            
+
         }
 
 }
 </script>
+
+<style>
+.ck-content {
+  font-family: 微软雅黑 宋体;
+  font-size:14px;
+}
+.ck-content p{
+  margin: 0 0 6px 0;
+  line-height: 22px;
+  text-indent: 2em;
+}
+</style>

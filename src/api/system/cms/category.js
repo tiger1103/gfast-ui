@@ -9,6 +9,15 @@ export function list(query) {
     })
   }
 
+  // 查询栏目模型选项
+export function getModelOptions() {
+  return request({
+    url: '/system/cms/menu/modelOptions',
+    method: 'get',
+  })
+}
+
+
   //添加页获取父级栏目
   export function treeselect(){
     return request({
@@ -22,7 +31,7 @@ export function list(query) {
     return request({
       url: '/system/cms/menu/sort',
       method: 'post',
-      params:{sorts:params}
+      data:{sorts:params}
     })
   }
 
@@ -31,7 +40,7 @@ export function list(query) {
     return request({
       url: '/system/cms/menu/add',
       method: 'post',
-      params:params
+      data:params
     })
   }
 
@@ -48,7 +57,7 @@ export function list(query) {
     return request({
       url :'/system/cms/menu/edit',
       method:'post',
-      params:data
+      data:data
     })
   }
 

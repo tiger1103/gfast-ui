@@ -42,7 +42,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-        
+
         >新增</el-button>
       </el-col>
       <!-- <el-col :span="1.5">
@@ -62,7 +62,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-         
+
         >删除</el-button>
       </el-col>
 
@@ -97,19 +97,19 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-          
+
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-          
+
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -202,7 +202,7 @@ export default {
   },
   created() {
     this.getList();
-    this.getDicts("sysNormalDisable").then(response => {
+    this.getDicts("sys_normal_disable").then(response => {
       this.statusOptions = response.data.values || [];
     });
   },
@@ -277,7 +277,7 @@ export default {
             remark: data.remark
           }
         }
-        
+
         this.open = true;
         this.title = "修改岗位";
       });

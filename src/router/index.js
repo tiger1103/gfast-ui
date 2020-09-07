@@ -117,7 +117,20 @@ export const constantRoutes = [
         meta: { title: '修改生成配置' }
       }
     ]
-  }
+  },
+  {
+    path: '/modelInfo',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'fields',
+        component: (resolve) => require(['@/views/system/model/info/list/fields'], resolve),
+        name: 'modelFields',
+        meta: { title: '模型字段列表' }
+      }
+    ]
+  },
 ]
 
 export default new Router({
