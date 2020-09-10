@@ -11,7 +11,7 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      
+
       <el-form-item label="状态" prop="status">
         <el-select
           v-model="queryParams.status"
@@ -152,6 +152,7 @@
             show-checkbox
             ref="menu"
             node-key="id"
+            :check-strictly="roleCheckStrictly"
             empty-text="加载中，请稍后"
             :props="defaultProps"
           ></el-tree>
@@ -161,7 +162,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submitForm" :disabled="submit!='确 定'">{{submit}}</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -172,7 +173,7 @@
         <el-form-item label="角色名称">
           <el-input v-model="form.roleName" :disabled="true" />
         </el-form-item>
-        
+
         <el-form-item label="权限范围">
           <el-select v-model="form.dataScope">
             <el-option
@@ -212,6 +213,7 @@ export default {
   name: "Role",
   data() {
     return {
+      submit:'确 定',
       // 遮罩层
       loading: true,
       // 选中数组
@@ -259,6 +261,7 @@ export default {
       ],
       // 菜单列表
       menuOptions: [],
+      roleCheckStrictly:true,
       // 部门列表
       deptOptions: [],
       // 查询参数
@@ -304,9 +307,9 @@ export default {
               response.data.list.forEach(item=>{
                 item.status = ''+item.status
                 list.push(item)
-            })  
+            })
           }
-          
+
           this.roleList = list;
           this.total = response.data.total;
           this.loading = false;
@@ -340,7 +343,7 @@ export default {
       let checkedKeys = this.$refs.dept.getCheckedKeys();
       return checkedKeys;
     },
-    
+
     /** 根据角色ID查询部门树结构 */
     getRoleDeptTreeselect(roleId) {
       roleDeptTreeselect(roleId).then(response => {
@@ -418,7 +421,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const roleId = row.id || this.ids    
+      const roleId = row.id || this.ids
       getRole(roleId).then(response => {
         this.form = {
           roleId: response.data.role.id,
@@ -432,9 +435,11 @@ export default {
         };
         this.open = true;
         this.title = "修改角色";
+        this.roleCheckStrictly = true
         this.$nextTick(() => {
           this.menuOptions = response.data.menuList;
           this.$refs.menu.setCheckedKeys(response.data.checkedRules);
+          this.roleCheckStrictly = false
         });
       });
     },
@@ -464,6 +469,7 @@ export default {
     submitForm: function() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.submit = 'loading'
           if (this.form.roleId != undefined) {
             this.form.menuIds = this.getMenuAllCheckedKeys();
             updateRole(this.form).then(response => {
@@ -474,6 +480,7 @@ export default {
               } else {
                 this.msgError(response.msg);
               }
+              this.submit='确 定'
             });
           } else {
             this.form.menuIds = this.getMenuAllCheckedKeys();
@@ -485,6 +492,7 @@ export default {
               } else {
                 this.msgError(response.msg);
               }
+              this.submit='确 定'
             });
           }
         }

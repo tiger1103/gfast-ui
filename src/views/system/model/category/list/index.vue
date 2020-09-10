@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
-    
+
       <el-form-item label="分类名称" prop="cName">
         <el-input
           v-model="queryParams.cName"
@@ -33,7 +33,7 @@
           type="primary"
           icon="el-icon-plus"
           size="mini"
-          @click="handleAdd"        
+          @click="handleAdd"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -59,7 +59,7 @@
           icon="el-icon-delete"
           size="mini"
           :disabled="multiple"
-          @click="handleDelete"         
+          @click="handleDelete"
         >删除</el-button>
       </el-col>
     </el-row>
@@ -68,7 +68,7 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="分类编号" align="center" prop="c_id" />
       <el-table-column label="分类名称" align="center" prop="c_name" />
-      
+
       <el-table-column
             prop="c_sort"
             label="排序"
@@ -91,19 +91,19 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-          
+
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-          
+
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -188,7 +188,7 @@ export default {
     });
   },
   methods: {
-    /** 查询岗位列表 */
+    /** 查询分类列表 */
     getList() {
       this.loading = true;
       listData(this.queryParams).then(response => {
@@ -197,7 +197,7 @@ export default {
         this.loading = false;
       });
     },
-    // 岗位状态字典翻译
+    // 分类状态字典翻译
     statusFormat(row, column) {
       return this.selectDictLabel(this.statusOptions, ''+row.c_status);
     },
@@ -236,7 +236,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      this.title = "添加岗位";
+      this.title = "添加分类";
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
@@ -252,9 +252,9 @@ export default {
             cSort: data.c_sort,
             cStatus: ""+data.c_status,
           };
-        }        
+        }
         this.open = true;
-        this.title = "修改岗位";
+        this.title = "修改分类";
       });
     },
     /** 提交按钮 */
@@ -288,7 +288,7 @@ export default {
     /** 删除按钮操作 */
     handleDelete(row) {
       const ids = row.c_id ? [row.c_id] :  this.ids;
-      this.$confirm('是否确认删除岗位编号为"' + ids + '"的数据项?', "警告", {
+      this.$confirm('是否确认删除分类编号为"' + ids + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
@@ -302,7 +302,7 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有岗位数据项?', "警告", {
+      this.$confirm('是否确认导出所有分类数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
@@ -316,7 +316,7 @@ export default {
         let sortMap = {}
         this.listdata.forEach(item => {
             sortMap[item.c_id] = item.c_sort
-         })         
+         })
         sortCategory(sortMap).then(response => {
           if (response.code === 0) {
             this.msgSuccess("排序成功");
@@ -325,7 +325,7 @@ export default {
           } else {
             this.msgError(response.msg);
           }
-        });         
+        });
     },
   }
 };
