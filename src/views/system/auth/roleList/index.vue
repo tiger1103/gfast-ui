@@ -155,6 +155,8 @@
             :check-strictly="roleCheckStrictly"
             empty-text="加载中，请稍后"
             :props="defaultProps"
+            @check="roleMenuCheck"
+            @check-change="roleMenuChange"
           ></el-tree>
         </el-form-item>
         <el-form-item label="备注">
@@ -262,6 +264,7 @@ export default {
       // 菜单列表
       menuOptions: [],
       roleCheckStrictly:true,
+      clickedNode:null,
       // 部门列表
       deptOptions: [],
       // 查询参数
@@ -539,6 +542,22 @@ export default {
         }).then(response => {
           this.download(response.msg);
         }).catch(function() {});
+    },
+    roleMenuCheck(d1){
+      this.clickedNode = d1
+    },
+    roleMenuChange(data,sel,cSel){
+      this.$nextTick(()=>{
+        if(!this.clickedNode||this.clickedNode.id!=data.id){
+          return
+        }
+        let node = this.$refs.menu.getNode(data.pid)
+        if(!sel&&node&&!node.checked){
+          this.roleCheckStrictly = true
+          this.$refs.menu.setChecked(node,true,false)
+          this.roleCheckStrictly = false
+        }
+      })
     }
   }
 };
