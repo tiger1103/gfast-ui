@@ -132,12 +132,12 @@
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
           >删除</el-button>
-          <!-- <el-button
+          <el-button
             type="text"
             size="small"
             icon="el-icon-download"
             @click="handleGenTable(scope.row)"
-          >生成代码</el-button> -->
+          >生成代码</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -236,12 +236,12 @@ export default {
     },
     /** 生成代码操作 */
     handleGenTable(row) {
-      const tableNames = row.tableName || this.tableNames;
-      if (tableNames == "") {
+      const tableIds = row.table_id || this.ids;
+      if (tableIds == "") {
         this.msgError("请选择要生成的数据");
         return;
       }
-      downLoadZip("/tool/gen/batchGenCode?tables=" + tableNames, "ruoyi");
+      downLoadZip("/system/tools/gen/batchGenCode?tables=" + tableIds, "gfast.zip");
     },
     /** 打开导入表弹窗 */
     openImportTable() {
@@ -280,10 +280,10 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       }).then(function() {
-          return delTable(tableIds);
+        return delTable(tableIds);
       }).then(() => {
-          this.getList();
-          this.msgSuccess("删除成功");
+        this.getList();
+        this.msgSuccess("删除成功");
       }).catch(function() {});
     }
   }
