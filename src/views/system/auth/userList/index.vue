@@ -367,7 +367,7 @@ export default {
       roleOptions: [],
       // 表单参数
       form: {
-  
+
       },
       defaultProps: {
         children: "children",
@@ -503,7 +503,8 @@ export default {
         status: "1",
         remark: undefined,
         postIds: [],
-        roleIds: []
+        roleIds: [],
+        is_admin:0
       };
       this.resetForm("form");
     },
@@ -534,7 +535,6 @@ export default {
         this.open = true;
         this.title = "添加用户";
         this.form.password = '';
-        this.form.is_admin = 0
       });
     },
     /** 修改按钮操作 */
