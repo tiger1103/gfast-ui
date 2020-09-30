@@ -28,7 +28,9 @@
             <template slot-scope="scope">
               <el-select v-model="scope.row.go_type">
                 <el-option label="int" value="int" />
+                <el-option label="uint" value="uint" />
                 <el-option label="int64" value="int64" />
+                <el-option label="uint64" value="uint64" />
                 <el-option label="float64" value="float64" />
                 <el-option label="string" value="string" />
                 <el-option label="Time" value="Time" />
