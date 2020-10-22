@@ -74,7 +74,7 @@
     </el-table>
 
     <!-- 添加或修改菜单对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="900px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-row>
           <el-col :span="24">
@@ -337,8 +337,8 @@ export default {
           icon: menuInfo.icon,
           menuType: ""+menuInfo.menu_type,
           orderNum: menuInfo.weigh,
-          isFrame: ""+menuInfo.isFrame,
-          visible: ""+menuInfo.alwaysShow,
+          isFrame: ""+menuInfo.is_frame,
+          visible: ""+menuInfo.always_show,
           status: ""+menuInfo.status,
           path:menuInfo.path,
           component:menuInfo.component,

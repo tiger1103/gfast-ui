@@ -53,3 +53,12 @@ export function delType(adTypeID) {
     }
   })
 }
+
+//排序操作
+export function sortMenu(params){
+  return request({
+    url: '/system/plug/ad/type/sort',
+    method: 'post',
+    data:{sorts:params}
+  })
+}

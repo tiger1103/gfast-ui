@@ -89,6 +89,7 @@
               icon="el-icon-plus"
               size="mini"
               @click="handleAdd"
+              v-hasPermi="['system/auth/addUser']"
             >新增</el-button>
           </el-col>
           <el-col :span="1.5">
@@ -98,6 +99,7 @@
               size="mini"
               :disabled="single"
               @click="handleUpdate"
+              v-hasPermi="['system/auth/editUser']"
             >修改</el-button>
           </el-col>
           <el-col :span="1.5">
@@ -107,6 +109,7 @@
               size="mini"
               :disabled="multiple"
               @click="handleDelete"
+              v-hasPermi="['system/auth/deleteAdmin']"
             >删除</el-button>
           </el-col>
         </el-row>
@@ -150,6 +153,7 @@
                 type="text"
                 icon="el-icon-edit"
                 @click="handleUpdate(scope.row)"
+                v-hasPermi="['system/auth/editUser']"
               >修改</el-button>
               <el-button
                 v-if="scope.row.userId !== 1"
@@ -157,6 +161,7 @@
                 type="text"
                 icon="el-icon-delete"
                 @click="handleDelete(scope.row)"
+                v-hasPermi="['system/auth/deleteAdmin']"
               >删除</el-button>
               <el-button
                 size="mini"
@@ -504,7 +509,7 @@ export default {
         remark: undefined,
         postIds: [],
         roleIds: [],
-        is_admin:0
+        is_admin:0,
       };
       this.resetForm("form");
     },

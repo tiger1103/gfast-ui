@@ -42,19 +42,26 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-        
+
         >新增</el-button>
       </el-col>
-      <!-- <el-col :span="1.5">
+      <el-col :span="1.5">
         <el-button
           type="success"
           icon="el-icon-edit"
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:post:edit']"
         >修改</el-button>
-      </el-col> -->
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          icon="el-icon-sort"
+          size="mini"
+          @click="handleSort"
+        >排序</el-button>
+      </el-col>
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -62,7 +69,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-         
+
         >删除</el-button>
       </el-col>
       <!-- <el-col :span="1.5">
@@ -80,16 +87,25 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="链接编号" align="center" prop="link_id" />
       <!-- <el-table-column label="岗位编码" align="center" prop="post_code" /> -->
+      <el-table-column label="联系人" align="center" prop="link_username" />
       <el-table-column label="链接名称" align="center" prop="link_name" />
       <el-table-column label="链接URL" align="center" prop="link_url" />
       <el-table-column label="联系QQ" align="center" prop="link_qq" />
+      <el-table-column label="邮箱" align="center" prop="link_email" />
       <el-table-column label="所属栏目" align="center" prop="linktype_name" />
-      <el-table-column label="创建时间" align="center" prop="link_addtime" width="180">
+      <el-table-column label="创建时间" align="center" prop="link_addtime">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.link_addtime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="排序" align="center" prop="link_order" />
+      <el-table-column
+        prop="link_order"
+        label="排序"
+        width="80">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.link_order" size="mini"></el-input>
+        </template>
+      </el-table-column>
       <el-table-column label="状态" align="center" prop="link_open" :formatter="statusFormat" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -98,19 +114,19 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-          
+
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-          
+
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -127,16 +143,19 @@
             <el-option v-for="(item,index) in menuOptions" :label="item.linktype_name" :key="index.linktype_id" :value="item.linktype_id"> </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="联系人" prop="linkUsername">
+          <el-input v-model="form.linkUsername" placeholder="请输入联系人" />
+        </el-form-item>
         <el-form-item label="链接名称" prop="linkName">
           <el-input v-model="form.linkName" placeholder="请输入链接名称" />
         </el-form-item>
         <el-form-item label="链接URL" prop="linkUrl">
-          <el-input v-model="form.linkUrl" placeholder="请输入链接名称" />
+          <el-input v-model="form.linkUrl" placeholder="请输入链接URL" />
         </el-form-item>
         <el-form-item label="打开方式" prop="linkTarget">
           <el-radio-group v-model="form.linkTarget">
-            <el-radio label="新标签页打开">新标签页打开</el-radio>
-            <el-radio label="本窗口打开">本窗口打开</el-radio>
+            <el-radio label="_blank">新标签页打开</el-radio>
+            <el-radio label="_self">本窗口打开</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="是否审核" prop="linkOpen">
@@ -148,25 +167,15 @@
         <el-form-item label="联系QQ" prop="linkQQ">
           <el-input type="number" v-model="form.linkQQ" placeholder="请输入联系QQ" />
         </el-form-item>
-
-        <!-- <el-form-item label="岗位编码" prop="postCode">
-          <el-input v-model="form.postCode" placeholder="请输入编码名称" />
-        </el-form-item> -->
+        <el-form-item label="邮箱" prop="linkEmail">
+          <el-input v-model="form.linkEmail" placeholder="请输入邮箱" />
+        </el-form-item>
         <el-form-item label="排序" prop="linkOrder">
           <el-input-number v-model="form.linkOrder" controls-position="right" :min="0" />
         </el-form-item>
-        <!-- <el-form-item label="岗位状态" prop="status">
-          <el-radio-group v-model="form.status">
-            <el-radio
-              v-for="dict in statusOptions"
-              :key="dict.key"
-              :label="dict.key"
-            >{{dict.value}}</el-radio>
-          </el-radio-group>
-        </el-form-item> -->
-        <!-- <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
-        </el-form-item> -->
+        <el-form-item label="备注" prop="linkRemark">
+          <el-input v-model="form.linkRemark" type="textarea" autosize placeholder="请输入备注" />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -177,7 +186,7 @@
 </template>
 
 <script>
-import { listInfo, getInfo, delInfo, addInfo, updateInfo } from "@/api/system/link/info";
+import { listInfo, getInfo, delInfo, addInfo, updateInfo, sortMenu} from "@/api/system/link/info";
 import { listNameType } from "@/api/system/link/type";
 
 export default {
@@ -217,6 +226,9 @@ export default {
       form: {},
       // 表单校验
       rules: {
+        linkUsername: [
+          { required: true, message: "联系人不能为空", trigger: "blur"}
+        ],
         linkName: [
           { required: true, message: "链接名称不能为空", trigger: "blur" }
         ],
@@ -234,6 +246,9 @@ export default {
         ],
         linkQQ: [
           { required: true, message: "联系QQ不能为空", trigger: "blur" }
+        ],
+        linkEmail: [
+          { required: true, message: "邮箱不能为空", trigger: "blur" }
         ],
         linkOrder: [
           { required: true, message: "链接顺序不能为空", trigger: "blur" }
@@ -283,12 +298,15 @@ export default {
     reset() {
       this.form = {
         plugLinkID: undefined,
+        linkUsername: undefined,
         linkName: undefined,
         linkTypeID: undefined,
         linkUrl: undefined,
         linkTarget: "",
         linkOpen:"",
         linkQQ: "",
+        linkEmail: "",
+        linkRemark: "",
         linkOrder: 0,
       };
       this.resetForm("form");
@@ -303,11 +321,31 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    // 多选框选中数据
+    /** 多选框选中数据 */
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.link_id)
       this.single = selection.length!=1
       this.multiple = !selection.length
+    },
+    /** 排序 */
+    setSortMap(infoList){
+      let sortMap = {}
+      infoList.forEach(item => {
+        sortMap[item.link_id] = item.link_order
+      })
+      return sortMap
+    },
+    handleSort(){
+      let sortMap = this.setSortMap(this.infoList)
+      sortMenu(sortMap).then(response => {
+        if (response.code === 0) {
+          this.msgSuccess("排序成功");
+          this.open = false;
+          this.getList();
+        } else {
+          this.msgError(response.msg);
+        }
+      });
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -327,17 +365,20 @@ export default {
         if (data) {
           this.form = {
             plugLinkID: data.link_id,
+            linkUsername: data.link_username,
             linkName: data.link_name,
             linkUrl: data.link_url,
             linkTarget: data.link_target,
             linkTypeID: data.link_typeid,
+            linkEmail: data.link_email,
+            linkRemark: data.link_remark,
             linkQQ: data.link_qq,
             linkOrder: data.link_order,
             linkOpen: data.link_open,
             // remark: data.remark
           }
         }
-        
+
         this.open = true;
         this.title = "修改链接";
       });

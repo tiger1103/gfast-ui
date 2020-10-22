@@ -53,3 +53,12 @@ export function delType(linkTypeID) {
     }
   })
 }
+
+//排序操作
+export function sortMenu(params){
+  return request({
+    url: '/system/plug/link/type/sort',
+    method: 'post',
+    data:{sorts:params}
+  })
+}

@@ -42,19 +42,26 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-        
+
         >新增</el-button>
       </el-col>
-      <!-- <el-col :span="1.5">
+      <el-col :span="1.5">
         <el-button
           type="success"
           icon="el-icon-edit"
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:post:edit']"
         >修改</el-button>
-      </el-col> -->
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          icon="el-icon-sort"
+          size="mini"
+          @click="handleSort"
+        >排序</el-button>
+      </el-col>
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -62,7 +69,7 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-         
+
         >删除</el-button>
       </el-col>
 
@@ -83,7 +90,14 @@
       <el-table-column label="分类编号" align="center" prop="linktype_id" />
       <!-- <el-table-column label="岗位编码" align="center" prop="post_code" /> -->
       <el-table-column label="分类名称" align="center" prop="linktype_name" />
-      <el-table-column label="分类排序" align="center" prop="linktype_order" />
+      <el-table-column
+        prop="linktype_order"
+        label="排序"
+        width="80">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.linktype_order" size="mini"></el-input>
+        </template>
+      </el-table-column>
       <!-- <el-table-column label="状态" align="center" prop="status" :formatter="statusFormat" />
       <el-table-column label="创建时间" align="center" prop="create_time" width="180">
         <template slot-scope="scope">
@@ -97,19 +111,19 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-          
+
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-          
+
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -152,7 +166,7 @@
 </template>
 
 <script>
-import { listType, getType, delType, addType, updateType } from "@/api/system/link/type";
+import { listType, getType, delType, addType, updateType, sortMenu } from "@/api/system/link/type";
 
 export default {
   name: "Type",
@@ -250,11 +264,31 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    // 多选框选中数据
+    /** 多选框选中数据 */
     handleSelectionChange(selection) {
       this.ids = selection.map(item => item.linktype_id)
       this.single = selection.length!=1
       this.multiple = !selection.length
+    },
+    /** 排序 */
+    setSortMap(typeList){
+      let sortMap = {}
+      typeList.forEach(item => {
+        sortMap[item.linktype_id] = item.linktype_order
+      })
+      return sortMap
+    },
+    handleSort(){
+      let sortMap = this.setSortMap(this.typeList)
+      sortMenu(sortMap).then(response => {
+        if (response.code === 0) {
+          this.msgSuccess("排序成功");
+          this.open = false;
+          this.getList();
+        } else {
+          this.msgError(response.msg);
+        }
+      });
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -280,7 +314,7 @@ export default {
             remark: data.remark
           }
         }
-        
+
         this.open = true;
         this.title = "修改分类";
       });

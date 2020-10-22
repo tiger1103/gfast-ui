@@ -30,16 +30,25 @@
       <el-col :span="1.5">
         <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增</el-button>
       </el-col>
-      <!-- <el-col :span="1.5">
+      <el-col :span="1.5">
         <el-button
           type="success"
           icon="el-icon-edit"
           size="mini"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['system:post:edit']"
-        >修改</el-button>
-      </el-col>-->
+        >修改
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          icon="el-icon-sort"
+          size="mini"
+          @click="handleSort"
+        >排序
+        </el-button>
+      </el-col>
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -47,7 +56,8 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <!-- <el-col :span="1.5">
         <el-button
@@ -61,18 +71,24 @@
     </el-row>
 
     <el-table v-loading="loading" :data="infoList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="广告编号" align="center" prop="ad_id" />
-      <el-table-column label="广告名称" align="center" prop="ad_name" />
-      <el-table-column label="所属位置" align="center" prop="adtype_name" />
-      <el-table-column label="创建时间" align="center" prop="ad_addtime" width="180">
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="广告编号" align="center" prop="ad_id"/>
+      <el-table-column label="广告名称" align="center" prop="ad_name"/>
+      <el-table-column label="所属位置" align="center" prop="adtype_name"/>
+      <el-table-column label="创建时间" align="center" prop="ad_addtime">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.ad_addtime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="广告排序" align="center" prop="ad_sort" />
-      <!-- <el-table-column label="状态" align="center" prop="status" :formatter="statusFormat" /> -->
-      <el-table-column label="状态" align="center" prop="ad_open" :formatter="statusFormat" />
+      <el-table-column
+        prop="ad_sort"
+        label="排序"
+        width="80">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.ad_sort" size="mini"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态" align="center" prop="ad_open" :formatter="statusFormat"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button size="mini" type="text" icon="el-icon-edit" @click="handleUpdate(scope.row)">修改</el-button>
@@ -81,7 +97,8 @@
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -108,7 +125,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="广告名称" prop="adName">
-          <el-input v-model="form.adName" placeholder="请输入广告名称" />
+          <el-input v-model="form.adName" placeholder="请输入广告名称"/>
         </el-form-item>
         <el-form-item label="广告模式" prop="adCheckid">
           <el-radio-group v-model="form.adCheckid" @change="modelSelect">
@@ -127,15 +144,15 @@
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
           >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <img v-if="imageUrl" :src="imageUrl" class="avatar"/>
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
           </el-upload>
         </el-form-item>
         <el-form-item v-if="flag" label="链接URL" prop="adUrl">
-          <el-input v-model="form.adUrl" placeholder="请输入链接URL" />
+          <el-input v-model="form.adUrl" placeholder="请输入链接URL"/>
         </el-form-item>
         <el-form-item v-if="!flag" label="JS代码" prop="adJs">
-          <el-input v-model="form.adJs" placeholder="请输入JS代码" />
+          <el-input v-model="form.adJs" placeholder="请输入JS代码"/>
         </el-form-item>
         <el-form-item label="是否审核" prop="adOpen">
           <el-radio-group v-model="form.adOpen">
@@ -144,10 +161,10 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="排序" prop="adSort">
-          <el-input-number v-model="form.adSort" controls-position="right" :min="0" />
+          <el-input-number v-model="form.adSort" controls-position="right" :min="0"/>
         </el-form-item>
         <el-form-item label="广告内容" prop="adContent">
-          <el-input v-model="form.adContent" placeholder="请输入广告内容" />
+          <el-input v-model="form.adContent" placeholder="请输入广告内容"/>
         </el-form-item>
         <!-- <el-form-item label="岗位状态" prop="status">
           <el-radio-group v-model="form.status">
@@ -171,15 +188,9 @@
 </template>
 
 <script>
-import {
-  listInfo,
-  getInfo,
-  delInfo,
-  addInfo,
-  updateInfo,
-} from "@/api/system/ad/info";
-import { listNameType } from "@/api/system/ad/type";
-import { getToken } from "@/utils/auth";
+import {listInfo, getInfo, delInfo, addInfo, updateInfo, sortMenu} from "@/api/system/ad/info";
+import {listNameType} from "@/api/system/ad/type";
+import {getToken} from "@/utils/auth";
 
 export default {
   name: "Info",
@@ -224,25 +235,19 @@ export default {
       // 表单校验
       rules: {
         adAdtypeid: [
-          { required: true, message: "所属位置不能为空", trigger: "blur" },
+          {required: true, message: "所属位置不能为空", trigger: "blur"},
         ],
         adName: [
-          { required: true, message: "广告名称不能为空", trigger: "blur" },
+          {required: true, message: "广告名称不能为空", trigger: "blur"},
         ],
         adCheckid: [
-          { required: true, message: "广告模式不能为空", trigger: "blur" },
+          {required: true, message: "广告模式不能为空", trigger: "blur"},
         ],
-        adUrl: [
-          { required: true, message: "连接URL不能为空", trigger: "blur" },
-        ],
-        adJs: [{ required: true, message: "JS代码不能为空", trigger: "blur" }],
+        adJs: [{required: true, message: "JS代码不能为空", trigger: "blur"}],
         adSort: [
-          { required: true, message: "广告排序不能为空", trigger: "blur" },
+          {required: true, message: "广告排序不能为空", trigger: "blur"},
         ],
-        adOpen: [{ required: true, message: "审核不能为空", trigger: "blur" }],
-        adContent: [
-          { required: true, message: "广告内容不能为空", trigger: "blur" },
-        ],
+        adOpen: [{required: true, message: "审核不能为空", trigger: "blur"}],
       },
     };
   },
@@ -307,7 +312,7 @@ export default {
     },
 
     setUpData() {
-      return { token: getToken() };
+      return {token: getToken()};
     },
 
     // /** 转换菜单数据结构 */
@@ -360,11 +365,31 @@ export default {
       this.resetForm("queryForm");
       this.handleQuery();
     },
-    // 多选框选中数据
+    /** 多选框选中数据 */
     handleSelectionChange(selection) {
       this.ids = selection.map((item) => item.ad_id);
       this.single = selection.length != 1;
       this.multiple = !selection.length;
+    },
+    /** 排序 */
+    setSortMap(infoList) {
+      let sortMap = {}
+      infoList.forEach(item => {
+        sortMap[item.ad_id] = item.ad_sort
+      })
+      return sortMap
+    },
+    handleSort() {
+      let sortMap = this.setSortMap(this.infoList)
+      sortMenu(sortMap).then(response => {
+        if (response.code === 0) {
+          this.msgSuccess("排序成功");
+          this.open = false;
+          this.getList();
+        } else {
+          this.msgError(response.msg);
+        }
+      });
     },
     /** 新增按钮操作 */
     handleAdd() {
@@ -452,7 +477,8 @@ export default {
           this.getList();
           this.msgSuccess("删除成功");
         })
-        .catch(function () {});
+        .catch(function () {
+        });
     },
     // /** 导出按钮操作 */
     // handleExport() {
@@ -479,9 +505,11 @@ export default {
   position: relative;
   overflow: hidden;
 }
+
 .avatar-uploader .el-upload:hover {
   border-color: #409eff;
 }
+
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
@@ -490,6 +518,7 @@ export default {
   line-height: 178px;
   text-align: center;
 }
+
 .avatar {
   width: 178px;
   height: 178px;

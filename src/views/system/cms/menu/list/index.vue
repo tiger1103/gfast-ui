@@ -86,28 +86,28 @@
       </el-table-column>
       <el-table-column prop="cate_type" label="分类类型" :formatter="typeFormat"  :show-overflow-tooltip="true"></el-table-column>
       <el-table-column prop="status" label="状态" :formatter="statusFormat" width="80"></el-table-column>
-      
+
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button 
+          <el-button
             v-if="scope.row.cate_type==1"
-            size="mini" 
-            type="text" 
-            icon="el-icon-plus" 
-            @click="handleAdd(scope.row)"            
+            size="mini"
+            type="text"
+            icon="el-icon-plus"
+            @click="handleAdd(scope.row)"
           >新增</el-button>
 
-          <el-button size="mini" 
-            type="text" 
-            icon="el-icon-edit" 
-            @click="handleUpdate(scope.row)"         
+          <el-button size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdate(scope.row)"
           >修改</el-button>
 
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
-            @click="handleDelete(scope.row)"            
+            @click="handleDelete(scope.row)"
           >删除</el-button>
         </template>
       </el-table-column>
@@ -115,7 +115,7 @@
 
     <!-- 添加或修改菜单对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="1000px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-row>
           <el-col :span="24">
             <el-form-item label="上级栏目">
@@ -123,7 +123,7 @@
                 v-model="form.parent_id"
                 :options="menuOptions"
                 :normalizer="normalizer"
-                :show-count="true"     
+                :show-count="true"
                 placeholder="选择上级栏目"
               />
             </el-form-item>
@@ -205,7 +205,30 @@
             </el-radio-group>
           </el-form-item>
           </el-col>
-          
+          <el-col :span="24" v-show="!isSingle&&!isJump">
+            <el-form-item label="列表页模板" prop="list_template">
+              <el-select v-model="form.list_template" >
+                <el-option
+                  v-for="item in list_template"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24" v-show="form.cate_type!=1 && !isJump">
+            <el-form-item label="内容页模板" prop="content_template">
+              <el-select v-model="form.content_template" >
+                <el-option
+                  v-for="item in content_template"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -271,7 +294,9 @@ export default {
         model_id: [
           { required: true, message: "请选择栏目模型", trigger: "change" }
         ]
-      }
+      },
+      list_template:[],
+      content_template:[]
     };
   },
   created() {
@@ -317,6 +342,8 @@ export default {
         const menu = { id: 0, name: '最顶级', children: [] };
         menu.children = this.handleTree(response.data.parentList, "id","parent_id");
         this.menuOptions.push(menu);
+        this.list_template = response.data.listTemp
+        this.content_template = response.data.contentTemp
       });
     },
     // 显示状态字典翻译
@@ -353,6 +380,8 @@ export default {
         thumbnail:'',
         cate_address:'',
         cate_content:'',
+        list_template:"",
+        content_template:"",
       };
       this.imageUrl='';
       this.isJump=false
@@ -386,7 +415,7 @@ export default {
       return sortMap
     },
     handleSort(){
-        let sortMap = this.setSortMap(this.menuList)     
+        let sortMap = this.setSortMap(this.menuList)
         sortMenu(sortMap).then(response => {
           if (response.code === 0) {
             this.msgSuccess("排序成功");
@@ -395,7 +424,7 @@ export default {
           } else {
             this.msgError(response.msg);
           }
-        });         
+        });
     },
     /** 新增按钮操作 */
     handleAdd(row) {
@@ -410,12 +439,14 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.id || this.ids    
+      const id = row.id || this.ids
       getMenu(id).then(response => {
         this.menuOptions = [];
         const menu = { id: 0, name: '最顶级', children: [] };
         menu.children = this.handleTree(response.data.parentList, "id","parent_id");
         this.menuOptions.push(menu);
+        this.list_template = response.data.listTemp
+        this.content_template = response.data.contentTemp
         const menuInfo = response.data.menuInfo
         const more = menuInfo.more!=''?JSON.parse(menuInfo.more):null
         this.form = {
@@ -433,6 +464,8 @@ export default {
           thumbnail:more?more.thumb:'',
           cate_address:menuInfo.cate_address,
           cate_content:menuInfo.cate_content,
+          list_template:menuInfo.list_template,
+          content_template:menuInfo.content_template,
         }
         this.imageUrl = more?(this.apiUrl+"/"+more.thumb):'',
         this.typeChange(menuInfo.cate_type)
@@ -488,7 +521,7 @@ export default {
         this.form.thumbnail = res.data.fileInfo.fileUrl;
       }else{
         this.msgError(res.msg);
-      }        
+      }
        this.upLoading = false
     },
     beforeAvatarUpload(file) {

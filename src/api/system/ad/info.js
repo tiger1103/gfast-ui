@@ -45,3 +45,12 @@ export function delInfo(plugAdID) {
     }
   })
 }
+
+//排序操作
+export function sortMenu(params){
+  return request({
+    url: '/system/plug/ad/info/sort',
+    method: 'post',
+    data:{sorts:params}
+  })
+}
