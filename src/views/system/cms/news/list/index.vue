@@ -498,6 +498,9 @@ export default {
         if (info.recommended === 1) {
           this.form.attr.push("2");
         }
+        if(info.is_slide==1){
+          this.form.attr.push("3");
+        }
         (this.imageUrl = info.thumbnail
           ? this.apiUrl + "/" + info.thumbnail
           : ""),
@@ -587,7 +590,7 @@ export default {
         }
       }
     },
-    
+
     showNewsCate(data) {
       let item = [];
       for (let i in data) {

@@ -48,7 +48,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2018-2020 gfast.vip All Rights Reserved.</span>
+      <span>Copyright © 2018-2020 g-fast.cn All Rights Reserved.</span>
     </div>
   </div>
 </template>

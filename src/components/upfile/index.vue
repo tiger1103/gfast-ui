@@ -10,7 +10,7 @@
       :data="dataParam"
       :on-exceed="handleExceed"
       :file-list="dataFileList"
-      :on-success="handleSuccess"      
+      :on-success="handleSuccess"
       :on-preview="handlePreview"
     >
       <el-button size="small" type="primary">点击上传</el-button>
@@ -56,11 +56,11 @@ export default {
           }
       }
   },
-  
+
   computed:{
       dataFileList:{
            get(){
-                    return this.value
+                    return this.value?this.value:[]
                 },
             set(data){
                 this.$emit('setUpFielList',data)
@@ -71,7 +71,7 @@ export default {
     handleRemove(file, fileList) {
       this.setDataFileList(fileList)
     },
-    
+
     handleExceed(files, fileList) {
       this.$message.warning(
         `最多可上传 ${this.limit} 个文件，已超出最大限制数。`

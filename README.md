@@ -59,7 +59,9 @@ npm run build:prod
 ```
 
 ## 后端地址
-[gfast](https://github.com/tiger1103/gfast)
+github地址：[https://github.com/tiger1103/gfast](https://github.com/tiger1103/gfast)
+
+gitee地址：[https://gitee.com/tiger1103/gfast](https://gitee.com/tiger1103/gfast)
 
 ## 演示图
 

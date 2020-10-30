@@ -123,8 +123,8 @@
             <el-switch v-model="form.isDefault"
                 active-text="是"
                 inactive-text="否"
-                :active-value="1"
-                :inactive-value="0"
+                active-value="1"
+                inactive-value="0"
             ></el-switch>
         </el-form-item>
 
