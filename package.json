@@ -52,6 +52,8 @@
     "js-beautify": "^1.10.2",
     "js-cookie": "2.2.0",
     "jsencrypt": "3.0.0-rc.1",
+    "jsplumb": "^2.14.5",
+    "lodash": "^4.17.20",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "path-to-regexp": "2.4.0",
