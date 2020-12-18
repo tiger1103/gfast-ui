@@ -131,6 +131,19 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/system/wf/flow',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'design',
+        component: (resolve) => require(['@/views/system/wf/flow/design'], resolve),
+        name: 'flowDesign',
+        meta: { title: '流程设计' }
+      }
+    ]
+  }
 ]
 
 export default new Router({
