@@ -98,7 +98,7 @@ export default {
         },
         data() {
             return {
-                editorUrl: "/js/ckeditor/ckeditor.js"
+                editorUrl: process.env.BASE_URL+"js/ckeditor/ckeditor.js"
             };
         },
         computed:{
