@@ -156,7 +156,7 @@
                 v-hasPermi="['system/auth/editUser']"
               >修改</el-button>
               <el-button
-                v-if="scope.row.userId !== 1"
+                v-if="scope.row.id !== 1"
                 size="mini"
                 type="text"
                 icon="el-icon-delete"
