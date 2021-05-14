@@ -343,6 +343,9 @@
           </div>
           </div>
       </el-dialog>
+      <ul class="copyright">
+        <li>流程引擎归属<a href="https://www.cojz8.com/" target="_blank" class="text-danger">TPFLOW</a>版权所有</li>
+      </ul>
     </div>
 </template>
 

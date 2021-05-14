@@ -30,6 +30,7 @@
                 <li><a href="http://www.qjit.cn/macrodata.html" target="_blank" class="text-danger">宏观数据库平台</a></li>
                 <li><a href="http://www.qjit.cn/usedcar.html" target="_blank" class="text-danger">二手车管理系统</a></li>
                 <li><a href="http://www.qjit.cn/" target="_blank" class="text-danger">公租房管理系统</a></li>
+                <li>流程引擎归属<a href="https://www.cojz8.com/" target="_blank" class="text-danger">TPFLOW</a>版权所有</li>
               </ul>
             </div>
           </el-card>
@@ -156,7 +157,7 @@ ul,li{ padding:0;margin:0;list-style:none}
 .product li{
   margin-bottom: 20px;
   float: left;
-  width: 150px;
+  width: 210px;
 }
 
 .dashboard-editor-container {
