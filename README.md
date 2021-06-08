@@ -95,3 +95,11 @@ gitee地址：[https://gitee.com/tiger1103/gfast](https://gitee.com/tiger1103/gf
         <td><img src="https://oscimg.oschina.net/oscnet/up-c195234bbcd30be6927f037a6755e6ab69c.png"/></td>
     </tr>
 </table>
+
+
+## 免责声明：
+> 1、Gfast仅限自己学习使用，一切商业行为与Gfast无关。
+
+> 2、用户不得利用Gfast从事非法行为，用户应当合法合规的使用，发现用户在使用产品时有任何的非法行为，Gfast有权配合有关机关进行调查或向政府部门举报，Gfast不承担用户因非法行为造成的任何法律责任，一切法律责任由用户自行承担，如因用户使用造成第三方损害的，用户应当依法予以赔偿。
+
+> 3、所有与使用Gfast相关的资源直接风险均由用户承担。 
