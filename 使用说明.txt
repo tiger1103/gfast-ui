@@ -1,0 +1,107 @@
+资料中包含后端和前端代码
+后端下载确保安装了go开发环境后安装依赖，修改数据库配置
+
+安装依赖
+go mod download 或 go mod tidy
+
+项目配置文件
+在项目根目录 ./config/config.toml 修改必要配置如下：
+
+数据库文件：./data/gfast.sql
+
+数据库连接
+[database]
+    type    =   "mysql"    #数据库类型
+    host    =   "127.0.0.1"  #数据库链接地址
+    port    =   "3306"  #端口
+    user    =   "gfast"  #用户
+    pass    =   "123456"  #密码
+    name    =   "gfast"  #数据库名称
+    charset   = "utf8mb4" #数据库编码
+    maxIdle      = "10" #连接池最大闲置的连接数
+    maxOpen     = "10" #连接池最大打开的连接数
+    maxLifetime  = "30" #(单位秒)连接对象可重复使用的时间长度
+    debug  = true   #是否调试模式
+
+
+web服务器配置
+[server]
+    Address          = ":8200"   #服务端口
+    ServerRoot       = "./public/resource"
+    AccessLogEnabled = true
+    ErrorLogEnabled  = true
+    PProfEnabled     = true
+    LogPath          = "./data/log/server_log"
+    SessionIdName    = "sysSessionId"
+    SessionPath      = "./data/session"
+    SessionMaxAge    = "24h"
+    DumpRouterMap    = true
+    NameToUriType = 3
+    ClientMaxBodySize = 52428800   #50M
+ServerRoot 用来设置Server的主目录（类似nginx中的root配置，默认为空）
+Server默认情况下是没有任何主目录的设置，只有设置了主目录，才支持对应主目录下的静态文件的访问。
+ClientMaxBodySize 发送请求最大长度 如果需要上传大文件可以适当改大。
+
+gToken配置
+[gToken]
+    CacheMode = 2 #此处如果不使用redis改为1
+    CacheKey = "GToken:"
+    Timeout = 0
+    MaxRefresh = 0
+    TokenDelimiter="_"
+    EncryptKey = "koi29a83idakguqjq29asd9asd8a7jhq"
+    AuthFailMsg = "登录超时，请重新登录"
+    MultiLogin = true  #后台是否允许多端同时在线
+    GovMultiLogin = true  #政务平台是否允许多端同时在线
+其中CacheMode 是gToken存储模式，1为直接存储在内存中，2为使用redis存储 。
+
+*注意：如果存储在内存中则每次服务重启都会清空token数据，也就是用户登录数据会丢失，需要重新登录。*
+
+
+后台相关配置
+[adminInfo]
+    notCheckAuthAdminIds = [1,2,31]  #无需验证后台权限的用户id  也就是超级管理员
+    pageNum = 5  #后台列表分页长度
+    dataDir =  "./data"  #数据目录用于数据备份或模型数据创建时备份旧表数据
+
+
+前端代码为gfast-ui
+前端npm依赖可直接在百度网盘下载：https://pan.baidu.com/s/1WtClhf8su_HSu_ncCi-qRg   提取码：pfvu
+也可直接 npm install 或使用代理安装 npm install --registry=https://registry.npm.taobao.org
+
+下载或安装依赖后直接 npm run dev 即可运行
+
+运行前如果后端修改了http服务端口则需修改前端接口地址：
+.env.development 文件中  VUE_APP_BASE_API 配置变量
+
+打包前端命令为：npm run build:prod
+打包生产环境 需修改 .env.production 文件中http服务接口地址 VUE_APP_BASE_API 配置变量（如果生产环境是放在gfast静态资源中，或用的同一个域名端口，则不需要修改，为空即可）
+
+
+前端完整使用步骤：
+开发
+# 安装依赖
+npm install
+
+# 建议不要直接使用 cnpm 安装依赖，会有各种诡异的 bug。可以通过如下操作解决 npm 下载速度慢的问题
+npm install --registry=https://registry.npm.taobao.org
+
+# 启动服务
+npm run dev
+浏览器访问 http://localhost:80
+
+发布
+# 构建测试环境
+npm run build:stage
+
+# 构建生产环境
+npm run build:prod
+
+
+对应的文档地址：http://doc.qjit.cn/docs/gfast/introduce
+流程视频讲解：https://www.bilibili.com/video/BV1W5411G7Gm
+
+管理员账号：admin 123456
+            demo  123456
+
+赞助会员QQ群：799025128

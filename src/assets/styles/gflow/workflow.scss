@@ -1,0 +1,615 @@
+// jsPlumb样式优化
+@import "jsplumbtoolkit-defaults";
+
+.flow-layout {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+.flow-toolbar{
+  width: 15%;
+}
+.flow-toolbar .tool-btn{
+  margin-top: 40px;
+}
+.flow-toolbar .tool-btn .el-button{
+  width: 90%;
+  margin: 0 auto 30px auto;
+  display: block;
+}
+.title-head{
+  font-size: 16px;
+  margin: 0;
+  padding: 8px;
+}
+.flow-design{
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  width: 85%;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+.flow-editor {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  overflow: hidden;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.flow-editor.draft {
+  background: #fff;
+}
+
+
+.canvas-container {
+  flex: 1;
+  overflow: auto;
+  z-index: 0;
+}
+
+.canvas-container[data-zoom="100"] {
+  background-image: linear-gradient(#eee 1px, transparent 0), linear-gradient(90deg, #eee 1px, transparent 0), linear-gradient(#f5f5f5 1px, transparent 0), linear-gradient(90deg, #f5f5f5 1px, transparent 0);
+  background-size: 75px 75px, 75px 75px, 15px 15px, 15px 15px;
+}
+
+.canvas-container[data-zoom="90"] {
+  background-image: linear-gradient(#eee 1px, transparent 0), linear-gradient(90deg, #eee 1px, transparent 0), linear-gradient(#f5f5f5 1px, transparent 0), linear-gradient(90deg, #f5f5f5 1px, transparent 0);
+  background-size: 70px 70px, 70px 70px, 14px 14px, 14px 14px;
+}
+
+.canvas-container[data-zoom="80"] {
+  background-image: linear-gradient(#eee 1px, transparent 0), linear-gradient(90deg, #eee 1px, transparent 0), linear-gradient(#f5f5f5 1px, transparent 0), linear-gradient(90deg, #f5f5f5 1px, transparent 0);
+  background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px;
+}
+
+.canvas-container[data-zoom="70"] {
+  background-image: linear-gradient(#eee 1px, transparent 0), linear-gradient(90deg, #eee 1px, transparent 0), linear-gradient(#f5f5f5 1px, transparent 0), linear-gradient(90deg, #f5f5f5 1px, transparent 0);
+  background-size: 55px 55px, 55px 55px, 11px 11px, 11px 11px;
+}
+
+.canvas-container[data-zoom="60"] {
+  background-image: linear-gradient(#eee 1px, transparent 0), linear-gradient(90deg, #eee 1px, transparent 0), linear-gradient(#f5f5f5 1px, transparent 0), linear-gradient(90deg, #f5f5f5 1px, transparent 0);
+  background-size: 45px 45px, 45px 45px, 9px 9px, 9px 9px;
+}
+
+.canvas-container[data-zoom="50"] {
+  background-image: linear-gradient(#eee 1px, transparent 0), linear-gradient(90deg, #eee 1px, transparent 0), linear-gradient(#f5f5f5 1px, transparent 0), linear-gradient(90deg, #f5f5f5 1px, transparent 0);
+  background-size: 40px 40px, 40px 40px, 8px 8px, 8px 8px;
+}
+
+.canvas-container:before {
+  content: "";
+  height: 10px;
+  width: 100%;
+  display: block;
+  background-repeat-y: no-repeat;
+  position: absolute;
+  background-image: linear-gradient(90deg, #ccc 1px, transparent 0), linear-gradient(90deg, #ddd 1px, transparent 0);
+  background-size: 75px 10px, 5px 5px;
+}
+
+.canvas-container:after {
+  content: "";
+  height: 100%;
+  width: 10px;
+  display: block;
+  background-repeat-x: no-repeat;
+  position: absolute;
+  top: 0;
+  background-image: linear-gradient(#ccc 1px, transparent 0), linear-gradient(#ddd 1px, transparent 0);
+  background-size: 10px 75px, 5px 5px;
+}
+
+#campaignCanvas {
+  background-color: transparent;
+  transform-origin: top;
+  width: 100%;
+  height: 100%;
+  overflow: visible !important;
+}
+
+.node {
+  display: inline-block;
+  vertical-align: bottom;
+  background-color: #8db9d3;
+  color: #fff;
+  border-radius: 10px;
+  margin: 0px 9px 15px;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.9em;
+  transition: 0.2s outline;
+}
+
+.node-circle {
+  border-radius: 25px;
+
+  .step-img {
+    margin: 0 auto;
+    margin-top: 10px;
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.node-square {
+  display: inline-block;
+  vertical-align: bottom;
+  margin: 0px 9px 0;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  position: relative;
+
+  .square {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: #8db9d3;
+    transform: rotate(45deg) scale(0.8);
+    overflow: hidden;
+  }
+
+  .step-img {
+    transform: rotate(-45deg);
+    margin-top: 5px;
+    margin-left: 5px;
+    width: 40px;
+    height: 40px;
+  }
+
+  .step-expand {
+    margin-top: 2px;
+    margin-left: 2px;
+  }
+}
+
+
+.step-img {
+  margin-top: 5px;
+  margin-left: 13px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.step-title {
+  font-size: 10px;
+  text-align: center;
+}
+
+// 右侧的editor
+.flow-editor-sidebar {
+  position: relative;
+  width: 287px;
+  background-color: #616D74;
+  color: #bababa;
+  z-index: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: all 0.3s;
+
+  &.collapsed {
+    transform: translateX(-100%);
+    overflow: visible;
+    width: 0;
+  }
+
+  .items-box {
+    padding-top: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #7f7f7f;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+}
+
+
+// editor
+.canvas-container {
+  //
+  .flow-item {
+    height: 50px;
+    width: 50px;
+  }
+
+  .flow-text {
+    margin-left: 5px;
+    padding-top: 8px;
+    vertical-align: top;
+    width: 62px;
+
+    .text-line {
+      color: #444;
+      display: inline-block;
+    }
+
+    span {
+      max-width: 50px;
+      display: inline-block;
+    }
+
+    span.text-content{
+      white-space: pre;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      color: #8b9ea5;
+      max-width: 90px;
+      display: inline-block;
+      position: absolute;
+      word-break: break-all;
+      word-break: break-word;
+
+      &:hover{
+        overflow: visible;
+        width: 90px;
+        white-space: pre-wrap;
+        z-index: 1;
+      }
+    }
+
+
+    i {
+      position: absolute;
+    }
+  }
+
+
+  .node-content-wrap {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    flex-shrink: 0;
+
+    .node-square {
+      margin: auto;
+    }
+
+    .node-content {
+      display: flex;
+    }
+
+    .flow-item {
+      flex-shrink: 0;
+    }
+
+
+    &:hover {
+      .flow-delete {
+        display: inline-block;
+        text-align: center;
+        font-size: 16px;
+      }
+    }
+  }
+
+  .node {
+    margin: auto;
+  }
+
+
+  .flow-delete {
+    cursor: pointer;
+    display: none;
+    color: #ff7373;
+  }
+
+
+  .node-temp-small {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px dashed;
+    color: #ccc;
+    text-align: center;
+    background: #fff;
+    cursor: pointer;
+    transition: transform 0.3s, width 0.3s, height 0.3s, border-radius 0.3s;
+    justify-content: center;
+    display: none;
+
+    &.is-active{
+      .sortable-ghost {
+        display: none;
+      }
+    }
+
+    &:before {
+      width: 100px;
+      height: 50px;
+      position: absolute;
+      left: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &:after {
+      content: "+";
+      background: #fff;
+      position: relative;
+      top: 2px;
+    }
+
+
+    &.is-active, &:hover {
+      color: #72c6d0;
+      width: 135px;
+      height: 50px;
+      border-radius: 50px;
+      z-index: 1;
+
+      &:before {
+        content: '\70B9\51FB\6216\62D6\52A8\5DE6\4FA7\8282\70B9\5230\6B64\5904';
+      }
+
+      &:after {
+        opacity: 0;
+      }
+    }
+  }
+
+
+}
+
+
+// dialog
+.dialog-wrap {
+  .el-dialog__header {
+    padding: 15px 20px 10px;
+    background-color: #81D3F8;
+    color: #F2F2F2;
+  }
+
+  .el-dialog__body {
+    padding: 15px 10px;
+  }
+
+  .dialog-title {
+  }
+
+  .el-icon-arrow-left {
+    font-size: 14px;
+    cursor: pointer;
+    padding-right: 15px;
+    border-right: 1px solid #ccc;
+  }
+
+  .desc {
+    position: relative;
+    line-height: 14px;
+  }
+
+}
+
+
+.flow-tools {
+  position: absolute;
+  box-sizing: border-box;
+  left: 10px;
+  top: 10px;
+  background: rgba(255, 255, 255, 1);
+  border: 1px solid rgba(242, 242, 242, 1);
+  height: 40px;
+  border-radius: 3px;
+  padding: 5px 0;
+  z-index: 1;
+
+  .tool-item {
+    width: 25px;
+    height: 25px;
+    display: inline-block;
+    cursor: pointer;
+    color: #BFBFBF;
+    margin: 0 5px;
+    vertical-align: top;
+
+    span {
+      display: inline-block;
+    }
+
+    .fa{
+      font-size: 25px;
+    }
+
+    .fa-mail-forward{
+      font-size: 23px;
+    }
+  }
+}
+
+
+.flow-zoom {
+  height: 96px;
+  padding: 5px;
+  top: 50px;
+  left: 20px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 1;
+
+  .zoom-btn {
+    z-index: 2;
+
+    .el-button--mini {
+      width: 24px;
+      height: 24px;
+
+      &.is-circle {
+        padding: 5px;
+      }
+    }
+  }
+
+  &:before {
+    content: "";
+    position: absolute;
+    border: 1px solid;
+    width: 2px;
+    height: 80px;
+    left: 16px;
+    box-shadow: 0px 0px 10px #ccc;
+  }
+
+  &:after {
+    content: attr(data-zoom);
+    top: 10px;
+    left: 33px;
+    position: absolute;
+  }
+}
+
+
+.node-item-label {
+  transform: translate(10px, -15px) !important;
+  color: #bababa;
+  width: 60px;
+
+  .node-item-title {
+    max-width: 60px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+}
+
+.item-border {
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 5px 10px;
+
+  .item-title {
+    font-size: 12px;
+  }
+}
+
+.text-step-count{
+  color: #AA5C00;
+}
+
+.process-step {
+  position: absolute;
+  cursor: move;
+  min-width: 100px;
+  line-height: 28px;
+}
+
+.wf_btn {
+  padding: 4px 8px;
+  box-sizing: border-box;
+  cursor: pointer;
+  text-align: center;
+  border: solid 1px #ddd;
+  background-color: #fff;
+  width: auto;
+  font-size: 12px;
+}
+
+.wf_btn_red{
+  border: solid 2px #FF0000;
+  background-color: #F5A1A1;
+}
+
+.flow-component {
+  opacity: 0.8;
+  filter: alpha(opacity=80);
+  cursor: pointer;
+  z-index: 20;
+}
+
+.flow-label, .flow-badge {
+  display: inline-block;
+  padding: 2px 4px;
+  font-size: 11.844px;
+  font-weight: bold;
+  line-height: 14px;
+  color: #fff;
+  white-space: nowrap;
+  vertical-align: middle;
+  background-color: #999;
+  overflow: hidden;
+}
+
+.tab-container{
+  padding: 0 15px;
+}
+
+.attr-form .line {
+  text-align: center;
+}
+
+.selected-manager{
+  text-align: center;
+}
+.selected-manager h3{
+  font-size: 14px;
+}
+.select-dialog{
+  margin: 5px;
+  height: 500px;
+}
+
+.select-dialog .search {
+  margin: 3px 0 0 8px;
+}
+
+.transfer-selector{
+  width: 100%;
+  padding-top: 60px;
+}
+
+.transfer-selector .el-transfer{
+  display: flex;
+  flex-direction:row;
+  justify-content:center;
+}
+
+.transfer-selector .el-transfer .el-transfer-panel__body {
+  height: 300px;
+}
+.save-attr-btn{
+  margin-top: 30px;
+}
+.save-selected button{
+  display: block;
+  margin: auto;
+}
+
+.node-trans{
+  width: 100%;
+}
+.table-step,.trans-tables{
+  width: 100%;
+  empty-cells: show;
+  background-color: transparent;
+  border-collapse: collapse;
+  border-spacing: 0px;
+  display: table;
+  border: solid 1px #ccc;
+  font-size: 14px;
+}
+.table-step tr,.table-step th,.table-step td ,.table-condensed td,.trans-tables tr,.trans-tables td{
+  border: solid 1px #ccc;
+}
+.trans-tables tr,.trans-tables td{
+  padding: 5px;
+}
+
+
+
