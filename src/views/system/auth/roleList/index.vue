@@ -446,8 +446,8 @@ export default {
         deptIds: [],
         remark: '',
         dataScope:'3',
-        menuCheckStrictly: true,
-        deptCheckStrictly: true,
+        menuCheckStrictly: false,
+        deptCheckStrictly: false,
       };
       this.resetForm("form");
     },
@@ -489,8 +489,8 @@ export default {
           menuIds: response.data.checkedRules,
           deptIds: [],
           remark: response.data.role.remark,
-          menuCheckStrictly: true,
-          deptCheckStrictly: true,
+          menuCheckStrictly: false,
+          deptCheckStrictly: false,
         };
         this.open = true;
         this.title = "修改角色";
@@ -518,8 +518,8 @@ export default {
           deptIds: [],
           remark: response.data.role.remark,
           dataScope:''+response.data.role.dataScope,
-          menuCheckStrictly: true,
-          deptCheckStrictly: true,
+          menuCheckStrictly: false,
+          deptCheckStrictly: false,
         }
         _this.openDataScope = true;
         _this.title = "分配数据权限";
