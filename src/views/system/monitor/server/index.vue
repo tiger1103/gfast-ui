@@ -230,15 +230,15 @@ export default {
       while(size>1024&&rankchar!='GB'){
         size = size/1024;
         rank++;
-      }
-      if(rank==1){
-        rankchar="KB";
-      }
-      else if(rank==2){
-        rankchar="MB";
-      }
-      else if(rank==3){
-        rankchar="GB";
+        if(rank==1){
+          rankchar="KB";
+        }
+        else if(rank==2){
+          rankchar="MB";
+        }
+        else if(rank==3){
+          rankchar="GB";
+        }
       }
       return size.toFixed(2)+ " "+ rankchar;
     },
@@ -249,12 +249,11 @@ export default {
       while(second>60&&rankchar!='小时'){
         second = second/60;
         rank++
-      }
-      if(rank==1){
-        rankchar = '分'
-      }
-      if(rank==2){
-        rankchar='小时'
+        if(rank==1){
+          rankchar = '分'
+        }else if(rank==2){
+          rankchar='小时'
+        }
       }
       return second.toFixed(2)+" "+rankchar
     }
