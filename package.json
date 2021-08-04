@@ -42,7 +42,7 @@
   "dependencies": {
     "@form-create/element-ui": "1.0.17",
     "@riophae/vue-treeselect": "0.4.0",
-    "axios": "0.18.1",
+    "axios": "0.21.1",
     "ckeditor4-vue": "^1.0.1",
     "clipboard": "2.0.4",
     "dayjs": "^1.10.5",
