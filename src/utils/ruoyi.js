@@ -77,6 +77,18 @@ export function selectDictLabel(datas, value) {
 	return actions.join('');
 }
 
+
+export function selectItemsLabel(datas, value) {
+  var actions = []
+  Object.keys(datas).map((key) => {
+    if (datas[key].key === ('' + value)) {
+      actions.push(datas[key].value)
+      return false
+    }
+  })
+  return actions.join('')
+}
+
 // 通用下载方法
 export function download(fileName) {
 	window.location.href = baseURL + "/common/download?fileName=" + encodeURI(fileName) + "&delete=" + true;

@@ -17,19 +17,23 @@ import permission from './directive/permission'
 import './assets/icons' // icon
 import './permission' // permission control
 import { getDicts } from "@/api/system/dict/data";
+import { getItems, setItems } from '@/api/items'
 import { getConfigKey } from "@/api/system/config";
 import { parseTime, resetForm, addDateRange, selectDictLabel, download,
-  handleTree,getUpFileUrl,handleTreeRmEmpty } from "@/utils/ruoyi";
+  handleTree,getUpFileUrl,handleTreeRmEmpty,selectItemsLabel } from "@/utils/ruoyi";
 import Pagination from "@/components/Pagination";
 
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts
+Vue.prototype.getItems = getItems
+Vue.prototype.setItems = setItems
 Vue.prototype.getConfigKey = getConfigKey
 Vue.prototype.parseTime = parseTime
 Vue.prototype.resetForm = resetForm
 Vue.prototype.addDateRange = addDateRange
 Vue.prototype.selectDictLabel = selectDictLabel
+Vue.prototype.selectItemsLabel = selectItemsLabel
 Vue.prototype.download = download
 Vue.prototype.handleTree = handleTree
 Vue.prototype.handleTreeRmEmpty = handleTreeRmEmpty
@@ -52,6 +56,20 @@ Vue.prototype.msgInfo = function (msg) {
 Vue.component('Pagination', Pagination)
 
 Vue.use(permission)
+
+
+// 全局弹窗
+import Popup from "./components/popup/index"
+Vue.prototype.$dialog = Popup.install
+
+// 修正url链接中的地址
+Vue.filter("urlCorrection",function(url) {
+  if (/^http|^blob/.test(url)) {
+    return url
+  } else {
+    return Vue.prototype.apiUrl + "/" + url
+  }
+})
 
 /**
  * If you don't want to use mock-server

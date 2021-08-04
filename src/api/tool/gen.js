@@ -25,6 +25,14 @@ export function getGenTable(tableId) {
   })
 }
 
+//查询用于选择的关联表信息
+export function getRelationTable() {
+  return request({
+    url: '/system/tools/gen/relationTable',
+    method: 'get'
+  })
+}
+
 // 修改代码生成信息
 export function updateGenTable(data) {
   return request({
@@ -55,6 +63,16 @@ export function delTable(tableId) {
     url: '/system/tools/gen/delete',
     method: 'delete',
     data:{ids:tableId}
+  })
+}
+
+
+// 生成代码
+export function batchGenCode(tableIds){
+  return request({
+    url: '/system/tools/gen/batchGenCode',
+    method: 'put',
+    data:{ids:tableIds}
   })
 }
 

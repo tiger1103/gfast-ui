@@ -128,7 +128,7 @@
     />
 
     <!-- 添加或修改参数配置对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="字典名称" prop="dictName">
           <el-input v-model="form.dictName" placeholder="请输入字典名称" />
@@ -161,7 +161,7 @@
 import { listType, getType, delType, addType, updateType, exportType } from "@/api/system/dict/type";
 
 export default {
-  name: "Dict",
+  name: "Dict/list",
   data() {
     return {
       // 遮罩层

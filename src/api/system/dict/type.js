@@ -39,7 +39,7 @@ export function updateType(data) {
 // 获取字典选择框列表
 export function optionselect() {
   return request({
-    url: '/system/config/dict/optionSelect',
+    url: '/system/config/dict/type/optionSelect',
     method: 'get'
   })
 }
