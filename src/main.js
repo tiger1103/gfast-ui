@@ -67,7 +67,8 @@ Vue.filter("urlCorrection",function(url) {
   if (/^http|^blob/.test(url)) {
     return url
   } else {
-    return Vue.prototype.apiUrl + "/" + url
+    let reg = new RegExp('^/*'+Vue.prototype.apiUrl + "/*");
+    return Vue.prototype.apiUrl + "/" + url.replace(reg,'')
   }
 })
 

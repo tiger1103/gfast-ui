@@ -97,7 +97,7 @@ export default {
               this.msgError(res.msg);
               return;
             } else {
-              file.url = this.apiUrl + "/" + res.data.fileInfo.fileUrl;
+              file.url = this.getUpFileUrl(this.apiUrl,res.data.fileInfo.fileUrl);
             }
           };
         }

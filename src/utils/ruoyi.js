@@ -149,7 +149,8 @@ export function handleTree(data, id, parentId, children, rootId) {
     if(url.toLowerCase().indexOf("http")>=0){
       return url
     }
-    return domain+"/"+url
+    let reg = new RegExp('^/*' + domain + "/*");
+    return domain+"/"+url.replace(reg,'')
   }
 
   //删除树形数据中的空children

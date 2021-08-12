@@ -1,27 +1,30 @@
 <template>
   <div>
     <el-upload
-      class="upload-file"
+      ref="upload"
       :action="action"
+      list-type="picture-card"
+      :before-upload="beforeUpload"
       :on-remove="handleRemove"
-      :before-remove="beforeRemove"
       :multiple="false"
       :limit="limit"
       :data="dataParam"
       :on-exceed="handleExceed"
       :file-list="dataFileList"
       :on-success="handleSuccess"
-      :on-preview="handlePreview"
-    >
-      <el-button size="small" type="primary">点击上传</el-button>
+      :on-preview="handlePreview">
+      <i class="el-icon-plus"></i>
     </el-upload>
+    <el-dialog :visible.sync="dialogVisible">
+      <img width="100%" :src="dialogImageUrl" alt="">
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { getToken } from "@/utils/auth";
 export default {
-  name: "upFile",
+  name: "upImgs",
   props:{
       action:{
           type:String,
@@ -29,16 +32,10 @@ export default {
               return ""
           }
       },
-      multiple:{
-          type:Boolean,
-          default:function(){
-              return false
-          }
-      },
       limit:{
           type:Number,
           default:function(){
-              return 1
+              return 10
           }
       },
       value:{
@@ -58,23 +55,25 @@ export default {
   },
   data(){
     return {
+      dialogImageUrl: '',
+      dialogVisible: false,
       uploadedFile:[],
     }
   },
   computed:{
       dataFileList:{
            get(){
-               let value = this.value || []
-               value.map(item=>{
-                 if(item.url){
+              let value = this.value || []
+              value.map(item=>{
+                if(item.url){
                   item.url = this.getUpFileUrl(this.apiUrl,item.url)
-                 }
-               })
-               this.uploadedFile = value
-               return value
+                }
+              })
+              this.uploadedFile = value
+              return value
             },
             set(data){
-              this.$emit('setUpFielList',data)
+              this.$emit('setUpImgList',data)
             },
       }
   },
@@ -83,14 +82,17 @@ export default {
       this.uploadedFile.splice(this.uploadedFile.findIndex(item => item.name === file.name), 1)
       this.setDataFileList()
     },
-
+    beforeUpload(file){
+      if (file.type.substring(0, 5) != "image") {
+        this.msgError("只能上传图片文件");
+        return false;
+      }
+      return true;
+    },
     handleExceed(files, fileList) {
       this.$message.warning(
         `最多可上传 ${this.limit} 个文件，已超出最大限制数。`
       );
-    },
-    beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${file.name}？`);
     },
     handleSuccess(res,file,fileList){
       if(file.response.code===0){
@@ -100,14 +102,15 @@ export default {
       this.setDataFileList()
     },
     handlePreview(file){
-        window.open(file.url)
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
     },
     setDataFileList(){
-      let list = [];
-      this.uploadedFile.forEach(item => {
-        list.push({name:item.name,url:item.url})
-      });
-      this.dataFileList = list
+        let list = [];
+        this.uploadedFile.forEach(item => {
+            list.push({name:item.name,url:item.url})
+        });
+        this.dataFileList = list
     }
   },
 };
