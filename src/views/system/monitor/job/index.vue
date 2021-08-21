@@ -403,7 +403,7 @@ export default {
     },
     /** 执行按钮操作 */
     handleJobRun(row) {
-      const jobId = row.job_id || 0;
+      const jobId = row.jobId || 0;
       this.$confirm(
         '是否确认立即执行一次该任务?',
         "警告",
