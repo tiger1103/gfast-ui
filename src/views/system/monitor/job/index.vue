@@ -89,6 +89,7 @@
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
           >删除</el-button>
+          <el-button size="mini" type="text" icon="el-icon-caret-right" @click="handleJobRun(scope.row)">执行</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -397,6 +398,26 @@ export default {
         .then(() => {
           this.getList();
           this.msgSuccess("删除成功");
+        })
+        .catch(function() {});
+    },
+    /** 执行按钮操作 */
+    handleJobRun(row) {
+      const jobId = row.jobId || 0;
+      this.$confirm(
+        '是否确认立即执行一次该任务?',
+        "警告",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      )
+        .then(function() {
+          return runJob(jobId);
+        })
+        .then(() => {
+          this.msgSuccess("执行成功");
         })
         .catch(function() {});
     },

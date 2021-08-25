@@ -84,14 +84,9 @@ export function stop(jobId){
 
 
 // 定时任务立即执行一次
-export function runJob(jobId, jobGroup) {
-  const data = {
-    jobId,
-    jobGroup
-  }
+export function runJob(jobId) {
   return request({
-    url: '/system/monitor/job/run',
+    url: '/system/monitor/job/run?id='+jobId,
     method: 'put',
-    data: data
   })
 }
