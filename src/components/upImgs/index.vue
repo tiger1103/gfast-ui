@@ -98,6 +98,8 @@ export default {
       if(file.response.code===0){
         let url = this.getUpFileUrl(this.apiUrl , file.response.data.fileInfo.fileUrl);
         this.uploadedFile.push({name:file.name,url:url})
+      }else{
+        this.msgError(res.msg)
       }
       this.setDataFileList()
     },
