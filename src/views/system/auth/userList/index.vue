@@ -480,7 +480,7 @@ export default {
     // 筛选节点
     filterNode(value, data) {
       if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+      return data[this.defaultProps.label].indexOf(value) !== -1;
     },
     // 节点单击事件
     handleNodeClick(data) {
