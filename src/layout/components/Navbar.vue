@@ -5,6 +5,10 @@
     <top-nav id="topmenu-container" class="topmenu-container" v-if="topNav"/>
     <div class="right-menu">
       <template v-if="device!=='mobile'">
+        <el-tooltip content="清除缓存" effect="dark" placement="bottom">
+          <clear-cache class="right-menu-item hover-effect" />
+        </el-tooltip>
+
         <search id="header-search" class="right-menu-item" />
 
         <el-tooltip content="源码地址" effect="dark" placement="bottom">
@@ -52,6 +56,7 @@ import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
 import RuoYiGit from '@/components/RuoYi/Git'
+import clearCache from '@/components/RuoYi/clearCache'
 import RuoYiDoc from '@/components/RuoYi/Doc'
 import TopNav from '@/components/TopNav'
 
@@ -64,7 +69,8 @@ export default {
     Search,
     RuoYiGit,
     RuoYiDoc,
-    TopNav
+    TopNav,
+    clearCache
   },
   computed: {
     ...mapGetters([
