@@ -8,8 +8,8 @@
       :multiple="false"
       :limit="limit"
       :data="dataParam"
+      :fileList="uploadedFile"
       :on-exceed="handleExceed"
-      :file-list="dataFileList"
       :on-success="handleSuccess"
       :on-preview="handlePreview"
     >
@@ -61,27 +61,14 @@ export default {
       uploadedFile:[],
     }
   },
-  computed:{
-      dataFileList:{
-           get(){
-               let value = this.value || []
-               value.map(item=>{
-                 if(item.url){
-                  item.url = this.getUpFileUrl(this.apiUrl,item.url)
-                 }
-               })
-               this.uploadedFile = value
-               return value
-            },
-            set(data){
-              this.$emit('setUpFielList',data)
-            },
-      }
+  mounted() {
+    if(this.value){
+      this.uploadedFile = this.value
+    }
   },
   methods: {
     handleRemove(file, fileList) {
-      this.uploadedFile.splice(this.uploadedFile.findIndex(item => item.name === file.name), 1)
-      this.setDataFileList()
+      this.setDataFileList(fileList)
     },
 
     handleExceed(files, fileList) {
@@ -94,22 +81,28 @@ export default {
     },
     handleSuccess(res,file,fileList){
       if(file.response.code===0){
-        let url = this.getUpFileUrl(this.apiUrl , file.response.data.fileInfo.fileUrl);
-        this.uploadedFile.push({name:file.name,url:url})
+        this.setDataFileList(fileList)
       }else{
         this.msgError(res.msg)
       }
-      this.setDataFileList()
+
     },
     handlePreview(file){
         window.open(file.url)
     },
-    setDataFileList(){
-      let list = [];
-      this.uploadedFile.forEach(item => {
-        list.push({name:item.name,url:item.url})
-      });
-      this.dataFileList = list
+    setDataFileList(fileList){
+      this.uploadedFile = fileList.map(item=>{
+        if(item.url) {
+          return {url: item.url,name:item.name}
+        } else {
+          try {
+            return {url: item.response.data.fileInfo.fileUrl,name:item.name}
+          }catch (e){
+            console.error(e)
+          }
+        }
+      })
+      this.$emit('set-up-file-list',this.uploadedFile)
     }
   },
 };

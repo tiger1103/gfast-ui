@@ -54,8 +54,8 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.fApi.on("editorPrefix-setEditContent", this.setEditContent);
-      this.fApi.on("upFilePrefix-setUpFielList", this.setUpFielList);
+      this.fApi.on("editor-prefix-set-edit-content", this.setEditContent);
+      this.fApi.on("up-file-prefix-set-up-file-list", this.setUpFielList);
     });
   },
   computed: {
@@ -65,13 +65,13 @@ export default {
         let item = Object.assign({}, value);
         //如果是富文本编辑器，添加绑定内容事件
         if (item.type == "Editor") {
-          item.emit = [{ name: "setEditContent", inject: item.field }];
-          item.emitPrefix = "editorPrefix";
+          item.emit = [{ name: "set-edit-content", inject: item.field }];
+          item.emitPrefix = "editor-prefix";
         }else if(item.type=="upFile"){
           //上传附件
           item.props.action = this.apiUrl + item.props.action;
-          item.emit = [{ name: "setUpFielList", inject: item.field }];
-          item.emitPrefix = "upFilePrefix";
+          item.emit = [{ name: "set-up-file-list", inject: item.field }];
+          item.emitPrefix = "up-file-prefix";
         } else if (item.type == "upload") {
           //如果是上传图片组件
           //上传请求地址
