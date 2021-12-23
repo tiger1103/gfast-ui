@@ -93,10 +93,12 @@ export default {
     setDataFileList(fileList){
       this.uploadedFile = fileList.map(item=>{
         if(item.url) {
-          return {url: item.url,name:item.name}
+          let url = this.getUpFileUrl(this.apiUrl , item.url);
+          return {url: url,name:item.name}
         } else {
           try {
-            return {url: item.response.data.fileInfo.fileUrl,name:item.name}
+            let url = this.getUpFileUrl(this.apiUrl , item.response.data.fileInfo.fileUrl);
+            return {url: url,name:item.name}
           }catch (e){
             console.error(e)
           }
