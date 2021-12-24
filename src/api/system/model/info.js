@@ -19,16 +19,16 @@ export function listData(query) {
     })
   }
 
-  
+
 // 查询模型信息
 export function getModel(id) {
     return request({
-      url: '/system/model/info/edit?id='+id,
+      url: '/system/model/info/info?id='+id,
       method: 'get',
     })
   }
 
-  
+
 // 修改
 export function updateModel(data) {
     return request({
@@ -67,7 +67,7 @@ export function changeStatus(id,status) {
     })
   }
 
-  
+
 // 删除模型列表
 export function delModel(data) {
     return request({
@@ -76,4 +76,3 @@ export function delModel(data) {
       data: {ids:data}
     })
   }
-  

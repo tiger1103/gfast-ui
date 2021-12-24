@@ -31,7 +31,7 @@ export function addCategory(data) {
 // 查询模型分类信息
 export function getCategory(id) {
   return request({
-    url: '/system/model/category/edit?id='+id,
+    url: '/system/model/category/info?id='+id,
     method: 'get',
   })
 }

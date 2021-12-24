@@ -28,16 +28,16 @@ export function fieldsList(modelId) {
     })
   }
 
-  
+
 // 查询字段信息
 export function getField(id) {
     return request({
-      url: '/system/model/fields/edit?id='+id,
+      url: '/system/model/fields/info?id='+id,
       method: 'get',
     })
   }
 
-  
+
 // 修改
 export function updateFeild(data) {
     return request({
@@ -47,7 +47,7 @@ export function updateFeild(data) {
     })
   }
 
-  
+
 // 删除字段
 export function delField(data) {
     return request({
@@ -56,4 +56,4 @@ export function delField(data) {
       data: {ids:data}
     })
   }
-  
+

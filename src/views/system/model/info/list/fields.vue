@@ -25,55 +25,55 @@
           size="mini"
           :disabled="multiple"
           @click="handleDelete"
-         
+
         >删除</el-button>
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="fieldsList" row-key="field_id" @selection-change="handleSelectionChange" ref="dragTable" >
+    <el-table v-loading="loading" :data="fieldsList" row-key="fieldId" @selection-change="handleSelectionChange" ref="dragTable" >
       <el-table-column align="center"  width="40">
         <template slot-scope="{}">
           <svg-icon class="drag-handler" icon-class="drag" />
         </template>
       </el-table-column>
       <el-table-column type="selection" width="45" align="center" />
-      <el-table-column label="字段编号" align="center" width="50" prop="field_id" />
-      <el-table-column label="字段名称" align="center" prop="field_name" />
-      <el-table-column label="字段标题" align="center" prop="field_title" />
-      <el-table-column label="字段类型" align="center" prop="field_type" />
-      <el-table-column label="字段规则" align="center" prop="field_rules" />
+      <el-table-column label="字段编号" align="center" width="50" prop="fieldId" />
+      <el-table-column label="字段名称" align="center" prop="fieldName" />
+      <el-table-column label="字段标题" align="center" prop="fieldTitle" />
+      <el-table-column label="字段类型" align="center" prop="fieldType" />
+      <el-table-column label="字段规则" align="center" prop="fieldRules" />
       <el-table-column label="主键" min-width="30">
           <template slot-scope="scope">
-            <el-radio :label="scope.row.field_id"  v-model="fieldPkId">是</el-radio>
+            <el-radio :label="scope.row.fieldId"  v-model="fieldPkId">是</el-radio>
           </template>
       </el-table-column>
       <el-table-column label="排序字段" min-width="30">
           <template slot-scope="scope">
-            <el-checkbox true-label="1" v-model="scope.row.model_sort"></el-checkbox>
+            <el-checkbox true-label="1" v-model="scope.row.modelSort"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column label="列表显示" min-width="30">
           <template slot-scope="scope">
-            <el-checkbox true-label="1" v-model="scope.row.model_list"></el-checkbox>
+            <el-checkbox true-label="1" v-model="scope.row.modelList"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column label="可编辑" min-width="30">
           <template slot-scope="scope">
-            <el-checkbox true-label="1" v-model="scope.row.model_edit"></el-checkbox>
+            <el-checkbox true-label="1" v-model="scope.row.modelEdit"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column label="模型索引" min-width="30">
           <template slot-scope="scope">
-            <el-checkbox true-label="1" v-model="scope.row.model_indexes"></el-checkbox>
+            <el-checkbox true-label="1" v-model="scope.row.modelIndexes"></el-checkbox>
           </template>
         </el-table-column>
         <el-table-column label="列表查询" min-width="30">
           <template slot-scope="scope">
-            <el-checkbox true-label="1" v-model="scope.row.search_list"></el-checkbox>
+            <el-checkbox true-label="1" v-model="scope.row.searchList"></el-checkbox>
           </template>
         </el-table-column>
-        
-        
+
+
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -81,14 +81,14 @@
             type="text"
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
-          
+
           >修改</el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
-          
+
           >删除</el-button>
         </template>
       </el-table-column>
@@ -102,7 +102,7 @@
     </el-form>
 
     <!-- 添加或修改字段对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="160px">
         <el-form-item label="字段名称" prop="fieldName">
           <el-input v-model="form.fieldName" placeholder="请输入字段名称" />
@@ -334,10 +334,10 @@ export default {
       fieldsList(this.modelId).then(response => {
         this.fieldsList = response.data.list?response.data.list:[]
         this.oldList = this.fieldsList.map(v => {
-          if(v.model_pk=="1"){
-              this.fieldPkId = v.field_id
+          if(v.modelPk=="1"){
+              this.fieldPkId = v.fieldId
           }
-           return v.field_id
+           return v.fieldId
           })
         this.newList = this.oldList.slice()
         this.loading = false;
@@ -408,7 +408,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.field_id)
+      this.ids = selection.map(item => item.fieldId)
       this.single = selection.length!=1
       this.multiple = !selection.length
     },
@@ -421,27 +421,27 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const fieldId = row.field_id || this.ids
+      const fieldId = row.fieldId || this.ids
       getField(fieldId).then(response => {
         let data = response.data
         if (data) {
           this.form = {
-            fieldId:data.field_id,
-            modelId:data.model_id,
-            fieldName:data.field_name,
-            fieldTitle:data.field_title,
-            fieldType:data.field_type,
-            fieldData:data.field_data,
-            fieldLength:data.field_length,
-            fieldDefault:data.field_default,
-            fieldDesc:data.field_desc,
-            fieldRules:data.field_rules!=""?data.field_rules.split(','):[],
-            fieldWidth:data.field_width,
-            fieldAlign:data.field_align,
+            fieldId:data.fieldId,
+            modelId:data.modelId,
+            fieldName:data.fieldName,
+            fieldTitle:data.fieldTitle,
+            fieldType:data.fieldType,
+            fieldData:data.fieldData,
+            fieldLength:data.fieldLength,
+            fieldDefault:data.fieldDefault,
+            fieldDesc:data.fieldDesc,
+            fieldRules:data.fieldRules!=""?data.fieldRules.split(','):[],
+            fieldWidth:data.fieldWidth,
+            fieldAlign:data.fieldAlign,
           }
           this.showOption(this.form.fieldType)
         }
-        
+
         this.open = true;
         this.title = "修改字段";
       });
@@ -487,7 +487,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const fieldIds = row.field_id ? [row.field_id] :  this.ids;
+      const fieldIds = row.fieldId ? [row.fieldId] :  this.ids;
       this.$confirm('是否确认删除字段编号为"' + fieldIds + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -509,7 +509,7 @@ export default {
         onEnd: evt => {
           const targetRow = this.fieldsList.splice(evt.oldIndex, 1)[0]
           this.fieldsList.splice(evt.newIndex, 0, targetRow)
-         
+
           const tempIndex = this.newList.splice(evt.oldIndex, 1)[0]
           this.newList.splice(evt.newIndex, 0, tempIndex)
         }

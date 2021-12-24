@@ -33,9 +33,9 @@
         <el-select v-model="queryParams.modelCategoryId" placeholder="模型分类" clearable size="small">
           <el-option
             v-for="dict in categoryList"
-            :key="dict.c_id"
-            :label="dict.c_name"
-            :value="dict.c_id"
+            :key="dict.cId"
+            :label="dict.cName"
+            :value="dict.cId"
           />
         </el-select>
       </el-form-item>
@@ -77,24 +77,24 @@
 
     <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="模型ID" align="center" prop="model_id" />
-      <el-table-column label="模型标识" align="center" prop="model_name" />
-      <el-table-column label="模型名称" align="center" prop="model_title" />
-      <el-table-column label="模型分类" align="center" prop="c_name" />
-      <el-table-column label="数据引擎" align="center" prop="model_engine" />
+      <el-table-column label="模型ID" align="center" prop="modelId" />
+      <el-table-column label="模型标识" align="center" prop="modelName" />
+      <el-table-column label="模型名称" align="center" prop="modelTitle" />
+      <el-table-column label="模型分类" align="center" prop="cName" />
+      <el-table-column label="数据引擎" align="center" prop="modelEngine" />
       <el-table-column label="状态" align="center" >
         <template slot-scope="scope">
           <el-switch
-            v-model="scope.row.model_status"
+            v-model="scope.row.modelStatus"
             active-value="1"
             inactive-value="0"
             @change="handleStatusChange(scope.row)"
           ></el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" align="center" prop="create_time" width="180">
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.create_time) }}</span>
+          <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="280">
@@ -132,7 +132,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -142,15 +142,15 @@
     />
 
     <!-- 添加或修改模型对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="模型分类" prop="modelCategoryId">
           <el-select v-model="form.modelCategoryId">
             <el-option
               v-for="item in categoryList"
-              :key="item.c_id"
-              :label="item.c_name"
-              :value="item.c_id"
+              :key="item.cId"
+              :label="item.cName"
+              :value="item.cId"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -269,7 +269,7 @@ export default {
       listData(this.queryParams).then(response => {
         if(response.data.list){
           response.data.list.map(item=>{
-            item.model_status = ''+item.model_status
+            item.modelStatus = ''+item.modelStatus
             this.list.push(item)
           })
         }
@@ -292,7 +292,7 @@ export default {
         modelId: undefined,
         modelCategoryId:undefined,
         modelName: undefined,
-        modelTitle: undefined,        
+        modelTitle: undefined,
         modelEngine:"MyISAM",
         modelStatus: "1",
       };
@@ -310,7 +310,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.model_id)
+      this.ids = selection.map(item => item.modelId)
       this.single = selection.length!=1
       this.multiple = !selection.length
     },
@@ -323,26 +323,26 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const postId = row.model_id || this.ids
+      const postId = row.modelId || this.ids
       getModel(postId).then(response => {
         let data = response.data
         if (data) {
           this.form = {
-            modelId: data.model_id,
-            modelCategoryId:data.model_category_id,
-            modelName: data.model_name,
-            modelTitle: data.model_title,        
-            modelEngine:data.model_engine,
-            modelStatus: ""+data.model_status,
+            modelId: data.modelId,
+            modelCategoryId:data.modelCategoryId,
+            modelName: data.modelName,
+            modelTitle: data.modelTitle,
+            modelEngine:data.modelEngine,
+            modelStatus: ""+data.modelStatus,
           }
         }
-        
+
         this.open = true;
         this.title = "修改模型";
       });
     },
     handleFieldsList(row){
-        const modelId = row.model_id || this.ids[0];
+        const modelId = row.modelId || this.ids[0];
         this.$router.push({ path: "/modelInfo/fields", query: { modelId: modelId } });
     },
     /** 提交按钮 */
@@ -375,12 +375,12 @@ export default {
     },
     //复制模型
     handleCopyModel(row){
-        copyModel(row.model_id).then(response=>{
+        copyModel(row.modelId).then(response=>{
           this.msgSuccess("模型复制成功");
           this.loading = true;
           this.getList();
         }).catch((rej)=>{
-          
+
         })
     },
     //生成模型数据
@@ -390,7 +390,7 @@ export default {
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return createModel(row.model_id);
+          return createModel(row.modelId);
         }).then(() => {
           this.msgSuccess("模型生成成功");
         }).catch(function(response) {
@@ -399,22 +399,22 @@ export default {
     },
     //状态修改
     handleStatusChange(row) {
-      let text = row.model_status === "1" ? "启用" : "停用";
-      this.$confirm('确认要"' + text + '"' + row.model_title + '"吗?', "警告", {
+      let text = row.modelStatus === "1" ? "启用" : "停用";
+      this.$confirm('确认要"' + text + '"' + row.modelTitle + '"吗?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
         }).then(function() {
-          return changeStatus(row.model_id, row.model_status);
+          return changeStatus(row.modelId, row.modelStatus);
         }).then(() => {
           this.msgSuccess(text + "成功");
         }).catch(function() {
-          row.model_status = row.model_status === "0" ? "1" : "0";
+          row.modelStatus = row.modelStatus === "0" ? "1" : "0";
         });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.model_id ? [row.model_id] :  this.ids;
+      const ids = row.modelId ? [row.modelId] :  this.ids;
       this.$confirm('是否确认删除编号为"' + ids + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",

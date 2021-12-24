@@ -66,22 +66,22 @@
 
     <el-table v-loading="loading" :data="listdata" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="分类编号" align="center" prop="c_id" />
-      <el-table-column label="分类名称" align="center" prop="c_name" />
+      <el-table-column label="分类编号" align="center" prop="cId" />
+      <el-table-column label="分类名称" align="center" prop="cName" />
 
       <el-table-column
-            prop="c_sort"
+            prop="cSort"
             label="排序"
             width="80">
         <template slot-scope="scope">
-            <el-input v-model="scope.row.c_sort" size="mini"></el-input>
+            <el-input v-model="scope.row.cSort" size="mini"></el-input>
         </template>
       </el-table-column>
 
-      <el-table-column label="状态" align="center" prop="c_status" :formatter="statusFormat" />
-      <el-table-column label="创建时间" align="center" prop="create_time" width="180">
+      <el-table-column label="状态" align="center" prop="cStatus" :formatter="statusFormat" />
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.create_time) }}</span>
+          <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -113,7 +113,7 @@
     />
 
     <!-- 添加或修改模型分类对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="分类名称" prop="cName">
           <el-input v-model="form.cName" placeholder="请输入分类名称" />
@@ -199,7 +199,7 @@ export default {
     },
     // 模型分类状态字典翻译
     statusFormat(row, column) {
-      return this.selectDictLabel(this.statusOptions, ''+row.c_status);
+      return this.selectDictLabel(this.statusOptions, ''+row.cStatus);
     },
     // 取消按钮
     cancel() {
@@ -228,7 +228,7 @@ export default {
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.c_id)
+      this.ids = selection.map(item => item.cId)
       this.single = selection.length!=1
       this.multiple = !selection.length
     },
@@ -241,16 +241,16 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      const id = row.c_id || this.ids
+      const id = row.cId || this.ids
       getCategory(id).then(response => {
         //this.form = response.data;
         let data = response.data
         if (data) {
           this.form = {
-            cId: data.c_id,
-            cName: data.c_name,
-            cSort: data.c_sort,
-            cStatus: ""+data.c_status,
+            cId: data.cId,
+            cName: data.cName,
+            cSort: data.cSort,
+            cStatus: ""+data.cStatus,
           };
         }
         this.open = true;
@@ -287,7 +287,7 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      const ids = row.c_id ? [row.c_id] :  this.ids;
+      const ids = row.cId ? [row.cId] :  this.ids;
       this.$confirm('是否确认删除模型分类编号为"' + ids + '"的数据项?', "警告", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -315,7 +315,7 @@ export default {
     handleSort(){
         let sortMap = {}
         this.listdata.forEach(item => {
-            sortMap[item.c_id] = item.c_sort
+            sortMap[item.cId] = item.cSort
          })
         sortCategory(sortMap).then(response => {
           if (response.code === 0) {
