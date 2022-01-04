@@ -8,7 +8,7 @@
       :multiple="false"
       :limit="limit"
       :data="dataParam"
-      :fileList="uploadedFile"
+      :fileList="dataFileList"
       :on-exceed="handleExceed"
       :on-success="handleSuccess"
       :on-preview="handlePreview"
@@ -23,47 +23,59 @@ import { getToken } from "@/utils/auth";
 export default {
   name: "upFile",
   props:{
-      action:{
-          type:String,
-          default:function(){
-              return ""
-          }
-      },
-      multiple:{
-          type:Boolean,
-          default:function(){
-              return false
-          }
-      },
-      limit:{
-          type:Number,
-          default:function(){
-              return 1
-          }
-      },
-      value:{
-        type:Array,
-        default:function(){
-            return []
-        }
-      },
-      dataParam:{
-          type:Object,
-          default:function(){
-              return {
-                  token:getToken()
-              }
-          }
+    action:{
+      type:String,
+      default:function(){
+        return ""
       }
+    },
+    multiple:{
+      type:Boolean,
+      default:function(){
+        return false
+      }
+    },
+    limit:{
+      type:Number,
+      default:function(){
+        return 1
+      }
+    },
+    value:{
+      type:Array,
+      default:function(){
+        return []
+      }
+    },
+    dataParam:{
+      type:Object,
+      default:function(){
+        return {
+          token:getToken()
+        }
+      }
+    }
   },
   data(){
     return {
       uploadedFile:[],
     }
   },
-  mounted() {
-    if(this.value){
-      this.uploadedFile = this.value
+  computed:{
+    dataFileList:{
+      get(){
+        let value = this.value || []
+        value.map(item=>{
+          if(item.url){
+            item.url = this.getUpFileUrl(this.apiUrl,item.url)
+          }
+        })
+        this.uploadedFile = value
+        return value
+      },
+      set(data){
+        this.$emit('set-up-file-list',data)
+      },
     }
   },
   methods: {
@@ -88,7 +100,7 @@ export default {
 
     },
     handlePreview(file){
-        window.open(file.url)
+      window.open(file.url)
     },
     setDataFileList(fileList){
       this.uploadedFile = fileList.map(item=>{
