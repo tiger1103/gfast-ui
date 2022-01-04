@@ -350,7 +350,7 @@ export default {
       })
     },
     handleRegister(){
-
+      window.open("https://plugins.g-fast.cn/store#/login")
     },
     getCode() {
       getCodeImgR().then(res => {
