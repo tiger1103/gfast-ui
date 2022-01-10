@@ -148,6 +148,9 @@ export function handleTree(data, id, parentId, children, rootId) {
 
 
   export function getUpFileUrl(domain,url){
+    if (!url){
+      return url
+    }
     if(url.toLowerCase().indexOf("http")>=0){
       return url
     }
