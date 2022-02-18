@@ -6,7 +6,7 @@
       list-type="picture-card"
       :before-upload="beforeUpload"
       :on-remove="handleRemove"
-      :multiple="false"
+      :multiple="multiple"
       :limit="limit"
       :data="dataParam"
       :on-exceed="handleExceed"
@@ -23,6 +23,7 @@
 
 <script>
 import { getToken } from "@/utils/auth";
+import _ from 'lodash';
 export default {
   name: "upImgs",
   props:{
@@ -31,6 +32,10 @@ export default {
           default:function(){
               return ""
           }
+      },
+      multiple:{
+        type:Boolean,
+        default:false,
       },
       limit:{
           type:Number,
@@ -69,7 +74,7 @@ export default {
                   item.url = this.getUpFileUrl(this.apiUrl,item.url)
                 }
               })
-              this.uploadedFile = value
+              this.uploadedFile = _.cloneDeep(value)
               return value
             },
             set(data){
@@ -80,7 +85,7 @@ export default {
   methods: {
     handleRemove(file, fileList) {
       this.uploadedFile.splice(this.uploadedFile.findIndex(item => item.name === file.name), 1)
-      this.setDataFileList()
+      this.setDataFileList(fileList.length)
     },
     beforeUpload(file){
       if (file.type.substring(0, 5) != "image") {
@@ -101,18 +106,20 @@ export default {
       }else{
         this.msgError(res.msg)
       }
-      this.setDataFileList()
+      this.setDataFileList(fileList.length)
     },
     handlePreview(file){
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
-    setDataFileList(){
+    setDataFileList(fLength){
         let list = [];
         this.uploadedFile.forEach(item => {
             list.push({name:item.name,url:item.url})
         });
-        this.dataFileList = list
+        if(list.length==fLength) {
+          this.dataFileList = list
+        }
     }
   },
 };
