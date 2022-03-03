@@ -360,7 +360,7 @@ export default {
     },
     handleBeforeUpLoad(file){
       let fileType = file.type
-      if(fileType!='application/zip'){
+      if(fileType!='application/zip'&&fileType!='application/x-zip-compressed'){
         this.$alert('只能上传zip压缩文件')
         return false
       }
