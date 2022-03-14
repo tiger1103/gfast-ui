@@ -3,23 +3,32 @@ import request from '/@/utils/request';
 /**
  * 登录api接口集合
  * @method signIn 用户登录
- * @method signOut 用户退出登录
  */
-export function useLoginApi() {
-	return {
-		signIn: (params: object) => {
-			return request({
-				url: '/user/signIn',
-				method: 'post',
-				data: params,
-			});
-		},
-		signOut: (params: object) => {
-			return request({
-				url: '/user/signOut',
-				method: 'post',
-				data: params,
-			});
-		},
-	};
+export function login(params: object){
+	return request({
+		url: '/user/signIn',
+		method: 'post',
+		data: params,
+	});
+}
+
+/**
+ * 获取验证码
+ */
+export function captcha(){
+	return request({
+		url:"/pub/captcha/get",
+		method:"get"
+	})
+}
+
+/**
+ * 退出登录
+ */
+export function signOut(params: object){
+	return request({
+		url: '/user/signOut',
+		method: 'post',
+		data: params,
+	});
 }

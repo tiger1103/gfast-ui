@@ -43,9 +43,18 @@
 				</el-input>
 			</el-col>
 			<el-col :span="1"></el-col>
-			<el-col :span="8">
-				<el-button class="login-content-code">1234</el-button>
-			</el-col>
+      <el-col :span="8">
+        <div class="login-content-code">
+          <img
+              class="login-content-code-img"
+              @click="getCaptcha"
+              width="130"
+              height="38"
+              :src="captchaSrc"
+              style="cursor: pointer"
+          />
+        </div>
+      </el-col>
 		</el-form-item>
 		<el-form-item class="login-animation4">
 			<el-button type="primary" class="login-content-submit" round @click="onSignIn" :loading="loading.signIn">
@@ -56,7 +65,7 @@
 </template>
 
 <script lang="ts">
-import { toRefs, reactive, defineComponent, computed } from 'vue';
+import {toRefs, reactive, defineComponent, computed, onMounted} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useI18n } from 'vue-i18n';
@@ -65,6 +74,7 @@ import { initBackEndControlRoutes } from '/@/router/backEnd';
 import { useStore } from '/@/store/index';
 import { Session } from '/@/utils/storage';
 import { formatAxis } from '/@/utils/formatTime';
+import {captcha} from '/@/api/login';
 export default defineComponent({
 	name: 'loginAccount',
 	setup() {
@@ -82,11 +92,24 @@ export default defineComponent({
 			loading: {
 				signIn: false,
 			},
+      captchaSrc:'',
+      captchaKey:'',
 		});
+    onMounted(() => {
+      getCaptcha();
+    });
 		// 时间获取
 		const currentTime = computed(() => {
 			return formatAxis(new Date());
 		});
+
+    const getCaptcha = () => {
+      captcha().then((res:any)=>{
+        state.captchaSrc = res.data.img
+        state.captchaKey = res.data.captchaKey
+      })
+    };
+
 		// 登录
 		const onSignIn = async () => {
 			// 模拟数据
@@ -161,6 +184,7 @@ export default defineComponent({
 		};
 		return {
 			onSignIn,
+      getCaptcha,
 			...toRefs(state),
 		};
 	},
@@ -187,12 +211,26 @@ export default defineComponent({
 			color: #909399;
 		}
 	}
-	.login-content-code {
-		width: 100%;
-		padding: 0;
-		font-weight: bold;
-		letter-spacing: 5px;
-	}
+  .login-content-code {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    .login-content-code-img {
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      background-color: #ffffff;
+      border: 1px solid rgb(220, 223, 230);
+      cursor: pointer;
+      transition: all ease 0.2s;
+      border-radius: 4px;
+      user-select: none;
+      &:hover {
+        border-color: #c0c4cc;
+        transition: all ease 0.2s;
+      }
+    }
+  }
 	.login-content-submit {
 		width: 100%;
 		letter-spacing: 2px;
