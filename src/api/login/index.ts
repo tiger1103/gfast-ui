@@ -6,7 +6,7 @@ import request from '/@/utils/request';
  */
 export function login(params: object){
 	return request({
-		url: '/user/signIn',
+		url: '/system/login',
 		method: 'post',
 		data: params,
 	});

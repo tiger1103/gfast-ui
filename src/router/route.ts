@@ -49,19 +49,20 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 				path: '/demo',
 				name: 'demo',
 				component: () => import('/@/layout/routerView/parent.vue'),
-				redirect: '/demo',
+				redirect: '/demo/system/menu',
 				meta: {
-					icon: 'iconfont icon-diannao',
-					title: '案例展示',
+					title: '案例演示',
 					isLink: '',
 					isHide: false,
 					isKeepAlive: true,
 					isAffix: false,
 					isIframe: false,
+					roles: ['admin'],
+					icon: 'iconfont icon-diannao',
 				},
 				children: [
 					{
-						path: '/system',
+						path: '/demo/system',
 						name: 'system',
 						component: () => import('/@/layout/routerView/parent.vue'),
 						redirect: '/system/menu',
@@ -77,7 +78,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						},
 						children: [
 							{
-								path: '/system/menu',
+								path: '/demo/system/menu',
 								name: 'systemMenu',
 								component: () => import('/@/views/system/menu/index.vue'),
 								meta: {
@@ -92,7 +93,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/system/role',
+								path: '/demo/system/role',
 								name: 'systemRole',
 								component: () => import('/@/views/system/role/index.vue'),
 								meta: {
@@ -107,7 +108,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/system/user',
+								path: '/demo/system/user',
 								name: 'systemUser',
 								component: () => import('/@/views/system/user/index.vue'),
 								meta: {
@@ -122,7 +123,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/system/dept',
+								path: '/demo/system/dept',
 								name: 'systemDept',
 								component: () => import('/@/views/system/dept/index.vue'),
 								meta: {
@@ -137,7 +138,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/system/dic',
+								path: '/demo/system/dic',
 								name: 'systemDic',
 								component: () => import('/@/views/system/dic/index.vue'),
 								meta: {
@@ -154,7 +155,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						],
 					},
 					{
-						path: '/limits',
+						path: '/demo/limits',
 						name: 'limits',
 						component: () => import('/@/layout/routerView/parent.vue'),
 						redirect: '/limits/frontEnd',
@@ -170,7 +171,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						},
 						children: [
 							{
-								path: '/limits/frontEnd',
+								path: '/demo/limits/frontEnd',
 								name: 'limitsFrontEnd',
 								component: () => import('/@/layout/routerView/parent.vue'),
 								redirect: '/limits/frontEnd/page',
@@ -186,7 +187,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 								children: [
 									{
-										path: '/limits/frontEnd/page',
+										path: '/demo/limits/frontEnd/page',
 										name: 'limitsFrontEndPage',
 										component: () => import('/@/views/limits/frontEnd/page/index.vue'),
 										meta: {
@@ -201,7 +202,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 										},
 									},
 									{
-										path: '/limits/frontEnd/btn',
+										path: '/demo/limits/frontEnd/btn',
 										name: 'limitsFrontEndBtn',
 										component: () => import('/@/views/limits/frontEnd/btn/index.vue'),
 										meta: {
@@ -218,7 +219,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								],
 							},
 							{
-								path: '/limits/backEnd',
+								path: '/demo/limits/backEnd',
 								name: 'limitsBackEnd',
 								component: () => import('/@/layout/routerView/parent.vue'),
 								meta: {
@@ -233,7 +234,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 								children: [
 									{
-										path: '/limits/backEnd/page',
+										path: '/demo/limits/backEnd/page',
 										name: 'limitsBackEndEndPage',
 										component: () => import('/@/views/limits/backEnd/page/index.vue'),
 										meta: {
@@ -252,7 +253,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						],
 					},
 					{
-						path: '/menu',
+						path: '/demo/menu',
 						name: 'menu',
 						component: () => import('/@/layout/routerView/parent.vue'),
 						redirect: '/menu/menu1',
@@ -268,7 +269,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						},
 						children: [
 							{
-								path: '/menu/menu1',
+								path: '/demo/menu/menu1',
 								name: 'menu1',
 								component: () => import('/@/layout/routerView/parent.vue'),
 								redirect: '/menu/menu1/menu11',
@@ -284,7 +285,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 								children: [
 									{
-										path: '/menu/menu1/menu11',
+										path: '/demo/menu/menu1/menu11',
 										name: 'menu11',
 										component: () => import('/@/views/menu/menu1/menu11/index.vue'),
 										meta: {
@@ -299,7 +300,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 										},
 									},
 									{
-										path: '/menu/menu1/menu12',
+										path: '/demo/menu/menu1/menu12',
 										name: 'menu12',
 										component: () => import('/@/layout/routerView/parent.vue'),
 										redirect: '/menu/menu1/menu12/menu121',
@@ -315,7 +316,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 										},
 										children: [
 											{
-												path: '/menu/menu1/menu12/menu121',
+												path: '/demo/menu/menu1/menu12/menu121',
 												name: 'menu121',
 												component: () => import('/@/views/menu/menu1/menu12/menu121/index.vue'),
 												meta: {
@@ -330,7 +331,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 												},
 											},
 											{
-												path: '/menu/menu1/menu12/menu122',
+												path: '/demo/menu/menu1/menu12/menu122',
 												name: 'menu122',
 												component: () => import('/@/views/menu/menu1/menu12/menu122/index.vue'),
 												meta: {
@@ -347,7 +348,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 										],
 									},
 									{
-										path: '/menu/menu1/menu13',
+										path: '/demo/menu/menu1/menu13',
 										name: 'menu13',
 										component: () => import('/@/views/menu/menu1/menu13/index.vue'),
 										meta: {
@@ -364,7 +365,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								],
 							},
 							{
-								path: '/menu/menu2',
+								path: '/demo/menu/menu2',
 								name: 'menu2',
 								component: () => import('/@/views/menu/menu2/index.vue'),
 								meta: {
@@ -381,7 +382,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						],
 					},
 					{
-						path: '/fun',
+						path: '/demo/fun',
 						name: 'funIndex',
 						component: () => import('/@/layout/routerView/parent.vue'),
 						redirect: '/fun/tagsView',
@@ -397,7 +398,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						},
 						children: [
 							{
-								path: '/fun/tagsView',
+								path: '/demo/fun/tagsView',
 								name: 'funTagsView',
 								component: () => import('/@/views/fun/tagsView/index.vue'),
 								meta: {
@@ -412,7 +413,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/fun/countup',
+								path: '/demo/fun/countup',
 								name: 'funCountup',
 								component: () => import('/@/views/fun/countup/index.vue'),
 								meta: {
@@ -427,7 +428,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/fun/wangEditor',
+								path: '/demo/fun/wangEditor',
 								name: 'funWangEditor',
 								component: () => import('/@/views/fun/wangEditor/index.vue'),
 								meta: {
@@ -442,7 +443,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/fun/cropper',
+								path: '/demo/fun/cropper',
 								name: 'funCropper',
 								component: () => import('/@/views/fun/cropper/index.vue'),
 								meta: {
@@ -457,7 +458,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/fun/qrcode',
+								path: '/demo/fun/qrcode',
 								name: 'funQrcode',
 								component: () => import('/@/views/fun/qrcode/index.vue'),
 								meta: {
@@ -472,7 +473,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/fun/echartsMap',
+								path: '/demo/fun/echartsMap',
 								name: 'funEchartsMap',
 								component: () => import('/@/views/fun/echartsMap/index.vue'),
 								meta: {
@@ -487,7 +488,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/fun/printJs',
+								path: '/demo/fun/printJs',
 								name: 'funPrintJs',
 								component: () => import('/@/views/fun/printJs/index.vue'),
 								meta: {
@@ -502,7 +503,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/fun/clipboard',
+								path: '/demo/fun/clipboard',
 								name: 'funClipboard',
 								component: () => import('/@/views/fun/clipboard/index.vue'),
 								meta: {
@@ -517,7 +518,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/fun/gridLayout',
+								path: '/demo/fun/gridLayout',
 								name: 'funGridLayout',
 								component: () => import('/@/views/fun/gridLayout/index.vue'),
 								meta: {
@@ -532,7 +533,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/fun/splitpanes',
+								path: '/demo/fun/splitpanes',
 								name: 'funSplitpanes',
 								component: () => import('/@/views/fun/splitpanes/index.vue'),
 								meta: {
@@ -549,7 +550,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						],
 					},
 					{
-						path: '/pages',
+						path: '/demo/pages',
 						name: 'pagesIndex',
 						component: () => import('/@/layout/routerView/parent.vue'),
 						redirect: '/pages/filtering',
@@ -565,7 +566,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						},
 						children: [
 							{
-								path: '/pages/filtering',
+								path: '/demo/pages/filtering',
 								name: 'pagesFiltering',
 								component: () => import('/@/views/pages/filtering/index.vue'),
 								meta: {
@@ -586,7 +587,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								 */
 								children: [
 									{
-										path: '/pages/filtering/details',
+										path: '/demo/pages/filtering/details',
 										name: 'pagesFilteringDetails',
 										component: () => import('/@/views/pages/filtering/details.vue'),
 										meta: {
@@ -603,7 +604,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								],
 							},
 							{
-								path: '/pages/filtering/details1',
+								path: '/demo/pages/filtering/details1',
 								name: 'pagesFilteringDetails1',
 								component: () => import('/@/views/pages/filtering/details1.vue'),
 								meta: {
@@ -618,7 +619,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/iocnfont',
+								path: '/demo/pages/iocnfont',
 								name: 'pagesIocnfont',
 								component: () => import('/@/views/pages/iocnfont/index.vue'),
 								meta: {
@@ -633,7 +634,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/element',
+								path: '/demo/pages/element',
 								name: 'pagesElement',
 								component: () => import('/@/views/pages/element/index.vue'),
 								meta: {
@@ -648,7 +649,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/awesome',
+								path: '/demo/pages/awesome',
 								name: 'pagesAwesome',
 								component: () => import('/@/views/pages/awesome/index.vue'),
 								meta: {
@@ -663,7 +664,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/formAdapt',
+								path: '/demo/pages/formAdapt',
 								name: 'pagesFormAdapt',
 								component: () => import('/@/views/pages/formAdapt/index.vue'),
 								meta: {
@@ -678,7 +679,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/tableRules',
+								path: '/demo/pages/tableRules',
 								name: 'pagesTableRules',
 								component: () => import('/@/views/pages/tableRules/index.vue'),
 								meta: {
@@ -693,7 +694,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/formI18n',
+								path: '/demo/pages/formI18n',
 								name: 'pagesFormI18n',
 								component: () => import('/@/views/pages/formI18n/index.vue'),
 								meta: {
@@ -708,7 +709,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/formRules',
+								path: '/demo/pages/formRules',
 								name: 'pagesFormRules',
 								component: () => import('/@/views/pages/formRules/index.vue'),
 								meta: {
@@ -723,7 +724,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/listAdapt',
+								path: '/demo/pages/listAdapt',
 								name: 'pagesListAdapt',
 								component: () => import('/@/views/pages/listAdapt/index.vue'),
 								meta: {
@@ -738,7 +739,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/waterfall',
+								path: '/demo/pages/waterfall',
 								name: 'pagesWaterfall',
 								component: () => import('/@/views/pages/waterfall/index.vue'),
 								meta: {
@@ -753,7 +754,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/steps',
+								path: '/demo/pages/steps',
 								name: 'pagesSteps',
 								component: () => import('/@/views/pages/steps/index.vue'),
 								meta: {
@@ -768,7 +769,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/preview',
+								path: '/demo/pages/preview',
 								name: 'pagesPreview',
 								component: () => import('/@/views/pages/preview/index.vue'),
 								meta: {
@@ -783,7 +784,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/waves',
+								path: '/demo/pages/waves',
 								name: 'pagesWaves',
 								component: () => import('/@/views/pages/waves/index.vue'),
 								meta: {
@@ -798,7 +799,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/tree',
+								path: '/demo/pages/tree',
 								name: 'pagesTree',
 								component: () => import('/@/views/pages/tree/index.vue'),
 								meta: {
@@ -813,7 +814,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/drag',
+								path: '/demo/pages/drag',
 								name: 'pagesDrag',
 								component: () => import('/@/views/pages/drag/index.vue'),
 								meta: {
@@ -828,7 +829,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/lazyImg',
+								path: '/demo/pages/lazyImg',
 								name: 'pagesLazyImg',
 								component: () => import('/@/views/pages/lazyImg/index.vue'),
 								meta: {
@@ -843,7 +844,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/dynamicForm',
+								path: '/demo/pages/dynamicForm',
 								name: 'pagesDynamicForm',
 								component: () => import('/@/views/pages/dynamicForm/index.vue'),
 								meta: {
@@ -858,7 +859,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/pages/workflow',
+								path: '/demo/pages/workflow',
 								name: 'pagesWorkflow',
 								component: () => import('/@/views/pages/workflow/index.vue'),
 								meta: {
@@ -875,7 +876,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						],
 					},
 					{
-						path: '/make',
+						path: '/demo/make',
 						name: 'makeIndex',
 						component: () => import('/@/layout/routerView/parent.vue'),
 						redirect: '/make/selector',
@@ -891,7 +892,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						},
 						children: [
 							{
-								path: '/make/selector',
+								path: '/demo/make/selector',
 								name: 'makeSelector',
 								component: () => import('/@/views/make/selector/index.vue'),
 								meta: {
@@ -906,7 +907,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/make/noticeBar',
+								path: '/demo/make/noticeBar',
 								name: 'makeNoticeBar',
 								component: () => import('/@/views/make/noticeBar/index.vue'),
 								meta: {
@@ -921,7 +922,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/make/svgDemo',
+								path: '/demo/make/svgDemo',
 								name: 'makeSvgDemo',
 								component: () => import('/@/views/make/svgDemo/index.vue'),
 								meta: {
@@ -938,7 +939,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						],
 					},
 					{
-						path: '/params',
+						path: '/demo/params',
 						name: 'paramsIndex',
 						component: () => import('/@/layout/routerView/parent.vue'),
 						redirect: '/params/common',
@@ -954,7 +955,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						},
 						children: [
 							{
-								path: '/params/common',
+								path: '/demo/params/common',
 								name: 'paramsCommon',
 								component: () => import('/@/views/params/common/index.vue'),
 								meta: {
@@ -969,7 +970,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/params/common/details',
+								path: '/demo/params/common/details',
 								name: 'paramsCommonDetails',
 								component: () => import('/@/views/params/common/details.vue'),
 								meta: {
@@ -984,7 +985,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/params/dynamic',
+								path: '/demo/params/dynamic',
 								name: 'paramsDynamic',
 								component: () => import('/@/views/params/dynamic/index.vue'),
 								meta: {
@@ -999,7 +1000,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/params/dynamic/details/:t/:id',
+								path: '/demo/params/dynamic/details/:t/:id',
 								name: 'paramsDynamicDetails',
 								component: () => import('/@/views/params/dynamic/details.vue'),
 								meta: {
@@ -1016,7 +1017,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						],
 					},
 					{
-						path: '/visualizing',
+						path: '/demo/visualizing',
 						name: 'visualizingIndex',
 						component: () => import('/@/layout/routerView/parent.vue'),
 						redirect: '/visualizing/visualizingLinkDemo1',
@@ -1032,7 +1033,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						},
 						children: [
 							{
-								path: '/visualizing/visualizingLinkDemo1',
+								path: '/demo/visualizing/visualizingLinkDemo1',
 								name: 'visualizingLinkDemo1',
 								component: () => import('/@/layout/routerView/link.vue'),
 								meta: {
@@ -1047,7 +1048,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 								},
 							},
 							{
-								path: '/visualizing/visualizingLinkDemo2',
+								path: '/demo/visualizing/visualizingLinkDemo2',
 								name: 'visualizingLinkDemo2',
 								component: () => import('/@/layout/routerView/link.vue'),
 								meta: {
@@ -1064,7 +1065,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						],
 					},
 					{
-						path: '/chart',
+						path: '/demo/chart',
 						name: 'chartIndex',
 						component: () => import('/@/views/chart/index.vue'),
 						meta: {
@@ -1079,7 +1080,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						},
 					},
 					{
-						path: '/personal',
+						path: '/demo/personal',
 						name: 'personal',
 						component: () => import('/@/views/personal/index.vue'),
 						meta: {
@@ -1094,7 +1095,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						},
 					},
 					{
-						path: '/tools',
+						path: '/demo/tools',
 						name: 'tools',
 						component: () => import('/@/views/tools/index.vue'),
 						meta: {
@@ -1109,7 +1110,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						},
 					},
 					{
-						path: '/link',
+						path: '/demo/link',
 						name: 'layoutLinkView',
 						component: () => import('/@/layout/routerView/link.vue'),
 						meta: {
@@ -1124,7 +1125,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						},
 					},
 					{
-						path: '/iframes',
+						path: '/demo/iframes',
 						name: 'layoutIfameView',
 						component: () => import('/@/layout/routerView/iframes.vue'),
 						meta: {

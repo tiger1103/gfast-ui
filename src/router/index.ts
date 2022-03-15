@@ -81,7 +81,7 @@ export function formatTwoStageRoutes(arr: any) {
  */
 export function setCacheTagsViewRoutes() {
 	// 获取有权限的路由，否则 tagsView、菜单搜索中无权限的路由也将显示
-	let rolesRoutes = setFilterHasRolesMenu(dynamicRoutes, store.state.userInfos.userInfos.roles);
+	let rolesRoutes = dynamicRoutes
 	// 添加到 vuex setTagsViewRoutes 中
 	store.dispatch('tagsViewRoutes/setTagsViewRoutes', formatTwoStageRoutes(formatFlatteningRoutes(rolesRoutes))[0].children);
 }
@@ -108,7 +108,6 @@ export function setFilterHasRolesMenu(routes: any, roles: any) {
 	routes.forEach((route: any) => {
 		const item = { ...route };
 		if (hasRoles(roles, item)) {
-			if (item.children) item.children = setFilterHasRolesMenu(item.children, roles);
 			menu.push(item);
 		}
 	});
@@ -121,7 +120,7 @@ export function setFilterHasRolesMenu(routes: any, roles: any) {
  * @description 用于 tagsView、菜单搜索中：未过滤隐藏的(isHide)
  */
 export function setFilterMenuAndCacheTagsViewRoutes() {
-	store.dispatch('routesList/setRoutesList', setFilterHasRolesMenu(dynamicRoutes[0].children, store.state.userInfos.userInfos.roles));
+	store.dispatch('routesList/setRoutesList', dynamicRoutes[0].children);
 	setCacheTagsViewRoutes();
 }
 
@@ -153,7 +152,7 @@ export function setFilterRoute(chil: any) {
  */
 export function setFilterRouteEnd() {
 	let filterRouteEnd: any = formatTwoStageRoutes(formatFlatteningRoutes(dynamicRoutes));
-	filterRouteEnd[0].children = [...setFilterRoute(filterRouteEnd[0].children), { ...pathMatch }];
+	filterRouteEnd[0].children = [...filterRouteEnd[0].children, { ...pathMatch }];
 	return filterRouteEnd;
 }
 
