@@ -134,6 +134,8 @@ export default defineComponent({
             Session.set('userInfo', userInfos);
             // 设置用户菜单
             Session.set('userMenu',res.data.menuList)
+            // 设置按钮权限
+            Session.set('permissions',res.data.permissions)
             // 1、请注意执行顺序(存储用户信息到vuex)
             await store.dispatch('userInfos/setUserInfos', userInfos);
             if (!store.state.themeConfig.themeConfig.isRequestRoutes) {
