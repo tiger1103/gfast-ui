@@ -30,7 +30,7 @@ service.interceptors.response.use(
 		// 对响应数据做点什么
 		const res = response.data;
 		const code = response.data.code
-		if (code === -401) {
+		if (code === 401) {
 			Session.clear(); // 清除浏览器全部临时缓存
 			window.location.href = '/'; // 去登录页
 			ElMessageBox.alert('登录状态已过期，您可以继续留在该页面，或者重新登录', '提示', {})

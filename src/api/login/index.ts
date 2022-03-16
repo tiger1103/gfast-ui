@@ -6,7 +6,7 @@ import request from '/@/utils/request';
  */
 export function login(params: object){
 	return request({
-		url: '/system/login',
+		url: '/api/v1/system/login',
 		method: 'post',
 		data: params,
 	});
@@ -17,7 +17,7 @@ export function login(params: object){
  */
 export function captcha(){
 	return request({
-		url:"/pub/captcha/get",
+		url:"/api/v1/pub/captcha/get",
 		method:"get"
 	})
 }
@@ -27,7 +27,7 @@ export function captcha(){
  */
 export function signOut(params: object){
 	return request({
-		url: '/user/signOut',
+		url: '/api/v1/user/signOut',
 		method: 'post',
 		data: params,
 	});
