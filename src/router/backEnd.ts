@@ -34,24 +34,19 @@ export async function initBackEndControlRoutes() {
 	let menuRoute = Session.get('userMenu')
 	let permissions = Session.get('permissions')
 	if (!menuRoute || !permissions) {
-		let res = getBackEndControlRoutes(); // 获取路由
-		console.log(res);
+		await getBackEndControlRoutes(); // 获取路由
+		menuRoute = Session.get('userMenu')
 	}
 
-
-
-
-
 	// 获取路由菜单数据
-	//const res = await getBackEndControlRoutes();
 	// 存储接口原始路由（未处理component），根据需求选择使用
-	//store.dispatch('requestOldRoutes/setBackEndControlRoutes', JSON.parse(JSON.stringify(res.data)));
+	store.dispatch('requestOldRoutes/setBackEndControlRoutes', JSON.parse(JSON.stringify(menuRoute)));
 	// 处理路由（component），替换 dynamicRoutes（/@/router/route）第一个顶级 children 的路由
-	//dynamicRoutes[0].children = await backEndComponent(res.data);
+	dynamicRoutes[0].children?.push(...await backEndComponent(menuRoute)) ;
 	// 添加动态路由
-	//await setAddRoute();
+	await setAddRoute();
 	// 设置递归过滤有权限的路由到 vuex routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
-	//setFilterMenuAndCacheTagsViewRoutes();
+	setFilterMenuAndCacheTagsViewRoutes();
 }
 
 /**
@@ -59,8 +54,11 @@ export async function initBackEndControlRoutes() {
  * @description isRequestRoutes 为 true，则开启后端控制路由
  * @returns 返回后端路由菜单数据
  */
-export function getBackEndControlRoutes() {
-	return getUserMenus()
+export async function getBackEndControlRoutes() {
+	return getUserMenus().then((res:any)=>{
+		Session.set('userMenu',res.data.menuList)
+		Session.set('permissions',res.data.permissions)
+	})
 }
 
 /**

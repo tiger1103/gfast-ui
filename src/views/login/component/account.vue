@@ -86,7 +86,7 @@ export default defineComponent({
     const state = reactive({
       isShowPassword: false,
       ruleForm: {
-        username: 'zs',
+        username: 'demo',
         password: '123456',
         verifyCode: '',
         verifyKey:''
@@ -133,9 +133,9 @@ export default defineComponent({
             // 存储用户信息到浏览器缓存
             Session.set('userInfo', userInfos);
             // 设置用户菜单
-            Session.set('userMenu',res.data.menuList)
+            //Session.set('userMenu',res.data.menuList)
             // 设置按钮权限
-            Session.set('permissions',res.data.permissions)
+            //Session.set('permissions',res.data.permissions)
             // 1、请注意执行顺序(存储用户信息到vuex)
             await store.dispatch('userInfos/setUserInfos', userInfos);
             if (!store.state.themeConfig.themeConfig.isRequestRoutes) {
@@ -151,6 +151,7 @@ export default defineComponent({
             }
           }).catch(()=>{
             state.loading.signIn = false;
+            getCaptcha()
           })
         }
       }).catch(()=>{})
