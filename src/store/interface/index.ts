@@ -71,7 +71,7 @@ export interface TagsViewRoutesState {
 export interface UserInfosState {
 	userInfos: {
 		authBtnList: string[];
-		photo: string;
+		avatar: string;
 		roles: string[];
 		time: number;
 		userName: string;

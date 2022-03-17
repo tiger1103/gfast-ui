@@ -128,14 +128,15 @@ export default defineComponent({
           state.loading.signIn = true;
           login(state.ruleForm).then(async (res:any)=>{
             const userInfos = res.data.userInfo
+            userInfos.avatar = proxy.getUpFileUrl(userInfos.avatar)
             // 存储 token 到浏览器缓存
             Session.set('token', res.data.token);
             // 存储用户信息到浏览器缓存
             Session.set('userInfo', userInfos);
             // 设置用户菜单
-            //Session.set('userMenu',res.data.menuList)
+            Session.set('userMenu',res.data.menuList)
             // 设置按钮权限
-            //Session.set('permissions',res.data.permissions)
+            Session.set('permissions',res.data.permissions)
             // 1、请注意执行顺序(存储用户信息到vuex)
             await store.dispatch('userInfos/setUserInfos', userInfos);
             if (!store.state.themeConfig.themeConfig.isRequestRoutes) {
