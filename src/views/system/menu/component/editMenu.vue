@@ -190,9 +190,11 @@ export default defineComponent({
 		};
 		// 打开弹窗
 		const openDialog = (row: any) => {
-			row.menuType = 'menu';
-			row.menuSort = Math.random();
-			state.ruleForm = row;
+      if(row){
+        row.menuType = 'menu';
+        row.menuSort = Math.random();
+        state.ruleForm = row;
+      }
 			state.isShowDialog = true;
 		};
 		// 关闭弹窗

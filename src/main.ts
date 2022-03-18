@@ -12,16 +12,24 @@ import '/@/theme/index.scss';
 import mitt from 'mitt';
 import VueGridLayout from 'vue-grid-layout';
 import {getUpFileUrl} from "/@/utils/gfast";
+import {useDict} from "/@/api/system/dict/data";
 
 const app = createApp(App);
-// 全局挂载
-app.config.globalProperties.getUpFileUrl=getUpFileUrl
 
 directive(app);
 other.elSvg(app);
 
 
 
-app.use(router).use(store, key).use(ElementPlus, { i18n: i18n.global.t }).use(i18n).use(VueGridLayout).mount('#app');
+app.use(router)
+    .use(store, key)
+    .use(ElementPlus, { i18n: i18n.global.t })
+    .use(i18n)
+    .use(VueGridLayout)
+    .mount('#app');
 
+
+// 全局挂载
+app.config.globalProperties.getUpFileUrl=getUpFileUrl
+app.config.globalProperties.useDict=useDict
 app.config.globalProperties.mittBus = mitt();

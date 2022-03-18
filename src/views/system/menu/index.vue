@@ -53,7 +53,6 @@
 				</el-table-column>
 			</el-table>
 		</el-card>
-		<AddMenu ref="addMenuRef" />
 		<EditMenu ref="editMenuRef" />
 	</div>
 </template>
@@ -63,14 +62,12 @@ import { ref, toRefs, reactive, computed, defineComponent } from 'vue';
 import { RouteRecordRaw } from 'vue-router';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import { useStore } from '/@/store/index';
-import AddMenu from '/@/views/system/menu/component/addMenu.vue';
 import EditMenu from '/@/views/system/menu/component/editMenu.vue';
 export default defineComponent({
 	name: 'systemMenu',
-	components: { AddMenu, EditMenu },
+	components: { EditMenu },
 	setup() {
 		const store = useStore();
-		const addMenuRef = ref();
 		const editMenuRef = ref();
 		const state = reactive({});
 		// 获取 vuex 中的路由
@@ -79,7 +76,7 @@ export default defineComponent({
 		});
 		// 打开新增菜单弹窗
 		const onOpenAddMenu = () => {
-			addMenuRef.value.openDialog();
+      editMenuRef.value.openDialog();
 		};
 		// 打开编辑菜单弹窗
 		const onOpenEditMenu = (row: RouteRecordRaw) => {
@@ -98,7 +95,6 @@ export default defineComponent({
 				.catch(() => {});
 		};
 		return {
-			addMenuRef,
 			editMenuRef,
 			onOpenAddMenu,
 			onOpenEditMenu,
