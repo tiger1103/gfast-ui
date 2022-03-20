@@ -1,8 +1,9 @@
 import request from '/@/utils/request';
 import {ref ,toRefs} from 'vue'
+import {ToRefs} from "_@vue_reactivity@3.2.31@@vue/reactivity";
 // 根据字典类型查询字典数据信息
-export function getDicts(dictType :string,...defaultValue:string[]):Promise<any> {
-    let dv = defaultValue.length>0?defaultValue[0]:''
+export function getDicts(dictType :string,defaultValue?:string):Promise<any> {
+    let dv = defaultValue??''
     let params ={
         dictType:dictType,
         defaultValue:dv
@@ -19,7 +20,7 @@ export function getDicts(dictType :string,...defaultValue:string[]):Promise<any>
 /**
  * 获取字典数据
  */
-export function useDict(...args:Array<string>) {
+export function useDict(...args:string[]): ToRefs{
     const res:any = ref({});
     return (() => {
         args.forEach((d:string) => {
