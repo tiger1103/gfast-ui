@@ -53,12 +53,12 @@
 				</el-table-column>
 			</el-table>
 		</el-card>
-		<EditMenu ref="editMenuRef" />
+		<EditMenu ref="editMenuRef" :visibleOptions="sys_show_hide" :statusOptions="sys_normal_disable"/>
 	</div>
 </template>
 
 <script lang="ts">
-import { ref, toRefs, reactive, computed, defineComponent } from 'vue';
+import { ref, toRefs, reactive, computed, defineComponent,getCurrentInstance } from 'vue';
 import { RouteRecordRaw } from 'vue-router';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import { useStore } from '/@/store/index';
@@ -70,6 +70,8 @@ export default defineComponent({
 		const store = useStore();
 		const editMenuRef = ref();
 		const state = reactive({});
+    const {proxy} = getCurrentInstance() as any;
+    const {sys_show_hide,sys_normal_disable} = proxy.useDict('sys_show_hide','sys_normal_disable')
 		// 获取 vuex 中的路由
 		const menuTableData = computed(() => {
 			return store.state.routesList.routesList;
@@ -101,6 +103,8 @@ export default defineComponent({
 			menuTableData,
 			onTabelRowDel,
 			...toRefs(state),
+      sys_show_hide,
+      sys_normal_disable
 		};
 	},
 });

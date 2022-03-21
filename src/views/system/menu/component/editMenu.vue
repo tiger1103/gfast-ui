@@ -90,8 +90,11 @@
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 							<el-form-item label="是否隐藏">
 								<el-radio-group v-model="ruleForm.meta.isHide">
-									<el-radio :label="true">隐藏</el-radio>
-									<el-radio :label="false">不隐藏</el-radio>
+                  <el-radio
+                      v-for="dict in visibleOptions"
+                      :key="dict.value"
+                      :label="dict.value"
+                  >{{ dict.label }}</el-radio>
 								</el-radio-group>
 							</el-form-item>
 						</el-col>
@@ -149,8 +152,18 @@ import IconSelector from '/@/components/iconSelector/index.vue';
 export default defineComponent({
 	name: 'systemEditMenu',
 	components: { IconSelector },
+  props:{
+    visibleOptions:{
+      type:Array,
+      default:()=>[],
+    },
+    statusOptions:{
+      type:Array,
+      default:()=>[]
+    }
+  },
 	setup() {
-		const store = useStore();
+    const store = useStore();
 		const state = reactive({
 			isShowDialog: false,
 			// 参数请参考 `/src/router/route.ts` 中的 `dynamicRoutes` 路由菜单格式
@@ -166,7 +179,7 @@ export default defineComponent({
 				meta: {
 					title: '', // 菜单名称
 					icon: '', // 菜单图标
-					isHide: false, // 是否隐藏
+					isHide: '0', // 是否隐藏
 					isKeepAlive: true, // 是否缓存
 					isAffix: false, // 是否固定
 					isLink: '', // 外链/内嵌时链接地址（http:xxx.com），开启外链条件，`1、isLink:true 2、链接地址不为空`

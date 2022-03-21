@@ -20,15 +20,13 @@ export function getDicts(dictType :string,defaultValue?:string):Promise<any> {
 /**
  * 获取字典数据
  */
-export function useDict(...args:string[]): ToRefs{
+export function useDict(...args:string[]):ToRefs<any>{
     const res:any = ref({});
-    return (() => {
-        args.forEach((d:string) => {
-            res.value[d] = [];
-            getDicts(d).then(resp => {
-                res.value[d] = resp.data.map((p:any) => ({ label: p.dictLabel, value: p.dictValue, elTagType: p.listClass }))
-            })
+    args.forEach((d:string) => {
+        res.value[d] = [];
+        getDicts(d).then(resp => {
+            res.value[d] = resp.data.values.map((p:any) =>  ({ label: p.value, value: p.key, isDefault: p.isDefault }))
         })
-        return toRefs(res.value);
-    })()
+    })
+    return toRefs(res.value);
 }
