@@ -11,7 +11,7 @@ import 'element-plus/dist/index.css';
 import '/@/theme/index.scss';
 import mitt from 'mitt';
 import VueGridLayout from 'vue-grid-layout';
-import {getUpFileUrl} from "/@/utils/gfast";
+import {getUpFileUrl, handleTree} from "/@/utils/gfast";
 import {useDict} from "/@/api/system/dict/data";
 
 const app = createApp(App);
@@ -31,5 +31,6 @@ app.use(router)
 
 // 全局挂载
 app.config.globalProperties.getUpFileUrl=getUpFileUrl
+app.config.globalProperties.handleTree=handleTree
 app.config.globalProperties.useDict=useDict
 app.config.globalProperties.mittBus = mitt();

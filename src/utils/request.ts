@@ -31,10 +31,11 @@ service.interceptors.response.use(
 		const res = response.data;
 		const code = response.data.code
 		if (code === 401) {
-			Session.clear(); // 清除浏览器全部临时缓存
-			window.location.href = '/'; // 去登录页
-			ElMessageBox.alert('登录状态已过期，您可以继续留在该页面，或者重新登录', '提示', {})
-				.then(() => {})
+			ElMessageBox.alert('登录状态已过期，请重新登录', '提示', {confirmButtonText:'确定'})
+				.then(() => {
+					Session.clear(); // 清除浏览器全部临时缓存
+					window.location.href = '/'; // 去登录页
+				})
 				.catch(() => {});
 		} else if (code !== 0) {
 			ElMessage.error(res.message)

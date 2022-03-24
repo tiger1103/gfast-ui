@@ -53,7 +53,7 @@
 				</el-table-column>
 			</el-table>
 		</el-card>
-		<EditMenu ref="editMenuRef" :visibleOptions="sys_show_hide" :statusOptions="sys_normal_disable"/>
+		<EditMenu ref="editMenuRef" :visibleOptions="sys_show_hide" :acType="acType"/>
 	</div>
 </template>
 
@@ -71,17 +71,20 @@ export default defineComponent({
 		const editMenuRef = ref();
 		const state = reactive({});
     const {proxy} = getCurrentInstance() as any;
-    const {sys_show_hide,sys_normal_disable} = proxy.useDict('sys_show_hide','sys_normal_disable')
+    const {sys_show_hide} = proxy.useDict('sys_show_hide')
 		// 获取 vuex 中的路由
 		const menuTableData = computed(() => {
 			return store.state.routesList.routesList;
 		});
+    const acType = ref('add')
 		// 打开新增菜单弹窗
 		const onOpenAddMenu = () => {
+      acType.value = 'add'
       editMenuRef.value.openDialog();
 		};
 		// 打开编辑菜单弹窗
 		const onOpenEditMenu = (row: RouteRecordRaw) => {
+      acType.value='edit'
 			editMenuRef.value.openDialog(row);
 		};
 		// 删除当前行
@@ -104,7 +107,7 @@ export default defineComponent({
 			onTabelRowDel,
 			...toRefs(state),
       sys_show_hide,
-      sys_normal_disable
+      acType
 		};
 	},
 });
