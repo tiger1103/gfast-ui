@@ -2,19 +2,38 @@
 	<div class="system-menu-container">
 		<el-card shadow="hover">
 			<div class="system-menu-search mb15">
-				<el-input size="default" placeholder="请输入菜单名称" style="max-width: 180px"> </el-input>
-				<el-button size="default" type="primary" class="ml10">
-					<el-icon>
-						<ele-Search />
-					</el-icon>
-					查询
-				</el-button>
-				<el-button size="default" type="success" class="ml10" @click="onOpenAddMenu">
-					<el-icon>
-						<ele-FolderAdd />
-					</el-icon>
-					新增菜单
-				</el-button>
+        <el-form :inline="true">
+          <el-form-item label="菜单名称">
+            <el-input
+                v-model="queryParams.title"
+                placeholder="请输入菜单名称"
+                clearable
+                class="w-50 m-2"
+            />
+          </el-form-item>
+          <el-form-item label="组件路径">
+            <el-input
+                v-model="queryParams.component"
+                placeholder="请输入组件路径"
+                clearable
+                class="w-50 m-2"
+            />
+          </el-form-item>
+          <el-form-item>
+            <el-button size="default" type="primary" class="ml10" @click="handleQuery">
+              <el-icon>
+                <ele-Search />
+              </el-icon>
+              查询
+            </el-button>
+            <el-button size="default" type="success" class="ml10" @click="onOpenAddMenu(null)">
+              <el-icon>
+                <ele-FolderAdd />
+              </el-icon>
+              新增菜单
+            </el-button>
+          </el-form-item>
+        </el-form>
 			</div>
 			<el-table :data="menuTableData" style="width: 100%" row-key="path" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
 				<el-table-column label="菜单名称" show-overflow-tooltip>
@@ -48,14 +67,14 @@
         <el-table-column prop="isHide" label="显示状态" :formatter="formatIsHide" width="120"></el-table-column>
 				<el-table-column label="操作" show-overflow-tooltip width="140">
 					<template #default="scope">
-						<el-button size="small" type="text" @click="onOpenAddMenu(scope.row)">新增</el-button>
+						<el-button v-if="scope.row.menuType!==2" size="small" type="text" @click="onOpenAddMenu(scope.row)">新增</el-button>
 						<el-button size="small" type="text" @click="onOpenEditMenu(scope.row)">修改</el-button>
 						<el-button size="small" type="text" @click="onTabelRowDel(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 		</el-card>
-		<EditMenu ref="editMenuRef" :visibleOptions="sys_show_hide" :acType="acType"/>
+		<EditMenu ref="editMenuRef" @menuList="menuList" :visibleOptions="sys_show_hide" :acType="acType"/>
 	</div>
 </template>
 
@@ -63,7 +82,7 @@
 import {ref, toRefs, reactive, onBeforeMount, defineComponent, getCurrentInstance, unref} from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import EditMenu from '/@/views/system/menu/component/editMenu.vue';
-import {getMenuList} from "/@/api/system/menu";
+import {delMenu, getMenuList} from "/@/api/system/menu";
 export default defineComponent({
 	name: 'systemMenu',
 	components: { EditMenu },
@@ -91,13 +110,17 @@ export default defineComponent({
 		};
 		// 删除当前行
 		const onTabelRowDel = (row: any) => {
-			ElMessageBox.confirm(`此操作将永久删除路由：${row.path}, 是否继续?`, '提示', {
+			ElMessageBox.confirm(`此操作将永久删除菜单：“${row.title}”, 是否继续?`, '提示', {
 				confirmButtonText: '删除',
 				cancelButtonText: '取消',
 				type: 'warning',
 			})
 				.then(() => {
-					ElMessage.success('删除成功');
+          delMenu(row.id).then(()=>{
+            ElMessage.success('删除成功');
+            proxy.$refs['editMenuRef'].resetMenuSession()
+            menuList();
+          })
 				})
 				.catch(() => {});
 		};
@@ -105,16 +128,24 @@ export default defineComponent({
       return proxy.selectDictLabel(unref(sys_show_hide), ''+row.isHide);
     };
     onBeforeMount(()=>{
+      menuList()
+    });
+    const handleQuery=() => {
+      menuList();
+    };
+    const menuList = ()=>{
       getMenuList(state.queryParams).then(res=>{
         state.menuTableData = proxy.handleTree(res.data.rules??[], "id","pid");
       })
-    });
+    };
 		return {
 			editMenuRef,
 			onOpenAddMenu,
 			onOpenEditMenu,
 			onTabelRowDel,
       formatIsHide,
+      menuList,
+      handleQuery,
 			...toRefs(state),
       sys_show_hide,
       acType

@@ -45,3 +45,13 @@ export function updateMenu(data:Object) {
         data:data
     })
 }
+
+
+// 删除菜单
+export function delMenu(menuId:number) {
+    return request({
+        url: '/api/v1/system/menu/delete',
+        method: 'delete',
+        data:{ids:[menuId]}
+    })
+}

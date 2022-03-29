@@ -68,14 +68,14 @@
 								</el-input>
 							</el-form-item>
 						</el-col>
-						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-							<el-form-item label="权限标识">
-								<el-select v-model="ruleForm.roles" multiple placeholder="选择角色" clearable class="w100">
-									<el-option v-for="role in roles" :key="'role_'+role.id" :label="role.name" :value="role.id"></el-option>
-								</el-select>
-							</el-form-item>
-						</el-col>
 					</template>
+          <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
+            <el-form-item label="权限标识">
+              <el-select v-model="ruleForm.roles" multiple placeholder="选择角色" clearable class="w100">
+                <el-option v-for="role in roles" :key="'role_'+role.id" :label="role.name" :value="role.id"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="菜单排序">
 							<el-input-number v-model="ruleForm.menuSort" controls-position="right" placeholder="请输入排序" class="w100" />
@@ -159,7 +159,7 @@ export default defineComponent({
       default:()=>'add'
     }
   },
-	setup(props) {
+	setup(props,{emit}) {
     const ruleFormRef = ref<HTMLElement | null>(null);
     const {proxy} = getCurrentInstance() as any;
 		const state = reactive({
@@ -209,8 +209,8 @@ export default defineComponent({
 
 		// 打开弹窗
 		const openDialog = (row: any) => {
+      initForm();
       nextTick(()=>{
-        initForm();
         //获取角色信息
         getMenuParams().then((res:any)=>{
           state.roles = res.data.roles;
@@ -275,6 +275,7 @@ export default defineComponent({
               ElMessage.success('菜单添加成功');
               closeDialog(); // 关闭弹窗
               resetMenuSession()
+              emit('menuList')
             })
           }else{
             //修改
@@ -282,6 +283,7 @@ export default defineComponent({
               ElMessage.success('菜单修改成功');
               closeDialog(); // 关闭弹窗
               resetMenuSession()
+              emit('menuList')
             })
           }
         }
@@ -319,6 +321,7 @@ export default defineComponent({
 			onSelectIframeChange,
 			onCancel,
 			onSubmit,
+      resetMenuSession,
 			...toRefs(state),
 		};
 	},
