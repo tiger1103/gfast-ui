@@ -1,5 +1,13 @@
 import request from '/@/utils/request';
 
+export function getMenuList(query:Object) {
+    return request({
+        url: '/api/v1/system/menu/list',
+        method: 'get',
+        params:query
+    })
+}
+
 export function getUserMenus() {
     return request({
         url: '/api/v1/system/user/getUserMenus',
@@ -22,4 +30,18 @@ export function addMenu(data:Object) {
     })
 }
 
+export function getMenuInfo(id:number) {
+    return request({
+        url: '/api/v1/system/menu/get',
+        method: 'get',
+        params:{id}
+    })
+}
 
+export function updateMenu(data:Object) {
+    return request({
+        url: '/api/v1/system/menu/update',
+        method: 'post',
+        data:data
+    })
+}

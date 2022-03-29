@@ -19,8 +19,8 @@
 			<el-table :data="menuTableData" style="width: 100%" row-key="path" :tree-props="{ children: 'children', hasChildren: 'hasChildren' }">
 				<el-table-column label="菜单名称" show-overflow-tooltip>
 					<template #default="scope">
-						<SvgIcon :name="scope.row.meta.icon" />
-						<span class="ml10">{{ $t(scope.row.meta.title) }}</span>
+						<SvgIcon :name="scope.row.icon" />
+						<span class="ml10">{{ $t(scope.row.title) }}</span>
 					</template>
 				</el-table-column>
 				<el-table-column prop="path" label="路由路径" show-overflow-tooltip></el-table-column>
@@ -29,24 +29,26 @@
 						<span>{{ scope.row.component }}</span>
 					</template>
 				</el-table-column>
-				<el-table-column label="权限标识" show-overflow-tooltip>
+				<el-table-column label="api接口" show-overflow-tooltip>
 					<template #default="scope">
-						<span>{{ scope.row.meta.roles }}</span>
+						<span>{{ scope.row.name }}</span>
 					</template>
 				</el-table-column>
 				<el-table-column label="排序" show-overflow-tooltip width="80">
 					<template #default="scope">
-						{{ scope.$index }}
+						{{ scope.row.weigh }}
 					</template>
 				</el-table-column>
 				<el-table-column label="类型" show-overflow-tooltip width="80">
 					<template #default="scope">
-						<el-tag type="success" size="small">{{ scope.row.xx }}菜单</el-tag>
+						<el-tag :type="scope.row.menuType===0?'danger':(scope.row.menuType===1?'success':'warning')"
+                    size="small">{{scope.row.menuType===0?'目录':(scope.row.menuType===1?'菜单':'按钮') }}</el-tag>
 					</template>
 				</el-table-column>
+        <el-table-column prop="isHide" label="显示状态" :formatter="formatIsHide" width="120"></el-table-column>
 				<el-table-column label="操作" show-overflow-tooltip width="140">
 					<template #default="scope">
-						<el-button size="small" type="text" @click="onOpenAddMenu">新增</el-button>
+						<el-button size="small" type="text" @click="onOpenAddMenu(scope.row)">新增</el-button>
 						<el-button size="small" type="text" @click="onOpenEditMenu(scope.row)">修改</el-button>
 						<el-button size="small" type="text" @click="onTabelRowDel(scope.row)">删除</el-button>
 					</template>
@@ -58,37 +60,37 @@
 </template>
 
 <script lang="ts">
-import { ref, toRefs, reactive, computed, defineComponent,getCurrentInstance } from 'vue';
-import { RouteRecordRaw } from 'vue-router';
+import {ref, toRefs, reactive, onBeforeMount, defineComponent, getCurrentInstance, unref} from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import { useStore } from '/@/store/index';
 import EditMenu from '/@/views/system/menu/component/editMenu.vue';
+import {getMenuList} from "/@/api/system/menu";
 export default defineComponent({
 	name: 'systemMenu',
 	components: { EditMenu },
 	setup() {
-		const store = useStore();
 		const editMenuRef = ref();
-		const state = reactive({});
+		const state = reactive({
+      queryParams:{
+        title:"",
+        component:""
+      },
+      menuTableData:[],
+    });
     const {proxy} = getCurrentInstance() as any;
     const {sys_show_hide} = proxy.useDict('sys_show_hide')
-		// 获取 vuex 中的路由
-		const menuTableData = computed(() => {
-			return store.state.routesList.routesList;
-		});
     const acType = ref('add')
 		// 打开新增菜单弹窗
-		const onOpenAddMenu = () => {
+		const onOpenAddMenu = (row:any) => {
       acType.value = 'add'
-      editMenuRef.value.openDialog();
+      editMenuRef.value.openDialog(row);
 		};
 		// 打开编辑菜单弹窗
-		const onOpenEditMenu = (row: RouteRecordRaw) => {
+		const onOpenEditMenu = (row: any) => {
       acType.value='edit'
 			editMenuRef.value.openDialog(row);
 		};
 		// 删除当前行
-		const onTabelRowDel = (row: RouteRecordRaw) => {
+		const onTabelRowDel = (row: any) => {
 			ElMessageBox.confirm(`此操作将永久删除路由：${row.path}, 是否继续?`, '提示', {
 				confirmButtonText: '删除',
 				cancelButtonText: '取消',
@@ -99,12 +101,20 @@ export default defineComponent({
 				})
 				.catch(() => {});
 		};
+    const formatIsHide = (row:any)=>{
+      return proxy.selectDictLabel(unref(sys_show_hide), ''+row.isHide);
+    };
+    onBeforeMount(()=>{
+      getMenuList(state.queryParams).then(res=>{
+        state.menuTableData = proxy.handleTree(res.data.rules??[], "id","pid");
+      })
+    });
 		return {
 			editMenuRef,
 			onOpenAddMenu,
 			onOpenEditMenu,
-			menuTableData,
 			onTabelRowDel,
+      formatIsHide,
 			...toRefs(state),
       sys_show_hide,
       acType

@@ -13,27 +13,19 @@
 						}
 					"
 					:class="{ 'layout-columns-active': liIndex === k, 'layout-columns-hover': liHoverIndex === k }"
-					:title="$t(v.meta.title)"
+					:title="v.meta.title.indexOf('.')>0?$t(v.meta.title):v.meta.title"
 				>
 					<div :class="setColumnsAsidelayout" v-if="!v.meta.isLink || (v.meta.isLink && v.meta.isIframe)">
 						<SvgIcon :name="v.meta.icon" />
 						<div class="columns-vertical-title font12">
-							{{
-								$t(v.meta.title) && $t(v.meta.title).length >= 4
-									? $t(v.meta.title).substr(0, setColumnsAsidelayout === 'columns-vertical' ? 4 : 3)
-									: $t(v.meta.title)
-							}}
+							{{tMenuTitle(v.meta.title)}}
 						</div>
 					</div>
 					<div :class="setColumnsAsidelayout" v-else>
 						<a :href="v.meta.isLink" target="_blank">
 							<SvgIcon :name="v.meta.icon" />
 							<div class="columns-vertical-title font12">
-								{{
-									$t(v.meta.title) && $t(v.meta.title).length >= 4
-										? $t(v.meta.title).substr(0, setColumnsAsidelayout === 'columns-vertical' ? 4 : 3)
-										: $t(v.meta.title)
-								}}
+								{{tMenuTitle(v.meta.title)}}
 							</div>
 						</a>
 					</div>
@@ -48,6 +40,8 @@
 import { reactive, toRefs, ref, computed, onMounted, nextTick, getCurrentInstance, watch, onUnmounted, defineComponent } from 'vue';
 import { useRoute, useRouter, onBeforeRouteUpdate, RouteRecordRaw } from 'vue-router';
 import { useStore } from '/@/store/index';
+import {i18n} from '/@/i18n/index';
+import {useI18n} from "_vue-i18n@9.1.9@vue-i18n";
 
 // 定义接口来定义对象的类型
 interface ColumnsAsideState {
@@ -66,6 +60,7 @@ export default defineComponent({
 	setup() {
 		const columnsAsideOffsetTopRefs: any = ref([]);
 		const columnsAsideActiveRef = ref();
+    const { t } = useI18n();
 		const { proxy } = <any>getCurrentInstance();
 		const store = useStore();
 		const route = useRoute();
@@ -80,6 +75,14 @@ export default defineComponent({
 			routeSplit: [],
 			isNavHover: false,
 		});
+    // 设置菜单名称
+    const tMenuTitle = (title:string):string=>{
+      let rTitle = title.indexOf('.')>0?t(title):title;
+      rTitle && rTitle.length >= 4
+          ? rTitle.substring(0, store.state.themeConfig.themeConfig.columnsAsideLayout === 'columns-vertical' ? 4 : 3)
+          : rTitle
+      return rTitle
+    };
 		// 设置分栏高亮风格
 		const setColumnsAsideStyle = computed(() => {
 			return store.state.themeConfig.themeConfig.columnsAsideStyle;
@@ -210,6 +213,7 @@ export default defineComponent({
 			onColumnsAsideMenuClick,
 			onColumnsAsideMenuMouseenter,
 			onColumnsAsideMenuMouseleave,
+      tMenuTitle,
 			...toRefs(state),
 		};
 	},

@@ -17,7 +17,7 @@
 				<template #default="{ item }">
 					<div>
 						<SvgIcon :name="item.meta.icon" class="mr5" />
-						{{ $t(item.meta.title) }}
+						{{ item.meta.title.indexOf('.')>0?$t(item.meta.title):item.meta.title }}
 					</div>
 				</template>
 			</el-autocomplete>

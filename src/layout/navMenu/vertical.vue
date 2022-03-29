@@ -11,7 +11,7 @@
 			<el-sub-menu :index="val.path" v-if="val.children && val.children.length > 0" :key="val.path">
 				<template #title>
 					<SvgIcon :name="val.meta.icon" />
-					<span>{{ $t(val.meta.title) }}</span>
+					<span>{{ val.meta.title.indexOf('.')>0?$t(val.meta.title):val.meta.title }}</span>
 				</template>
 				<SubItem :chil="val.children" />
 			</el-sub-menu>
@@ -19,10 +19,10 @@
 				<el-menu-item :index="val.path" :key="val.path">
 					<SvgIcon :name="val.meta.icon" />
 					<template #title v-if="!val.meta.isLink || (val.meta.isLink && val.meta.isIframe)">
-						<span>{{ $t(val.meta.title) }}</span>
+						<span>{{ val.meta.title.indexOf('.')>0?$t(val.meta.title):val.meta.title }}</span>
 					</template>
 					<template #title v-else>
-						<a :href="val.meta.isLink" target="_blank" rel="opener" class="w100">{{ $t(val.meta.title) }}</a>
+						<a :href="val.meta.isLink" target="_blank" rel="opener" class="w100">{{ val.meta.title.indexOf('.')>0?$t(val.meta.title):val.meta.title }}</a>
 					</template>
 				</el-menu-item>
 			</template>

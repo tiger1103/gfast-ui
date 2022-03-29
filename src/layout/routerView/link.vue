@@ -1,7 +1,7 @@
 <template>
 	<div class="layout-view-bg-white flex layout-view-link" :style="{ height: `calc(100vh - ${setLinkHeight}` }">
 		<a :href="currentRouteMeta.isLink" target="_blank" rel="opener" class="flex-margin">
-			{{ $t(currentRouteMeta.title) }}：{{ currentRouteMeta.isLink }}
+			{{ currentRouteMeta.title.indexOf('.')>0?$t(currentRouteMeta.title):currentRouteMeta.title }}：{{ currentRouteMeta.isLink }}
 		</a>
 	</div>
 </template>

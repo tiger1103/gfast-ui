@@ -1,7 +1,7 @@
 <template>
 	<div class="system-edit-menu-container">
 		<el-dialog :title="(acType==='add'?'新增':'修改')+'菜单'" v-model="isShowDialog"
-               width="769px" :close-on-click-modal="false" @open="onOpenDialog">
+               width="769px" :close-on-click-modal="false">
 			<el-form :model="ruleForm" :rules="rules"
                ref="ruleFormRef" size="default" label-width="80px">
 				<el-row :gutter="35">
@@ -139,10 +139,10 @@
 </template>
 
 <script lang="ts">
-import { reactive, toRefs, defineComponent,ref,unref,getCurrentInstance } from 'vue';
+import { reactive, toRefs, defineComponent,ref,unref,getCurrentInstance,nextTick } from 'vue';
 import IconSelector from '/@/components/iconSelector/index.vue';
 import { getBackEndControlRoutes } from "/@/router/backEnd";
-import {getMenuParams,addMenu} from "/@/api/system/menu";
+import {getMenuParams, addMenu, getMenuInfo, updateMenu} from "/@/api/system/menu";
 import {ElMessage} from "_element-plus@2.1.2@element-plus";
 
 
@@ -168,6 +168,7 @@ export default defineComponent({
       roles:[],
 			// 参数请参考 `/src/router/route.ts` 中的 `dynamicRoutes` 路由菜单格式
 			ruleForm: {
+        id:undefined,
 				pid: 0, // 上级菜单
 				menuType: '0', // 菜单类型
         menuName:'', // 菜单名称
@@ -178,7 +179,7 @@ export default defineComponent({
 				path: '', // 路由路径
 				redirect: '', // 路由重定向，有子集 children 时
         icon: '', // 菜单图标
-        roles: '', // 权限标识，取角色管理
+        roles: [], // 权限标识，取角色管理
         isHide: '0', // 是否隐藏
         isKeepAlive: 1, // 是否缓存
         isAffix: 0, // 是否固定
@@ -208,14 +209,46 @@ export default defineComponent({
 
 		// 打开弹窗
 		const openDialog = (row: any) => {
-      initForm();
-      if(row){
-        row.menuType = '0';
-        row.menuSort = Math.random();
-        state.ruleForm = row;
-      }
-			state.isShowDialog = true;
-      state.loading = false;
+      nextTick(()=>{
+        initForm();
+        //获取角色信息
+        getMenuParams().then((res:any)=>{
+          state.roles = res.data.roles;
+          const menu = { id: 0, title: '主类目', children: [] };
+          menu.children = proxy.handleTree(res.data.menus, "id","pid");
+          state.menuData=new Array(menu) as any;
+        });
+        if(row) {
+          if (props.acType === 'add') {
+            state.ruleForm.pid = row.id
+          } else if (props.acType === 'edit') {
+            getMenuInfo(row.id).then(res => {
+              const data = res.data.rule;
+              state.ruleForm = {
+                id: data.id,
+                pid: data.pid, // 上级菜单
+                menuType: '' + data.menuType, // 菜单类型
+                menuName: data.title, // 菜单名称
+                name: data.name, // 接口规则
+                component: data.component, // 组件路径
+                isLink: data.isLink, // 是否外链
+                menuSort: data.weigh, // 菜单排序
+                path: data.path, // 路由路径
+                redirect: data.redirect, // 路由重定向，有子集 children 时
+                icon: data.icon, // 菜单图标
+                roles: res.data.roleIds, // 权限标识，取角色管理
+                isHide: '' + data.isHide, // 是否隐藏
+                isKeepAlive: data.isCached, // 是否缓存
+                isAffix: data.isAffix, // 是否固定
+                linkUrl: data.linkUrl, // 外链/内嵌时链接地址（http:xxx.com），开启外链条件，`1、isLink:true 2、链接地址不为空`
+                isIframe: data.isIframe, // 是否内嵌，开启条件，`1、isIframe:true 2、链接地址不为空`
+              }
+            })
+          }
+        }
+        state.isShowDialog = true;
+        state.loading = false;
+      })
 		};
 		// 关闭弹窗
 		const closeDialog = () => {
@@ -245,19 +278,14 @@ export default defineComponent({
             })
           }else{
             //修改
+            updateMenu(state.ruleForm).then(()=>{
+              ElMessage.success('菜单修改成功');
+              closeDialog(); // 关闭弹窗
+              resetMenuSession()
+            })
           }
         }
       })
-		};
-		// open dialog 时
-		const onOpenDialog = () => {
-      //获取角色信息
-      getMenuParams().then((res:any)=>{
-        state.roles = res.data.roles;
-        const menu = { id: 0, title: '主类目', children: [] };
-        menu.children = proxy.handleTree(res.data.menus, "id","pid");
-        state.menuData=new Array(menu) as any;
-      });
 		};
     // 重置菜单session
     const resetMenuSession = () => {
@@ -265,6 +293,7 @@ export default defineComponent({
     };
     const initForm=()=>{
       state.ruleForm =  {
+        id:undefined,
         pid: 0, // 上级菜单
         menuType: '0', // 菜单类型
         menuName:'', // 菜单名称
@@ -275,7 +304,7 @@ export default defineComponent({
         path: '', // 路由路径
         redirect: '', // 路由重定向，有子集 children 时
         icon: '', // 菜单图标
-        roles: '', // 权限标识，取角色管理
+        roles: [], // 权限标识，取角色管理
         isHide: '0', // 是否隐藏
         isKeepAlive: 1, // 是否缓存
         isAffix: 0, // 是否固定
@@ -286,7 +315,6 @@ export default defineComponent({
 		return {
       ruleFormRef,
 			openDialog,
-      onOpenDialog,
 			closeDialog,
 			onSelectIframeChange,
 			onCancel,

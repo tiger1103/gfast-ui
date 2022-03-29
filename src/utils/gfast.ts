@@ -46,3 +46,16 @@ export function handleTree(data:[], id:string, parentId:string, children:string,
     });
     return treeData != '' ? treeData : data;
 }
+
+
+// 回显数据字典
+export function selectDictLabel(data:Array<any>, value:string):string {
+    let actions:string[]=[]
+    data.map((item) => {
+        if (item.value == value) {
+            actions.push(item.label);
+            return false;
+        }
+    })
+    return actions.join('');
+}
