@@ -26,7 +26,7 @@
               </el-icon>
               查询
             </el-button>
-            <el-button size="default" type="success" class="ml10" @click="onOpenAddMenu(null)" v-auth="api/v1/system/menu/add">
+            <el-button size="default" type="success" class="ml10" @click="onOpenAddMenu(null)" v-auth="'api/v1/system/menu/add'">
               <el-icon>
                 <ele-FolderAdd />
               </el-icon>
@@ -39,7 +39,7 @@
 				<el-table-column label="菜单名称" show-overflow-tooltip>
 					<template #default="scope">
 						<SvgIcon :name="scope.row.icon" />
-						<span class="ml10">{{ $t(scope.row.title) }}</span>
+						<span class="ml10">{{ scope.row.title }}</span>
 					</template>
 				</el-table-column>
 				<el-table-column prop="path" label="路由路径" show-overflow-tooltip></el-table-column>
@@ -67,9 +67,9 @@
         <el-table-column prop="isHide" label="显示状态" :formatter="formatIsHide" width="120"></el-table-column>
 				<el-table-column label="操作" show-overflow-tooltip width="140">
 					<template #default="scope">
-						<el-button v-if="scope.row.menuType!==2" size="small" type="text" @click="onOpenAddMenu(scope.row)">新增</el-button>
-						<el-button size="small" type="text" @click="onOpenEditMenu(scope.row)">修改</el-button>
-						<el-button size="small" type="text" @click="onTabelRowDel(scope.row)">删除</el-button>
+						<el-button v-if="scope.row.menuType!==2" size="small" type="text" @click="onOpenAddMenu(scope.row)" v-auth="'api/v1/system/menu/add'">新增</el-button>
+						<el-button size="small" type="text" @click="onOpenEditMenu(scope.row)" v-auth="'api/v1/system/menu/update'">修改</el-button>
+						<el-button size="small" type="text" @click="onTabelRowDel(scope.row)" v-auth="'api/v1/system/menu/delete'">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -84,7 +84,7 @@ import { ElMessageBox, ElMessage } from 'element-plus';
 import EditMenu from '/@/views/system/menu/component/editMenu.vue';
 import {delMenu, getMenuList} from "/@/api/system/menu";
 export default defineComponent({
-	name: 'systemMenu',
+	name: 'apiV1SystemAuthMenuList',
 	components: { EditMenu },
 	setup() {
 		const editMenuRef = ref();
