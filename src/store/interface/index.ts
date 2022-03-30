@@ -70,13 +70,17 @@ export interface TagsViewRoutesState {
 // 用户信息
 export interface UserInfosState {
 	userInfos: {
-		authBtnList: string[];
+		id:number;
+		userName: string;
+		userNickname:string;
 		avatar: string;
 		roles: string[];
 		time: number;
-		userName: string;
 	};
+	permissions:string[]
 }
+
+
 
 // 后端返回原始路由(未处理时)
 export interface RequestOldRoutesState {

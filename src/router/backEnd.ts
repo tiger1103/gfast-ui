@@ -31,6 +31,7 @@ export async function initBackEndControlRoutes() {
 	if (!Session.get('token')) return false;
 	// 触发初始化用户信息
 	store.dispatch('userInfos/setUserInfos');
+	store.dispatch('userInfos/setPermissions');
 	let menuRoute = Session.get('userMenu')
 	let permissions = Session.get('permissions')
 	if (!menuRoute || !permissions) {
@@ -58,6 +59,7 @@ export async function getBackEndControlRoutes() {
 	return getUserMenus().then((res:any)=>{
 		Session.set('userMenu',res.data.menuList)
 		Session.set('permissions',res.data.permissions)
+		store.dispatch('userInfos/setPermissions',res.data.permissions)
 	})
 }
 

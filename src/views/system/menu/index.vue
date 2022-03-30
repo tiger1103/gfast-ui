@@ -26,7 +26,7 @@
               </el-icon>
               查询
             </el-button>
-            <el-button size="default" type="success" class="ml10" @click="onOpenAddMenu(null)">
+            <el-button size="default" type="success" class="ml10" @click="onOpenAddMenu(null)" v-auth="api/v1/system/menu/add">
               <el-icon>
                 <ele-FolderAdd />
               </el-icon>

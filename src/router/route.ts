@@ -1140,53 +1140,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 						},
 					},
 				],
-			},
-			{
-				path: '/system/auth',
-				name: 'systemAuth',
-				component: () => import('/@/layout/routerView/parent.vue'),
-				redirect: '/system/auth/menu',
-				meta: {
-					title: '权限管理',
-					isLink: '',
-					isHide: false,
-					isKeepAlive: true,
-					isAffix: false,
-					isIframe: false,
-					roles: ['admin'],
-					icon: 'iconfont icon-xitongshezhi',
-				},
-				children: [
-					{
-						path: '/system/auth/menu',
-						name: 'systemAuthMenu',
-						component: () => import('/@/views/system/menu/index.vue'),
-						meta: {
-							title: '菜单管理',
-							isLink: '',
-							isHide: false,
-							isKeepAlive: true,
-							isAffix: false,
-							isIframe: false,
-							icon: 'iconfont icon-caidan',
-						},
-					},
-					{
-						path: '/system/auth/role',
-						name: 'systemAuthRole',
-						component: () => import('/@/views/system/role/index.vue'),
-						meta: {
-							title: '角色管理',
-							isLink: '',
-							isHide: false,
-							isKeepAlive: true,
-							isAffix: false,
-							isIframe: false,
-							icon: 'ele-ColdDrink',
-						},
-					}
-				],
-			},
+			}
 		],
 	},
 ];

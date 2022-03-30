@@ -139,6 +139,7 @@ export default defineComponent({
             Session.set('permissions',res.data.permissions)
             // 1、请注意执行顺序(存储用户信息到vuex)
             await store.dispatch('userInfos/setUserInfos', userInfos);
+            await store.dispatch('userInfos/setPermissions',res.data.permissions)
             if (!store.state.themeConfig.themeConfig.isRequestRoutes) {
               // 前端控制路由，2、请注意执行顺序
               await initFrontEndControlRoutes();
