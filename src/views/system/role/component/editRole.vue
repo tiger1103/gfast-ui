@@ -95,8 +95,10 @@ export default defineComponent({
 			},
 		});
 		// 打开弹窗
-		const openDialog = (row: DialogRow) => {
-			state.ruleForm = row;
+		const openDialog = (row?: DialogRow) => {
+      if(row) {
+        state.ruleForm = row;
+      }
 			state.isShowDialog = true;
 			getMenuData();
 		};

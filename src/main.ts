@@ -13,13 +13,15 @@ import mitt from 'mitt';
 import VueGridLayout from 'vue-grid-layout';
 import {getUpFileUrl, handleTree, selectDictLabel} from "/@/utils/gfast";
 import {useDict} from "/@/api/system/dict/data";
+// 分页组件
+import pagination from '/@/components/pagination/index.vue'
 
 const app = createApp(App);
 
 directive(app);
 other.elSvg(app);
 
-
+app.component('pagination', pagination)
 
 app.use(router)
     .use(store, key)

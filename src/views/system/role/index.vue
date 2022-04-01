@@ -18,39 +18,31 @@
 			</div>
 			<el-table :data="tableData.data" style="width: 100%">
 				<el-table-column type="index" label="序号" width="60" />
-				<el-table-column prop="roleName" label="角色名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="roleSign" label="角色标识" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="sort" label="排序" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="name" label="角色名称" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="listOrder" label="排序" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="status" label="角色状态" show-overflow-tooltip>
 					<template #default="scope">
-						<el-tag type="success" v-if="scope.row.status">启用</el-tag>
+						<el-tag type="success" v-if="scope.row.status===1">启用</el-tag>
 						<el-tag type="info" v-else>禁用</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column prop="describe" label="角色描述" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="remark" label="角色描述" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="createdAt" label="创建时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="操作" width="100">
 					<template #default="scope">
-						<el-button :disabled="scope.row.roleName === '超级管理员'" size="small" type="text" @click="onOpenEditRole(scope.row)">修改</el-button>
-						<el-button :disabled="scope.row.roleName === '超级管理员'" size="small" type="text" @click="onRowDel(scope.row)">删除</el-button>
+						<el-button size="small" type="text" @click="onOpenEditRole(scope.row)">修改</el-button>
+						<el-button size="small" type="text" @click="onRowDel(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
-			<el-pagination
-				@size-change="onHandleSizeChange"
-				@current-change="onHandleCurrentChange"
-				class="mt15"
-				:pager-count="5"
-				:page-sizes="[10, 20, 30]"
-				v-model:current-page="tableData.param.pageNum"
-				background
-				v-model:page-size="tableData.param.pageSize"
-				layout="total, sizes, prev, pager, next, jumper"
-				:total="tableData.total"
-			>
-			</el-pagination>
+      <pagination
+          v-show="tableData.total>0"
+          :total="tableData.total"
+          v-model:page="tableData.param.pageNum"
+          v-model:limit="tableData.param.pageSize"
+          @pagination="roleList"
+      />
 		</el-card>
-		<AddRole ref="addRoleRef" />
 		<EditRole ref="editRoleRef" />
 	</div>
 </template>
@@ -58,17 +50,17 @@
 <script lang="ts">
 import { toRefs, reactive, onMounted, ref, defineComponent } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import AddRole from '/@/views/system/role/component/addRole.vue';
 import EditRole from '/@/views/system/role/component/editRole.vue';
-
+import {getRoleList} from "/@/api/system/role";
 // 定义接口来定义对象的类型
 interface TableData {
-	roleName: string;
-	roleSign: string;
-	describe: string;
-	sort: number;
-	status: boolean;
-	createTime: string;
+  id:number;
+	status: number;
+	listOrder: number;
+	name: string;
+  remark: string;
+  dataScope:number;
+  createdAt: string;
 }
 interface TableDataState {
 	tableData: {
@@ -83,8 +75,8 @@ interface TableDataState {
 }
 
 export default defineComponent({
-	name: 'systemRole',
-	components: { AddRole, EditRole },
+	name: 'apiV1SystemRoleList',
+	components: {EditRole},
 	setup() {
 		const addRoleRef = ref();
 		const editRoleRef = ref();
@@ -101,23 +93,30 @@ export default defineComponent({
 		});
 		// 初始化表格数据
 		const initTableData = () => {
-			const data: Array<TableData> = [];
-			for (let i = 0; i < 2; i++) {
-				data.push({
-					roleName: i === 0 ? '超级管理员' : '普通用户',
-					roleSign: i === 0 ? 'admin' : 'common',
-					describe: `测试角色${i + 1}`,
-					sort: i,
-					status: true,
-					createTime: new Date().toLocaleString(),
-				});
-			}
-			state.tableData.data = data;
-			state.tableData.total = state.tableData.data.length;
+			roleList()
 		};
+    const roleList = ()=>{
+      const data: Array<TableData> = [];
+      getRoleList(state.tableData.param).then(res=>{
+        const list = res.data.list??[]
+        list.map((item:TableData)=>{
+          data.push({
+            id:item.id,
+            status: item.status,
+            listOrder: item.listOrder,
+            name: item.name,
+            remark: item.remark,
+            dataScope:item.dataScope,
+            createdAt: item.createdAt,
+          });
+        })
+        state.tableData.data = data;
+        state.tableData.total = res.data.total;
+      })
+    };
 		// 打开新增角色弹窗
 		const onOpenAddRole = () => {
-			addRoleRef.value.openDialog();
+      editRoleRef.value.openDialog();
 		};
 		// 打开修改角色弹窗
 		const onOpenEditRole = (row: Object) => {
@@ -155,6 +154,7 @@ export default defineComponent({
 			onRowDel,
 			onHandleSizeChange,
 			onHandleCurrentChange,
+      roleList,
 			...toRefs(state),
 		};
 	},
