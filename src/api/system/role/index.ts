@@ -7,3 +7,19 @@ export function getRoleList(query:Object) {
         params:query
     })
 }
+
+export function getRoleParams() {
+    return request({
+        url: '/api/v1/system/role/getParams',
+        method: 'get'
+    })
+}
+
+export function addRole(data:object) {
+    return request({
+        url: '/api/v1/system/role/add',
+        method: 'put',
+        data:data
+    })
+}
+

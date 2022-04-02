@@ -1,41 +1,47 @@
 <template>
 	<div class="system-edit-role-container">
 		<el-dialog title="修改角色" v-model="isShowDialog" width="769px">
-			<el-form :model="ruleForm" size="default" label-width="90px">
+			<el-form :model="formData" size="default" label-width="90px">
 				<el-row :gutter="35">
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="角色名称">
-							<el-input v-model="ruleForm.roleName" placeholder="请输入角色名称" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="角色标识">
-							<template #label>
-								<el-tooltip effect="dark" content="用于 `router/route.ts` meta.roles" placement="top-start">
-									<span>角色标识</span>
-								</el-tooltip>
-							</template>
-							<el-input v-model="ruleForm.roleSign" placeholder="请输入角色标识" clearable></el-input>
+							<el-input v-model="formData.name" placeholder="请输入角色名称" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="排序">
-							<el-input-number v-model="ruleForm.sort" :min="0" :max="999" controls-position="right" placeholder="请输入排序" class="w100" />
+							<el-input-number v-model="formData.listOrder" :min="0" controls-position="right" placeholder="请输入排序" class="w100" />
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="角色状态">
-							<el-switch v-model="ruleForm.status" inline-prompt active-text="启" inactive-text="禁"></el-switch>
+							<el-switch v-model="formData.status" inline-prompt active-text="启" inactive-text="禁"></el-switch>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 						<el-form-item label="角色描述">
-							<el-input v-model="ruleForm.describe" type="textarea" placeholder="请输入角色描述" maxlength="150"></el-input>
+							<el-input v-model="formData.remark" type="textarea" placeholder="请输入角色描述" maxlength="150"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 						<el-form-item label="菜单权限">
-							<el-tree :data="menuData" :props="menuProps" :default-checked-keys="[112, 113]" node-key="id" show-checkbox class="menu-data-tree" />
+              <el-row :gutter="35">
+                <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+                  <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event)">展开/折叠</el-checkbox>
+                  <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event)">全选/全不选</el-checkbox>
+                  <el-checkbox v-model="menuCheckStrictly" @change="handleCheckedTreeConnect($event)">父子联动</el-checkbox>
+                </el-col>
+                <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
+                  <el-tree
+                      :data="menuData"
+                      ref="menuRef"
+                      :props="menuProps"
+                      :default-checked-keys="[2,3]"
+                      node-key="id"
+                      show-checkbox class="menu-data-tree tree-border"
+                      :check-strictly="!menuCheckStrictly"/>
+                </el-col>
+              </el-row>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -51,25 +57,31 @@
 </template>
 
 <script lang="ts">
-import { reactive, toRefs, defineComponent } from 'vue';
+import { reactive, toRefs, defineComponent,ref,getCurrentInstance } from 'vue';
+import {getRoleParams} from "/@/api/system/role";
+
 
 // 定义接口来定义对象的类型
 interface MenuDataTree {
 	id: number;
-	label: string;
+  pid:number;
+	title: string;
 	children?: MenuDataTree[];
 }
 interface DialogRow {
-	roleName: string;
-	roleSign: string;
-	sort: number;
-	status: boolean;
-	describe: string;
+	name: string;
+	status: number;
+  listOrder: number;
+  remark: string;
+  menuIds:Array<number>
 }
 interface RoleState {
 	isShowDialog: boolean;
-	ruleForm: DialogRow;
+	formData: DialogRow;
 	menuData: Array<MenuDataTree>;
+  menuExpand:boolean;
+  menuNodeAll:boolean;
+  menuCheckStrictly:boolean;
 	menuProps: {
 		children: string;
 		label: string;
@@ -79,27 +91,33 @@ interface RoleState {
 export default defineComponent({
 	name: 'systemEditRole',
 	setup() {
+    const {proxy} = getCurrentInstance() as any;
+    const menuRef = ref()
 		const state = reactive<RoleState>({
 			isShowDialog: false,
-			ruleForm: {
-				roleName: '', // 角色名称
-				roleSign: '', // 角色标识
-				sort: 0, // 排序
-				status: true, // 角色状态
-				describe: '', // 角色描述
+			formData: {
+        name: '',
+        status: 1,
+        listOrder: 0,
+        remark: '',
+        menuIds:[]
 			},
 			menuData: [],
+      menuExpand:false,
+      menuNodeAll:false,
+      menuCheckStrictly:false,
 			menuProps: {
 				children: 'children',
-				label: 'label',
+				label: 'title',
 			},
 		});
 		// 打开弹窗
 		const openDialog = (row?: DialogRow) => {
       if(row) {
-        state.ruleForm = row;
+        state.formData = row;
       }
 			state.isShowDialog = true;
+      resetForm();
 			getMenuData();
 		};
 		// 关闭弹窗
@@ -116,116 +134,45 @@ export default defineComponent({
 		};
 		// 获取菜单结构数据
 		const getMenuData = () => {
-			state.menuData = [
-				{
-					id: 1,
-					label: '系统管理',
-					children: [
-						{
-							id: 11,
-							label: '菜单管理',
-							children: [
-								{
-									id: 111,
-									label: '菜单新增',
-								},
-								{
-									id: 112,
-									label: '菜单修改',
-								},
-								{
-									id: 113,
-									label: '菜单删除',
-								},
-								{
-									id: 114,
-									label: '菜单查询',
-								},
-							],
-						},
-						{
-							id: 12,
-							label: '角色管理',
-							children: [
-								{
-									id: 121,
-									label: '角色新增',
-								},
-								{
-									id: 122,
-									label: '角色修改',
-								},
-								{
-									id: 123,
-									label: '角色删除',
-								},
-								{
-									id: 124,
-									label: '角色查询',
-								},
-							],
-						},
-						{
-							id: 13,
-							label: '用户管理',
-							children: [
-								{
-									id: 131,
-									label: '用户新增',
-								},
-								{
-									id: 132,
-									label: '用户修改',
-								},
-								{
-									id: 133,
-									label: '用户删除',
-								},
-								{
-									id: 134,
-									label: '用户查询',
-								},
-							],
-						},
-					],
-				},
-				{
-					id: 2,
-					label: '权限管理',
-					children: [
-						{
-							id: 21,
-							label: '前端控制',
-							children: [
-								{
-									id: 211,
-									label: '页面权限',
-								},
-								{
-									id: 212,
-									label: '页面权限',
-								},
-							],
-						},
-						{
-							id: 22,
-							label: '后端控制',
-							children: [
-								{
-									id: 221,
-									label: '页面权限',
-								},
-							],
-						},
-					],
-				},
-			];
+      getRoleParams().then((res:any)=>{
+        state.menuData = proxy.handleTree(res.data.menu, "id","pid");
+      })
 		};
+    const resetForm = ()=>{
+      state.formData = {
+        name: '',
+            status: 1,
+            listOrder: 0,
+            remark: '',
+            menuIds:[]
+      }
+    };
+    /** 树权限（展开/折叠）*/
+    const handleCheckedTreeExpand = (value:any) => {
+      let treeList = state.menuData;
+      for (let i = 0; i < treeList.length; i++) {
+        menuRef.value.store.nodesMap[treeList[i].id].expanded = value;
+      }
+    }
+
+    /** 树权限（全选/全不选） */
+    const handleCheckedTreeNodeAll = (value:any) => {
+        menuRef.value.setCheckedNodes(value ? state.menuData : []);
+    }
+
+    /** 树权限（父子联动） */
+    const handleCheckedTreeConnect = (value:any) => {
+      state.menuCheckStrictly = value ? true : false;
+    }
 		return {
 			openDialog,
 			closeDialog,
 			onCancel,
 			onSubmit,
+      menuRef,
+      handleCheckedTreeExpand,
+      handleCheckedTreeNodeAll,
+      handleCheckedTreeConnect,
 			...toRefs(state),
 		};
 	},
@@ -233,6 +180,12 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
+.tree-border {
+  margin-top: 5px;
+  border: 1px solid #e5e6e7!important;
+  background: #fff none!important;
+  border-radius: 4px;
+}
 .system-edit-role-container {
 	.menu-data-tree {
 		border: var(--el-input-border, var(--el-border-base));

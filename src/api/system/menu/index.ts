@@ -41,7 +41,7 @@ export function getMenuInfo(id:number) {
 export function updateMenu(data:Object) {
     return request({
         url: '/api/v1/system/menu/update',
-        method: 'post',
+        method: 'put',
         data:data
     })
 }
