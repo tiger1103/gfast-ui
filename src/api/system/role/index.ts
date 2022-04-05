@@ -18,8 +18,24 @@ export function getRoleParams() {
 export function addRole(data:object) {
     return request({
         url: '/api/v1/system/role/add',
-        method: 'put',
+        method: 'post',
         data:data
     })
 }
 
+export function getRole(id:number) {
+    return request({
+        url: '/api/v1/system/role/get',
+        method: 'get',
+        params:{id}
+    })
+}
+
+
+export function editRole(data:object) {
+    return request({
+        url: '/api/v1/system/role/edit',
+        method: 'put',
+        data:data
+    })
+}

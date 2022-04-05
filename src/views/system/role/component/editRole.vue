@@ -1,10 +1,10 @@
 <template>
 	<div class="system-edit-role-container">
-		<el-dialog title="修改角色" v-model="isShowDialog" width="769px">
-			<el-form :model="formData" size="default" label-width="90px">
+		<el-dialog :title="(formData.id===0?'添加':'修改')+'角色'" v-model="isShowDialog" width="769px">
+			<el-form ref="formRef" :model="formData" :rules="rules" size="default" label-width="90px">
 				<el-row :gutter="35">
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="角色名称">
+						<el-form-item label="角色名称" prop="name">
 							<el-input v-model="formData.name" placeholder="请输入角色名称" clearable></el-input>
 						</el-form-item>
 					</el-col>
@@ -15,7 +15,7 @@
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="角色状态">
-							<el-switch v-model="formData.status" inline-prompt active-text="启" inactive-text="禁"></el-switch>
+							<el-switch v-model="formData.status" :active-value="1" :inactive-value="0" inline-prompt active-text="启" inactive-text="禁"></el-switch>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
@@ -36,7 +36,7 @@
                       :data="menuData"
                       ref="menuRef"
                       :props="menuProps"
-                      :default-checked-keys="[2,3]"
+                      :default-checked-keys="formData.menuIds"
                       node-key="id"
                       show-checkbox class="menu-data-tree tree-border"
                       :check-strictly="!menuCheckStrictly"/>
@@ -49,7 +49,7 @@
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="onCancel" size="default">取 消</el-button>
-					<el-button type="primary" @click="onSubmit" size="default">修 改</el-button>
+					<el-button type="primary" @click="onSubmit" size="default" :loading="loading">{{formData.id===0?'新 增':'修 改'}}</el-button>
 				</span>
 			</template>
 		</el-dialog>
@@ -58,7 +58,10 @@
 
 <script lang="ts">
 import { reactive, toRefs, defineComponent,ref,getCurrentInstance } from 'vue';
-import {getRoleParams} from "/@/api/system/role";
+import {addRole, editRole, getRole, getRoleParams} from "/@/api/system/role";
+import {unref} from "_vue@3.2.31@vue";
+import {ElMessage} from "_element-plus@2.1.7@element-plus";
+import {getBackEndControlRoutes} from "/@/router/backEnd";
 
 
 // 定义接口来定义对象的类型
@@ -69,6 +72,7 @@ interface MenuDataTree {
 	children?: MenuDataTree[];
 }
 interface DialogRow {
+  id:number;
 	name: string;
 	status: number;
   listOrder: number;
@@ -76,6 +80,7 @@ interface DialogRow {
   menuIds:Array<number>
 }
 interface RoleState {
+  loading:boolean;
 	isShowDialog: boolean;
 	formData: DialogRow;
 	menuData: Array<MenuDataTree>;
@@ -86,22 +91,32 @@ interface RoleState {
 		children: string;
 		label: string;
 	};
+  rules: object;
 }
 
 export default defineComponent({
 	name: 'systemEditRole',
-	setup() {
+	setup(props,{emit}) {
     const {proxy} = getCurrentInstance() as any;
-    const menuRef = ref()
+    const formRef = ref<HTMLElement | null>(null);
+    const menuRef = ref();
 		const state = reactive<RoleState>({
+      loading:false,
 			isShowDialog: false,
 			formData: {
+        id:0,
         name: '',
         status: 1,
         listOrder: 0,
         remark: '',
         menuIds:[]
 			},
+      // 表单校验
+      rules: {
+        name:[
+          {required: true, message: "角色名称不能为空", trigger: "blur"},
+        ]
+      },
 			menuData: [],
       menuExpand:false,
       menuNodeAll:false,
@@ -113,12 +128,17 @@ export default defineComponent({
 		});
 		// 打开弹窗
 		const openDialog = (row?: DialogRow) => {
-      if(row) {
-        state.formData = row;
-      }
-			state.isShowDialog = true;
       resetForm();
 			getMenuData();
+      if(row) {
+        getRole(row.id).then((res:any)=>{
+          if(res.data.role){
+            state.formData = res.data.role;
+            state.formData.menuIds = res.data.menuIds??[]
+          }
+        })
+      }
+			state.isShowDialog = true;
 		};
 		// 关闭弹窗
 		const closeDialog = () => {
@@ -130,7 +150,35 @@ export default defineComponent({
 		};
 		// 新增
 		const onSubmit = () => {
-			closeDialog();
+      const formWrap = unref(formRef) as any;
+      if (!formWrap) return;
+      formWrap.validate((valid: boolean) => {
+        if (valid) {
+          state.loading = true;
+          state.formData.menuIds = getMenuAllCheckedKeys();
+          if(state.formData.id===0){
+            //添加
+            addRole(state.formData).then(()=>{
+              ElMessage.success('角色添加成功');
+              closeDialog(); // 关闭弹窗
+              resetMenuSession()
+              emit('getRoleList')
+            }).finally(()=>{
+              state.loading = false;
+            })
+          }else{
+            //修改
+            editRole(state.formData).then(()=>{
+              ElMessage.success('角色修改成功');
+              closeDialog(); // 关闭弹窗
+              resetMenuSession()
+              emit('getRoleList')
+            }).finally(()=>{
+              state.loading = false;
+            })
+          }
+        }
+      });
 		};
 		// 获取菜单结构数据
 		const getMenuData = () => {
@@ -139,12 +187,16 @@ export default defineComponent({
       })
 		};
     const resetForm = ()=>{
+      state.menuCheckStrictly=false;
+      state.menuExpand = false;
+      state.menuNodeAll = false;
       state.formData = {
+        id:0,
         name: '',
-            status: 1,
-            listOrder: 0,
-            remark: '',
-            menuIds:[]
+        status: 1,
+        listOrder: 0,
+        remark: '',
+        menuIds:[]
       }
     };
     /** 树权限（展开/折叠）*/
@@ -164,12 +216,28 @@ export default defineComponent({
     const handleCheckedTreeConnect = (value:any) => {
       state.menuCheckStrictly = value ? true : false;
     }
+
+    /** 所有菜单节点数据 */
+    function getMenuAllCheckedKeys() {
+      // 目前被选中的菜单节点
+      let checkedKeys = menuRef.value.getCheckedKeys();
+      // 半选中的菜单节点
+      let halfCheckedKeys = menuRef.value.getHalfCheckedKeys();
+      checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
+      return checkedKeys;
+    }
+
+    // 重置菜单session
+    const resetMenuSession = () => {
+      getBackEndControlRoutes();
+    };
 		return {
 			openDialog,
 			closeDialog,
 			onCancel,
 			onSubmit,
       menuRef,
+      formRef,
       handleCheckedTreeExpand,
       handleCheckedTreeNodeAll,
       handleCheckedTreeConnect,

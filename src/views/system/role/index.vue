@@ -43,12 +43,12 @@
           @pagination="roleList"
       />
 		</el-card>
-		<EditRole ref="editRoleRef" />
+		<EditRole ref="editRoleRef" @getRoleList="roleList"/>
 	</div>
 </template>
 
 <script lang="ts">
-import { toRefs, reactive, onMounted, ref, defineComponent } from 'vue';
+import {toRefs, reactive, onMounted, ref, defineComponent, toRaw} from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import EditRole from '/@/views/system/role/component/editRole.vue';
 import {getRoleList} from "/@/api/system/role";
@@ -120,7 +120,7 @@ export default defineComponent({
 		};
 		// 打开修改角色弹窗
 		const onOpenEditRole = (row: Object) => {
-			editRoleRef.value.openDialog(row);
+			editRoleRef.value.openDialog(toRaw(row));
 		};
 		// 删除角色
 		const onRowDel = (row: any) => {

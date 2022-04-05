@@ -143,7 +143,7 @@ import { reactive, toRefs, defineComponent,ref,unref,getCurrentInstance,nextTick
 import IconSelector from '/@/components/iconSelector/index.vue';
 import { getBackEndControlRoutes } from "/@/router/backEnd";
 import {getMenuParams, addMenu, getMenuInfo, updateMenu} from "/@/api/system/menu";
-import {ElMessage} from "_element-plus@2.1.2@element-plus";
+import {ElMessage} from "element-plus"
 
 
 export default defineComponent({
@@ -269,6 +269,7 @@ export default defineComponent({
       if (!formWrap) return;
       formWrap.validate((valid: boolean) => {
         if (valid) {
+          state.loading = true;
           if(props.acType==='add'){
             //添加
             addMenu(state.ruleForm).then(()=>{
@@ -276,6 +277,8 @@ export default defineComponent({
               closeDialog(); // 关闭弹窗
               resetMenuSession()
               emit('menuList')
+            }).finally(()=>{
+              state.loading = false;
             })
           }else{
             //修改
@@ -284,6 +287,8 @@ export default defineComponent({
               closeDialog(); // 关闭弹窗
               resetMenuSession()
               emit('menuList')
+            }).finally(()=>{
+              state.loading = false;
             })
           }
         }
