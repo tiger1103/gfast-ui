@@ -39,3 +39,12 @@ export function editRole(data:object) {
         data:data
     })
 }
+
+
+export function deleteRole(id:number) {
+    return request({
+        url: '/api/v1/system/role/delete',
+        method: 'delete',
+        data:{ids:[id]}
+    })
+}

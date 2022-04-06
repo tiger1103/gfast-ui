@@ -2,19 +2,31 @@
 	<div class="system-role-container">
 		<el-card shadow="hover">
 			<div class="system-user-search mb15">
-				<el-input size="default" placeholder="请输入角色名称" style="max-width: 180px"> </el-input>
-				<el-button size="default" type="primary" class="ml10">
-					<el-icon>
-						<ele-Search />
-					</el-icon>
-					查询
-				</el-button>
-				<el-button size="default" type="success" class="ml10" @click="onOpenAddRole">
-					<el-icon>
-						<ele-FolderAdd />
-					</el-icon>
-					新增角色
-				</el-button>
+        <el-form :inline="true">
+          <el-form-item label="角色名称">
+            <el-input size="default" v-model="tableData.param.roleName" placeholder="请输入角色名称" class="w-50 m-2"> </el-input>
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-select size="default" placeholder="请选择状态" class="w-50 m-2" v-model="tableData.param.roleStatus">
+              <el-option label="启用"  value="1" />
+              <el-option label="禁用"  value="0" />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button size="default" type="primary" class="ml10" @click="roleList">
+              <el-icon>
+                <ele-Search />
+              </el-icon>
+              查询
+            </el-button>
+            <el-button size="default" type="success" class="ml10" @click="onOpenAddRole">
+              <el-icon>
+                <ele-FolderAdd />
+              </el-icon>
+              新增角色
+            </el-button>
+          </el-form-item>
+        </el-form>
 			</div>
 			<el-table :data="tableData.data" style="width: 100%">
 				<el-table-column type="index" label="序号" width="60" />
@@ -48,10 +60,10 @@
 </template>
 
 <script lang="ts">
-import {toRefs, reactive, onMounted, ref, defineComponent, toRaw} from 'vue';
+import {toRefs, reactive, onMounted, ref, defineComponent, toRaw,getCurrentInstance} from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import EditRole from '/@/views/system/role/component/editRole.vue';
-import {getRoleList} from "/@/api/system/role";
+import {deleteRole, getRoleList} from "/@/api/system/role";
 // 定义接口来定义对象的类型
 interface TableData {
   id:number;
@@ -68,6 +80,8 @@ interface TableDataState {
 		total: number;
 		loading: boolean;
 		param: {
+      roleName:string;
+      roleStatus:string;
 			pageNum: number;
 			pageSize: number;
 		};
@@ -78,6 +92,7 @@ export default defineComponent({
 	name: 'apiV1SystemRoleList',
 	components: {EditRole},
 	setup() {
+    const {proxy} = getCurrentInstance() as any;
 		const addRoleRef = ref();
 		const editRoleRef = ref();
 		const state = reactive<TableDataState>({
@@ -86,6 +101,8 @@ export default defineComponent({
 				total: 0,
 				loading: false,
 				param: {
+          roleName:'',
+          roleStatus:'',
 					pageNum: 1,
 					pageSize: 10,
 				},
@@ -124,13 +141,17 @@ export default defineComponent({
 		};
 		// 删除角色
 		const onRowDel = (row: any) => {
-			ElMessageBox.confirm(`此操作将永久删除角色名称：“${row.roleName}”，是否继续?`, '提示', {
+			ElMessageBox.confirm(`此操作将永久删除角色：“${row.name}”，是否继续?`, '提示', {
 				confirmButtonText: '确认',
 				cancelButtonText: '取消',
 				type: 'warning',
 			})
 				.then(() => {
-					ElMessage.success('删除成功');
+          deleteRole(row.id).then(()=>{
+            ElMessage.success('删除成功');
+            proxy.$refs['editRoleRef'].resetMenuSession();
+            roleList();
+          })
 				})
 				.catch(() => {});
 		};

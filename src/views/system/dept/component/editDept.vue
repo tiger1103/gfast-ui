@@ -114,12 +114,14 @@ export default defineComponent({
 			deptData: [], // 部门数据
 		});
 		// 打开弹窗
-		const openDialog = (row: RuleFormState) => {
-			row.deptLevel = ['vueNextAdmin'];
-			row.person = 'lyt';
-			row.phone = '12345678910';
-			row.email = 'vueNextAdmin@123.com';
-			state.ruleForm = row;
+		const openDialog = (row?: RuleFormState) => {
+      if(row){
+        row.deptLevel = ['vueNextAdmin'];
+        row.person = 'lyt';
+        row.phone = '12345678910';
+        row.email = 'vueNextAdmin@123.com';
+        state.ruleForm = row;
+      }
 			state.isShowDialog = true;
 		};
 		// 关闭弹窗

@@ -57,10 +57,9 @@
 </template>
 
 <script lang="ts">
-import { reactive, toRefs, defineComponent,ref,getCurrentInstance } from 'vue';
+import { reactive, toRefs, defineComponent,ref,getCurrentInstance,unref } from 'vue';
 import {addRole, editRole, getRole, getRoleParams} from "/@/api/system/role";
-import {unref} from "_vue@3.2.31@vue";
-import {ElMessage} from "_element-plus@2.1.7@element-plus";
+import {ElMessage} from "element-plus";
 import {getBackEndControlRoutes} from "/@/router/backEnd";
 
 
@@ -241,6 +240,7 @@ export default defineComponent({
       handleCheckedTreeExpand,
       handleCheckedTreeNodeAll,
       handleCheckedTreeConnect,
+      resetMenuSession,
 			...toRefs(state),
 		};
 	},
