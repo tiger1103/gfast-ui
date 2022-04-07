@@ -25,3 +25,12 @@ export function editDept(data:object) {
         data:data
     })
 }
+
+
+export function deleteDept(id:number) {
+    return request({
+        url: '/api/v1/system/dept/delete',
+        method: 'delete',
+        data:{id}
+    })
+}

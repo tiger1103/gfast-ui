@@ -55,14 +55,14 @@
           @pagination="roleList"
       />
 		</el-card>
-		<EditRole ref="editRoleRef" @getRoleList="roleList"/>
+		<EditPost ref="editRoleRef" @getRoleList="roleList"/>
 	</div>
 </template>
 
 <script lang="ts">
 import {toRefs, reactive, onMounted, ref, defineComponent, toRaw,getCurrentInstance} from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import EditRole from '/@/views/system/role/component/editRole.vue';
+import EditPost from '/@/views/system/post/component/editPost.vue';
 import {deleteRole, getRoleList} from "/@/api/system/role";
 // 定义接口来定义对象的类型
 interface TableData {
@@ -90,7 +90,7 @@ interface TableDataState {
 
 export default defineComponent({
 	name: 'apiV1SystemRoleList',
-	components: {EditRole},
+	components: {EditPost},
 	setup() {
     const {proxy} = getCurrentInstance() as any;
 		const addRoleRef = ref();

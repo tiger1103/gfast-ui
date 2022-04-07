@@ -2,20 +2,32 @@
 	<div class="system-dept-container">
 		<el-card shadow="hover">
 			<div class="system-dept-search mb15">
-				<el-input size="default" placeholder="请输入部门名称" style="max-width: 180px"> </el-input>
-				<el-button size="default" type="primary" class="ml10">
-					<el-icon>
-						<ele-Search />
-					</el-icon>
-					查询
-				</el-button>
-				<el-button size="default" type="success" class="ml10" @click="onOpenAddDept">
-					<el-icon>
-						<ele-FolderAdd />
-					</el-icon>
-					新增部门
-				</el-button>
-			</div>
+        <el-form :inline="true">
+          <el-form-item label="部门名称">
+            <el-input size="default" v-model="tableData.param.deptName" placeholder="请输入部门名称" class="w-50 m-2" clearable/>
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-select size="default" placeholder="请选择状态" class="w-50 m-2" v-model="tableData.param.status" clearable>
+              <el-option label="启用"  value="1" />
+              <el-option label="禁用"  value="0" />
+            </el-select>
+          </el-form-item>
+				  <el-form-item>
+            <el-button size="default" type="primary" class="ml10" @click="deptList">
+              <el-icon>
+                <ele-Search />
+              </el-icon>
+              查询
+            </el-button>
+            <el-button size="default" type="success" class="ml10" @click="onOpenAddDept">
+              <el-icon>
+                <ele-FolderAdd />
+              </el-icon>
+              新增部门
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </div>
 			<el-table
 				:data="tableData.data"
 				style="width: 100%"
@@ -49,7 +61,7 @@
 import { ref, toRefs, reactive, onMounted, defineComponent,getCurrentInstance } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import EditDept from '/@/views/system/dept/component/editDept.vue';
-import {getDeptList} from "/@/api/system/dept";
+import {deleteDept, getDeptList} from "/@/api/system/dept";
 
 // 定义接口来定义对象的类型
 interface TableDataRow {
@@ -68,6 +80,8 @@ interface TableDataState {
 		param: {
 			pageNum: number;
 			pageSize: number;
+      deptName:string;
+      status:string;
 		};
 	};
 }
@@ -85,6 +99,8 @@ export default defineComponent({
 				param: {
 					pageNum: 1,
 					pageSize: 10,
+          deptName:'',
+          status:''
 				},
 			},
 		});
@@ -113,7 +129,10 @@ export default defineComponent({
 				type: 'warning',
 			})
 				.then(() => {
-					ElMessage.success('删除成功');
+          deleteDept(row.deptId).then(()=>{
+					  ElMessage.success('删除成功');
+            deptList();
+          })
 				})
 				.catch(() => {});
 		};

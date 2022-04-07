@@ -1,6 +1,6 @@
 <template>
 	<div class="system-edit-dept-container">
-		<el-dialog :title="(ruleForm.id!==0?'修改':'添加')+'部门'" v-model="isShowDialog" width="769px">
+		<el-dialog :title="(ruleForm.deptId!==0?'修改':'添加')+'部门'" v-model="isShowDialog" width="769px">
 			<el-form ref="formRef" :model="ruleForm" :rules="rules" size="default" label-width="90px">
 				<el-row :gutter="35">
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
@@ -55,7 +55,7 @@
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="onCancel" size="default">取 消</el-button>
-					<el-button type="primary" @click="onSubmit" size="default">{{ruleForm.id!==0?'修 改':'添 加'}}</el-button>
+					<el-button type="primary" @click="onSubmit" size="default">{{ruleForm.deptId!==0?'修 改':'添 加'}}</el-button>
 				</span>
 			</template>
 		</el-dialog>
@@ -63,10 +63,9 @@
 </template>
 
 <script lang="ts">
-import {reactive, toRefs, defineComponent, getCurrentInstance,ref} from 'vue';
+import {reactive, toRefs, defineComponent, getCurrentInstance,ref,unref} from 'vue';
 import {addDept,editDept, getDeptList} from "/@/api/system/dept";
-import {unref} from "_vue@3.2.31@vue";
-import {ElMessage} from "_element-plus@2.1.2@element-plus";
+import {ElMessage} from "element-plus";
 
 // 定义接口来定义对象的类型
 interface TableDataRow {
