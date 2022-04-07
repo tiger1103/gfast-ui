@@ -1,17 +1,17 @@
 <template>
 	<div class="system-edit-dept-container">
-		<el-dialog title="修改部门" v-model="isShowDialog" width="769px">
-			<el-form :model="ruleForm" size="default" label-width="90px">
+		<el-dialog :title="(ruleForm.id!==0?'修改':'添加')+'部门'" v-model="isShowDialog" width="769px">
+			<el-form ref="formRef" :model="ruleForm" :rules="rules" size="default" label-width="90px">
 				<el-row :gutter="35">
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 						<el-form-item label="上级部门">
 							<el-cascader
 								:options="deptData"
-								:props="{ checkStrictly: true, value: 'deptName', label: 'deptName' }"
+								:props="{ checkStrictly: true,emitPath: false, value: 'deptId', label: 'deptName' }"
 								placeholder="请选择部门"
 								clearable
 								class="w100"
-								v-model="ruleForm.deptLevel"
+								v-model="ruleForm.parentId"
 							>
 								<template #default="{ node, data }">
 									<span>{{ data.deptName }}</span>
@@ -21,13 +21,13 @@
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="部门名称">
+						<el-form-item label="部门名称" prop="deptName">
 							<el-input v-model="ruleForm.deptName" placeholder="请输入部门名称" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="负责人">
-							<el-input v-model="ruleForm.person" placeholder="请输入负责人" clearable></el-input>
+							<el-input v-model="ruleForm.leader" placeholder="请输入负责人" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
@@ -42,17 +42,12 @@
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="排序">
-							<el-input-number v-model="ruleForm.sort" :min="0" :max="999" controls-position="right" placeholder="请输入排序" class="w100" />
+							<el-input-number v-model="ruleForm.orderNum" :min="0" :max="999" controls-position="right" placeholder="请输入排序" class="w100" />
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="部门状态">
-							<el-switch v-model="ruleForm.status" inline-prompt active-text="启" inactive-text="禁"></el-switch>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="部门描述">
-							<el-input v-model="ruleForm.describe" type="textarea" placeholder="请输入部门描述" maxlength="150"></el-input>
+							<el-switch v-model="ruleForm.status" :active-value="1" :inactive-value="0" inline-prompt active-text="启" inactive-text="禁"></el-switch>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -60,7 +55,7 @@
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="onCancel" size="default">取 消</el-button>
-					<el-button type="primary" @click="onSubmit" size="default">修 改</el-button>
+					<el-button type="primary" @click="onSubmit" size="default">{{ruleForm.id!==0?'修 改':'添 加'}}</el-button>
 				</span>
 			</template>
 		</el-dialog>
@@ -68,59 +63,69 @@
 </template>
 
 <script lang="ts">
-import { reactive, toRefs, onMounted, defineComponent } from 'vue';
+import {reactive, toRefs, defineComponent, getCurrentInstance,ref} from 'vue';
+import {addDept,editDept, getDeptList} from "/@/api/system/dept";
+import {unref} from "_vue@3.2.31@vue";
+import {ElMessage} from "_element-plus@2.1.2@element-plus";
 
 // 定义接口来定义对象的类型
 interface TableDataRow {
 	deptName: string;
-	createTime: string;
-	status: boolean;
-	sort: number;
-	describe: string;
 	id: number;
+  parentId:number;
 	children?: TableDataRow[];
 }
 interface RuleFormState {
-	deptLevel: Array<string>;
+  deptId:number;
+	parentId: number;
 	deptName: string;
-	person: string;
+  orderNum: number;
+  leader: string;
 	phone: string | number;
 	email: string;
-	sort: number;
-	status: boolean;
-	describe: string;
+	status: number;
 }
 interface DeptSate {
 	isShowDialog: boolean;
 	ruleForm: RuleFormState;
 	deptData: Array<TableDataRow>;
+  rules: object;
 }
 
 export default defineComponent({
 	name: 'systemEditDept',
-	setup() {
+	setup(prop,{emit}) {
+    const {proxy} = getCurrentInstance() as any;
+    const formRef = ref<HTMLElement | null>(null);
 		const state = reactive<DeptSate>({
 			isShowDialog: false,
 			ruleForm: {
-				deptLevel: [], // 上级部门
+        deptId:0,
+        parentId: 0, // 上级部门
 				deptName: '', // 部门名称
-				person: '', // 负责人
-				phone: '', // 手机号
-				email: '', // 邮箱
-				sort: 0, // 排序
-				status: true, // 部门状态
-				describe: '', // 部门描述
+        orderNum:0,
+        leader: '',
+        phone: '',
+        email: '',
+        status: 1,
 			},
 			deptData: [], // 部门数据
+      rules: {
+        deptName:[
+          {required: true, message: "部门名称不能为空", trigger: "blur"},
+        ]
+      }
 		});
 		// 打开弹窗
-		const openDialog = (row?: RuleFormState) => {
-      if(row){
-        row.deptLevel = ['vueNextAdmin'];
-        row.person = 'lyt';
-        row.phone = '12345678910';
-        row.email = 'vueNextAdmin@123.com';
+		const openDialog = (row?: RuleFormState|number) => {
+      resetForm()
+      getDeptList().then((res:any)=>{
+        state.deptData =  proxy.handleTree(res.data.deptList??[], "deptId","parentId");
+      });
+      if(row && typeof row === "object"){
         state.ruleForm = row;
+      }else if(row && typeof row === 'number'){
+        state.ruleForm.parentId = row
       }
 			state.isShowDialog = true;
 		};
@@ -134,46 +139,46 @@ export default defineComponent({
 		};
 		// 新增
 		const onSubmit = () => {
-			closeDialog();
+      const formWrap = unref(formRef) as any;
+      if (!formWrap) return;
+      formWrap.validate((valid: boolean) => {
+        if (valid) {
+          if(state.ruleForm.deptId===0){
+            //添加
+            addDept(state.ruleForm).then(()=>{
+              ElMessage.success('角色添加成功');
+              closeDialog(); // 关闭弹窗
+              emit('deptList')
+            });
+          }else{
+            //修改
+            editDept(state.ruleForm).then(()=>{
+              ElMessage.success('角色修改成功');
+              closeDialog(); // 关闭弹窗
+              emit('deptList')
+            });
+          }
+        }
+      });
 		};
-		// 初始化部门数据
-		const initTableData = () => {
-			state.deptData.push({
-				deptName: 'vueNextAdmin',
-				createTime: new Date().toLocaleString(),
-				status: true,
-				sort: Math.random(),
-				describe: '顶级部门',
-				id: Math.random(),
-				children: [
-					{
-						deptName: 'IT外包服务',
-						createTime: new Date().toLocaleString(),
-						status: true,
-						sort: Math.random(),
-						describe: '总部',
-						id: Math.random(),
-					},
-					{
-						deptName: '资本控股',
-						createTime: new Date().toLocaleString(),
-						status: true,
-						sort: Math.random(),
-						describe: '分部',
-						id: Math.random(),
-					},
-				],
-			});
-		};
-		// 页面加载时
-		onMounted(() => {
-			initTableData();
-		});
+    const resetForm = ()=>{
+      state.ruleForm = {
+        deptId:0,
+        parentId: 0, // 上级部门
+        deptName: '', // 部门名称
+        orderNum:0,
+        leader: '',
+        phone: '',
+        email: '',
+        status: 1,
+      }
+    };
 		return {
 			openDialog,
 			closeDialog,
 			onCancel,
 			onSubmit,
+      formRef,
 			...toRefs(state),
 		};
 	},

@@ -111,7 +111,7 @@
 						</el-col>
 						<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 							<el-form-item label="是否外链">
-								<el-radio-group v-model="ruleForm.isLink" :disabled="ruleForm.isIframe===0">
+								<el-radio-group v-model="ruleForm.isLink" :disabled="ruleForm.isIframe===1">
 									<el-radio :label="1">是</el-radio>
 									<el-radio :label="0">否</el-radio>
 								</el-radio-group>

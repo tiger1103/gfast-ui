@@ -34,14 +34,14 @@
 				<el-table-column prop="createdAt" label="创建时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="操作" show-overflow-tooltip width="140">
 					<template #default="scope">
-						<el-button size="small" type="text" @click="onOpenAddDept">新增</el-button>
+						<el-button size="small" type="text" @click="onOpenAddDept(scope.row)">新增</el-button>
 						<el-button size="small" type="text" @click="onOpenEditDept(scope.row)">修改</el-button>
 						<el-button size="small" type="text" @click="onTabelRowDel(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 		</el-card>
-		<EditDept ref="editDeptRef" />
+		<EditDept ref="editDeptRef" @deptList="deptList"/>
 	</div>
 </template>
 
@@ -98,8 +98,8 @@ export default defineComponent({
       });
     };
 		// 打开新增菜单弹窗
-		const onOpenAddDept = () => {
-      editDeptRef.value.openDialog();
+		const onOpenAddDept = (row?: TableDataRow) => {
+      editDeptRef.value.openDialog(row?.deptId);
 		};
 		// 打开编辑菜单弹窗
 		const onOpenEditDept = (row: TableDataRow) => {
@@ -123,6 +123,7 @@ export default defineComponent({
 		});
 		return {
 			editDeptRef,
+      deptList,
 			onOpenAddDept,
 			onOpenEditDept,
 			onTabelRowDel,
