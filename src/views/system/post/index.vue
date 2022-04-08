@@ -1,48 +1,59 @@
 <template>
-	<div class="system-role-container">
+	<div class="system-post-container">
 		<el-card shadow="hover">
 			<div class="system-user-search mb15">
         <el-form :inline="true">
-          <el-form-item label="角色名称">
-            <el-input size="default" v-model="tableData.param.roleName" placeholder="请输入角色名称" class="w-50 m-2" clearable/>
+          <el-form-item label="岗位名称">
+            <el-input size="default" v-model="tableData.param.postName" placeholder="请输入岗位名称" class="w-50 m-2" clearable/>
+          </el-form-item>
+          <el-form-item label="岗位编码">
+            <el-input size="default" v-model="tableData.param.postCode" placeholder="请输入岗位编码" class="w-50 m-2" clearable/>
           </el-form-item>
           <el-form-item label="状态">
-            <el-select size="default" placeholder="请选择状态" class="w-50 m-2" v-model="tableData.param.roleStatus" clearable>
+            <el-select size="default" placeholder="请选择状态" class="w-50 m-2" v-model="tableData.param.status" clearable>
               <el-option label="启用"  value="1" />
               <el-option label="禁用"  value="0" />
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button size="default" type="primary" class="ml10" @click="roleList">
+            <el-button size="default" type="primary" class="ml10" @click="postList">
               <el-icon>
                 <ele-Search />
               </el-icon>
               查询
             </el-button>
-            <el-button size="default" type="success" class="ml10" @click="onOpenAddRole">
+            <el-button size="default" type="success" class="ml10" @click="onOpenAddPost">
               <el-icon>
                 <ele-FolderAdd />
               </el-icon>
-              新增角色
+              新增岗位
+            </el-button>
+            <el-button size="default" type="danger" class="ml10" @click="onRowDel(null)">
+              <el-icon>
+                <ele-Delete />
+              </el-icon>
+              删除岗位
             </el-button>
           </el-form-item>
         </el-form>
 			</div>
-			<el-table :data="tableData.data" style="width: 100%">
+			<el-table :data="tableData.data" style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table-column type="selection" width="55" align="center" />
 				<el-table-column type="index" label="序号" width="60" />
-				<el-table-column prop="name" label="角色名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="listOrder" label="排序" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="status" label="角色状态" show-overflow-tooltip>
+				<el-table-column prop="postCode" label="岗位编码" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="postName" label="岗位名称" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="postSort" label="排序" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="status" label="岗位状态" show-overflow-tooltip>
 					<template #default="scope">
 						<el-tag type="success" v-if="scope.row.status===1">启用</el-tag>
 						<el-tag type="info" v-else>禁用</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column prop="remark" label="角色描述" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="remark" label="岗位描述" show-overflow-tooltip></el-table-column>
         <el-table-column prop="createdAt" label="创建时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="操作" width="100">
 					<template #default="scope">
-						<el-button size="small" type="text" @click="onOpenEditRole(scope.row)">修改</el-button>
+						<el-button size="small" type="text" @click="onOpenEditPost(scope.row)">修改</el-button>
 						<el-button size="small" type="text" @click="onRowDel(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
@@ -52,36 +63,38 @@
           :total="tableData.total"
           v-model:page="tableData.param.pageNum"
           v-model:limit="tableData.param.pageSize"
-          @pagination="roleList"
+          @pagination="postList"
       />
 		</el-card>
-		<EditPost ref="editRoleRef" @getRoleList="roleList"/>
+		<EditPost ref="editPostRef" @getPostList="postList"/>
 	</div>
 </template>
 
 <script lang="ts">
-import {toRefs, reactive, onMounted, ref, defineComponent, toRaw,getCurrentInstance} from 'vue';
+import {toRefs, reactive, onMounted, ref, defineComponent, toRaw} from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import EditPost from '/@/views/system/post/component/editPost.vue';
-import {deleteRole, getRoleList} from "/@/api/system/role";
+import {deletePost, getPostList} from "/@/api/system/post";
 // 定义接口来定义对象的类型
 interface TableData {
-  id:number;
-	status: number;
-	listOrder: number;
-	name: string;
-  remark: string;
-  dataScope:number;
-  createdAt: string;
+  postId:number;
+  postCode:string;
+  postName:string;
+  postSort:number;
+  status:number;
+  remark:string;
+  createdAt:string;
 }
 interface TableDataState {
+  ids:number[];
 	tableData: {
 		data: Array<TableData>;
 		total: number;
 		loading: boolean;
 		param: {
-      roleName:string;
-      roleStatus:string;
+      postName:string;
+      status:string;
+      postCode:string;
 			pageNum: number;
 			pageSize: number;
 		};
@@ -89,20 +102,21 @@ interface TableDataState {
 }
 
 export default defineComponent({
-	name: 'apiV1SystemRoleList',
+	name: 'apiV1SystemPostList',
 	components: {EditPost},
 	setup() {
-    const {proxy} = getCurrentInstance() as any;
-		const addRoleRef = ref();
-		const editRoleRef = ref();
+		const addPostRef = ref();
+		const editPostRef = ref();
 		const state = reactive<TableDataState>({
+      ids:[],
 			tableData: {
 				data: [],
 				total: 0,
 				loading: false,
 				param: {
-          roleName:'',
-          roleStatus:'',
+          postName:'',
+          status:'',
+          postCode:'',
 					pageNum: 1,
 					pageSize: 10,
 				},
@@ -110,47 +124,45 @@ export default defineComponent({
 		});
 		// 初始化表格数据
 		const initTableData = () => {
-			roleList()
+			postList()
 		};
-    const roleList = ()=>{
-      const data: Array<TableData> = [];
-      getRoleList(state.tableData.param).then(res=>{
-        const list = res.data.list??[]
-        list.map((item:TableData)=>{
-          data.push({
-            id:item.id,
-            status: item.status,
-            listOrder: item.listOrder,
-            name: item.name,
-            remark: item.remark,
-            dataScope:item.dataScope,
-            createdAt: item.createdAt,
-          });
-        })
-        state.tableData.data = data;
+    const postList = ()=>{
+      getPostList(state.tableData.param).then(res=>{
+        state.tableData.data = res.data.postList??[];
         state.tableData.total = res.data.total;
       })
     };
-		// 打开新增角色弹窗
-		const onOpenAddRole = () => {
-      editRoleRef.value.openDialog();
+		// 打开新增岗位弹窗
+		const onOpenAddPost = () => {
+      editPostRef.value.openDialog();
 		};
-		// 打开修改角色弹窗
-		const onOpenEditRole = (row: Object) => {
-			editRoleRef.value.openDialog(toRaw(row));
+		// 打开修改岗位弹窗
+		const onOpenEditPost = (row: Object) => {
+			editPostRef.value.openDialog(toRaw(row));
 		};
-		// 删除角色
+		// 删除岗位
 		const onRowDel = (row: any) => {
-			ElMessageBox.confirm(`此操作将永久删除角色：“${row.name}”，是否继续?`, '提示', {
+      let msg = '你确定要删除所选岗位？';
+      let ids:number[] = [] ;
+      if(row){
+        msg = `此操作将永久删除岗位：“${row.postName}”，是否继续?`
+        ids = [row.postId]
+      }else{
+        ids = state.ids
+      }
+      if(ids.length===0){
+        ElMessage.error('请选择要删除的数据。');
+        return
+      }
+			ElMessageBox.confirm(msg, '提示', {
 				confirmButtonText: '确认',
 				cancelButtonText: '取消',
 				type: 'warning',
 			})
 				.then(() => {
-          deleteRole(row.id).then(()=>{
+          deletePost(ids).then(()=>{
             ElMessage.success('删除成功');
-            proxy.$refs['editRoleRef'].resetMenuSession();
-            roleList();
+            postList();
           })
 				})
 				.catch(() => {});
@@ -167,15 +179,20 @@ export default defineComponent({
 		onMounted(() => {
 			initTableData();
 		});
+    // 多选框选中数据
+    const handleSelectionChange = (selection:Array<TableData>)=> {
+      state.ids = selection.map(item => item.postId)
+    };
 		return {
-			addRoleRef,
-			editRoleRef,
-			onOpenAddRole,
-			onOpenEditRole,
+			addPostRef,
+			editPostRef,
+			onOpenAddPost,
+			onOpenEditPost,
 			onRowDel,
 			onHandleSizeChange,
 			onHandleCurrentChange,
-      roleList,
+      postList,
+      handleSelectionChange,
 			...toRefs(state),
 		};
 	},

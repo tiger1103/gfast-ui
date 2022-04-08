@@ -1,55 +1,30 @@
 <template>
-	<div class="system-edit-role-container">
-		<el-dialog :title="(formData.id===0?'添加':'修改')+'角色'" v-model="isShowDialog" width="769px">
+	<div class="system-edit-post-container">
+		<el-dialog v-model="isShowDialog" width="769px">
+      <template #title>
+        <div v-drag="['.system-edit-post-container .el-dialog', '.system-edit-post-container .el-dialog__header']">{{(formData.postId===0?'添加':'修改')+'岗位'}}</div>
+      </template>
 			<el-form ref="formRef" :model="formData" :rules="rules" size="default" label-width="90px">
-				<el-row :gutter="35">
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="角色名称" prop="name">
-							<el-input v-model="formData.name" placeholder="请输入角色名称" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="排序">
-							<el-input-number v-model="formData.listOrder" :min="0" controls-position="right" placeholder="请输入排序" class="w100" />
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="角色状态">
-							<el-switch v-model="formData.status" :active-value="1" :inactive-value="0" inline-prompt active-text="启" inactive-text="禁"></el-switch>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="角色描述">
-							<el-input v-model="formData.remark" type="textarea" placeholder="请输入角色描述" maxlength="150"></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="菜单权限">
-              <el-row :gutter="35">
-                <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-                  <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event)">展开/折叠</el-checkbox>
-                  <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event)">全选/全不选</el-checkbox>
-                  <el-checkbox v-model="menuCheckStrictly" @change="handleCheckedTreeConnect($event)">父子联动</el-checkbox>
-                </el-col>
-                <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-                  <el-tree
-                      :data="menuData"
-                      ref="menuRef"
-                      :props="menuProps"
-                      :default-checked-keys="formData.menuIds"
-                      node-key="id"
-                      show-checkbox class="menu-data-tree tree-border"
-                      :check-strictly="!menuCheckStrictly"/>
-                </el-col>
-              </el-row>
-						</el-form-item>
-					</el-col>
-				</el-row>
+        <el-form-item label="岗位名称" prop="postName">
+          <el-input v-model="formData.postName" placeholder="请输入岗位名称" />
+        </el-form-item>
+        <el-form-item label="岗位编码" prop="postCode">
+          <el-input v-model="formData.postCode" placeholder="请输入编码名称" />
+        </el-form-item>
+        <el-form-item label="岗位顺序" prop="postSort">
+          <el-input-number v-model="formData.postSort" controls-position="right" :min="0" />
+        </el-form-item>
+        <el-form-item label="岗位状态" prop="status">
+          <el-switch v-model="formData.status" :active-value="1" :inactive-value="0" inline-prompt active-text="启" inactive-text="禁"></el-switch>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="formData.remark" type="textarea" placeholder="请输入内容" />
+        </el-form-item>
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="onCancel" size="default">取 消</el-button>
-					<el-button type="primary" @click="onSubmit" size="default" :loading="loading">{{formData.id===0?'新 增':'修 改'}}</el-button>
+					<el-button type="primary" @click="onSubmit" size="default" :loading="loading">{{formData.postId===0?'新 增':'修 改'}}</el-button>
 				</span>
 			</template>
 		</el-dialog>
@@ -57,32 +32,22 @@
 </template>
 
 <script lang="ts">
-import { reactive, toRefs, defineComponent,ref,getCurrentInstance,unref } from 'vue';
-import {addRole, editRole, getRole, getRoleParams} from "/@/api/system/role";
+import { reactive, toRefs, defineComponent,ref,unref } from 'vue';
+import {addPost, editPost} from "/@/api/system/post";
 import {ElMessage} from "element-plus";
-import {getBackEndControlRoutes} from "/@/router/backEnd";
 
-
-// 定义接口来定义对象的类型
-interface MenuDataTree {
-	id: number;
-  pid:number;
-	title: string;
-	children?: MenuDataTree[];
-}
 interface DialogRow {
-  id:number;
-	name: string;
-	status: number;
-  listOrder: number;
-  remark: string;
-  menuIds:Array<number>
+  postId:number;
+  postCode:string;
+  postName:string;
+  postSort:number;
+  status:number;
+  remark:string;
 }
-interface RoleState {
+interface PostState {
   loading:boolean;
 	isShowDialog: boolean;
 	formData: DialogRow;
-	menuData: Array<MenuDataTree>;
   menuExpand:boolean;
   menuNodeAll:boolean;
   menuCheckStrictly:boolean;
@@ -94,29 +59,33 @@ interface RoleState {
 }
 
 export default defineComponent({
-	name: 'systemEditRole',
+	name: 'systemEditPost',
 	setup(props,{emit}) {
-    const {proxy} = getCurrentInstance() as any;
     const formRef = ref<HTMLElement | null>(null);
     const menuRef = ref();
-		const state = reactive<RoleState>({
+		const state = reactive<PostState>({
       loading:false,
 			isShowDialog: false,
 			formData: {
-        id:0,
-        name: '',
-        status: 1,
-        listOrder: 0,
-        remark: '',
-        menuIds:[]
+        postId:0,
+        postCode:'',
+        postName:'',
+        postSort:0,
+        status:1,
+        remark:'',
 			},
       // 表单校验
       rules: {
-        name:[
-          {required: true, message: "角色名称不能为空", trigger: "blur"},
+        postName: [
+          { required: true, message: "岗位名称不能为空", trigger: "blur" }
+        ],
+        postCode: [
+          { required: true, message: "岗位编码不能为空", trigger: "blur" }
+        ],
+        postSort: [
+          { required: true, message: "岗位顺序不能为空", trigger: "blur" }
         ]
       },
-			menuData: [],
       menuExpand:false,
       menuNodeAll:false,
       menuCheckStrictly:false,
@@ -128,14 +97,8 @@ export default defineComponent({
 		// 打开弹窗
 		const openDialog = (row?: DialogRow) => {
       resetForm();
-			getMenuData();
       if(row) {
-        getRole(row.id).then((res:any)=>{
-          if(res.data.role){
-            state.formData = res.data.role;
-            state.formData.menuIds = res.data.menuIds??[]
-          }
-        })
+        state.formData = row;
       }
 			state.isShowDialog = true;
 		};
@@ -154,24 +117,21 @@ export default defineComponent({
       formWrap.validate((valid: boolean) => {
         if (valid) {
           state.loading = true;
-          state.formData.menuIds = getMenuAllCheckedKeys();
-          if(state.formData.id===0){
+          if(state.formData.postId===0){
             //添加
-            addRole(state.formData).then(()=>{
-              ElMessage.success('角色添加成功');
+            addPost(state.formData).then(()=>{
+              ElMessage.success('岗位添加成功');
               closeDialog(); // 关闭弹窗
-              resetMenuSession()
-              emit('getRoleList')
+              emit('getPostList')
             }).finally(()=>{
               state.loading = false;
             })
           }else{
             //修改
-            editRole(state.formData).then(()=>{
-              ElMessage.success('角色修改成功');
+            editPost(state.formData).then(()=>{
+              ElMessage.success('岗位修改成功');
               closeDialog(); // 关闭弹窗
-              resetMenuSession()
-              emit('getRoleList')
+              emit('getPostList')
             }).finally(()=>{
               state.loading = false;
             })
@@ -179,57 +139,20 @@ export default defineComponent({
         }
       });
 		};
-		// 获取菜单结构数据
-		const getMenuData = () => {
-      getRoleParams().then((res:any)=>{
-        state.menuData = proxy.handleTree(res.data.menu, "id","pid");
-      })
-		};
     const resetForm = ()=>{
       state.menuCheckStrictly=false;
       state.menuExpand = false;
       state.menuNodeAll = false;
       state.formData = {
-        id:0,
-        name: '',
-        status: 1,
-        listOrder: 0,
-        remark: '',
-        menuIds:[]
+        postId:0,
+        postCode:'',
+        postName:'',
+        postSort:0,
+        status:1,
+        remark:'',
       }
     };
-    /** 树权限（展开/折叠）*/
-    const handleCheckedTreeExpand = (value:any) => {
-      let treeList = state.menuData;
-      for (let i = 0; i < treeList.length; i++) {
-        menuRef.value.store.nodesMap[treeList[i].id].expanded = value;
-      }
-    }
 
-    /** 树权限（全选/全不选） */
-    const handleCheckedTreeNodeAll = (value:any) => {
-        menuRef.value.setCheckedNodes(value ? state.menuData : []);
-    }
-
-    /** 树权限（父子联动） */
-    const handleCheckedTreeConnect = (value:any) => {
-      state.menuCheckStrictly = value ? true : false;
-    }
-
-    /** 所有菜单节点数据 */
-    function getMenuAllCheckedKeys() {
-      // 目前被选中的菜单节点
-      let checkedKeys = menuRef.value.getCheckedKeys();
-      // 半选中的菜单节点
-      let halfCheckedKeys = menuRef.value.getHalfCheckedKeys();
-      checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
-      return checkedKeys;
-    }
-
-    // 重置菜单session
-    const resetMenuSession = () => {
-      getBackEndControlRoutes();
-    };
 		return {
 			openDialog,
 			closeDialog,
@@ -237,10 +160,6 @@ export default defineComponent({
 			onSubmit,
       menuRef,
       formRef,
-      handleCheckedTreeExpand,
-      handleCheckedTreeNodeAll,
-      handleCheckedTreeConnect,
-      resetMenuSession,
 			...toRefs(state),
 		};
 	},
@@ -254,7 +173,7 @@ export default defineComponent({
   background: #fff none!important;
   border-radius: 4px;
 }
-.system-edit-role-container {
+.system-edit-post-container {
 	.menu-data-tree {
 		border: var(--el-input-border, var(--el-border-base));
 		border-radius: var(--el-input-border-radius, var(--el-border-radius-base));
