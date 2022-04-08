@@ -1,68 +1,88 @@
 <template>
 	<div class="system-user-container">
-		<el-card shadow="hover">
-			<div class="system-user-search mb15">
-				<el-input size="default" placeholder="请输入用户名称" style="max-width: 180px"> </el-input>
-				<el-button size="default" type="primary" class="ml10">
-					<el-icon>
-						<ele-Search />
-					</el-icon>
-					查询
-				</el-button>
-				<el-button size="default" type="success" class="ml10" @click="onOpenAddUser">
-					<el-icon>
-						<ele-FolderAdd />
-					</el-icon>
-					新增用户
-				</el-button>
-			</div>
-			<el-table :data="tableData.data" style="width: 100%">
-				<el-table-column type="index" label="序号" width="60" />
-				<el-table-column prop="userName" label="账户名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="userNickname" label="用户昵称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="roleSign" label="关联角色" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="department" label="部门" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="phone" label="手机号" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="email" label="邮箱" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="status" label="用户状态" show-overflow-tooltip>
-					<template #default="scope">
-						<el-tag type="success" v-if="scope.row.status">启用</el-tag>
-						<el-tag type="info" v-else>禁用</el-tag>
-					</template>
-				</el-table-column>
-				<el-table-column prop="describe" label="用户描述" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
-				<el-table-column label="操作" width="100">
-					<template #default="scope">
-						<el-button :disabled="scope.row.userName === 'admin'" size="small" type="text" @click="onOpenEditUser(scope.row)">修改</el-button>
-						<el-button :disabled="scope.row.userName === 'admin'" size="small" type="text" @click="onRowDel(scope.row)">删除</el-button>
-					</template>
-				</el-table-column>
-			</el-table>
-			<el-pagination
-				@size-change="onHandleSizeChange"
-				@current-change="onHandleCurrentChange"
-				class="mt15"
-				:pager-count="5"
-				:page-sizes="[10, 20, 30]"
-				v-model:current-page="tableData.param.pageNum"
-				background
-				v-model:page-size="tableData.param.pageSize"
-				layout="total, sizes, prev, pager, next, jumper"
-				:total="tableData.total"
-			>
-			</el-pagination>
-		</el-card>
+    <el-row :gutter="10">
+      <el-col :span="4">
+        <el-aside>
+          <el-scrollbar>
+            <el-input v-model="filterText" placeholder="请输入部门名称" style="width: 240px;" clearable/>
+            <el-tree
+                ref="treeRef"
+                class="filter-tree"
+                :data="deptData"
+                :props="deptProps"
+                default-expand-all
+                :filter-node-method="deptFilterNode"
+            />
+          </el-scrollbar>
+        </el-aside>
+      </el-col>
+      <el-col :span="20">
+        <el-card shadow="hover">
+          <div class="system-user-search mb15">
+            <el-input size="default" placeholder="请输入用户名称" style="max-width: 180px"> </el-input>
+            <el-button size="default" type="primary" class="ml10">
+              <el-icon>
+                <ele-Search />
+              </el-icon>
+              查询
+            </el-button>
+            <el-button size="default" type="success" class="ml10" @click="onOpenAddUser">
+              <el-icon>
+                <ele-FolderAdd />
+              </el-icon>
+              新增用户
+            </el-button>
+          </div>
+          <el-table :data="tableData.data" style="width: 100%">
+            <el-table-column type="index" label="序号" width="60" />
+            <el-table-column prop="userName" label="账户名称" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="userNickname" label="用户昵称" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="roleSign" label="关联角色" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="department" label="部门" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="phone" label="手机号" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="email" label="邮箱" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="status" label="用户状态" show-overflow-tooltip>
+              <template #default="scope">
+                <el-tag type="success" v-if="scope.row.status">启用</el-tag>
+                <el-tag type="info" v-else>禁用</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="describe" label="用户描述" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
+            <el-table-column label="操作" width="100">
+              <template #default="scope">
+                <el-button :disabled="scope.row.userName === 'admin'" size="small" type="text" @click="onOpenEditUser(scope.row)">修改</el-button>
+                <el-button :disabled="scope.row.userName === 'admin'" size="small" type="text" @click="onRowDel(scope.row)">删除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+              @size-change="onHandleSizeChange"
+              @current-change="onHandleCurrentChange"
+              class="mt15"
+              :pager-count="5"
+              :page-sizes="[10, 20, 30]"
+              v-model:current-page="tableData.param.pageNum"
+              background
+              v-model:page-size="tableData.param.pageSize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="tableData.total"
+          >
+          </el-pagination>
+        </el-card>
+      </el-col>
+    </el-row>
 		<AddUer ref="addUserRef" />
 		<EditUser ref="editUserRef" />
 	</div>
 </template>
 
 <script lang="ts">
-import { toRefs, reactive, onMounted, ref, defineComponent } from 'vue';
+import {toRefs, reactive, onMounted, ref, defineComponent, watch} from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import AddUer from '/@/views/system/user/component/addUser.vue';
 import EditUser from '/@/views/system/user/component/editUser.vue';
+import {Ref} from "_@vue_reactivity@3.2.31@@vue/reactivity";
 
 // 定义接口来定义对象的类型
 interface TableDataRow {
@@ -80,6 +100,9 @@ interface TableDataRow {
 	createTime: string;
 }
 interface TableDataState {
+  filterText:string;
+  deptProps:{};
+  deptData:any[];
 	tableData: {
 		data: Array<TableDataRow>;
 		total: number;
@@ -97,7 +120,34 @@ export default defineComponent({
 	setup() {
 		const addUserRef = ref();
 		const editUserRef = ref();
+    const treeRef = ref<HTMLElement | null>(null);
 		const state = reactive<TableDataState>({
+      filterText:'',
+      deptProps:{
+        children: 'children',
+        label: 'label',
+      },
+      deptData:[
+        {
+          label: '集团总部',
+          children: [
+            {
+              label: '曲靖分部',
+              children: [
+                {
+                  label: '总经办',
+                },
+                {
+                  label: '市场部',
+                },
+                {
+                  label: '研发部',
+                },
+              ],
+            },
+          ],
+        },
+      ],
 			tableData: {
 				data: [],
 				total: 0,
@@ -108,6 +158,9 @@ export default defineComponent({
 				},
 			},
 		});
+    watch(()=>state.filterText, (val) => {
+      console.log(val);
+    });
 		// 初始化表格数据
 		const initTableData = () => {
 			const data: Array<TableDataRow> = [];
@@ -162,6 +215,10 @@ export default defineComponent({
 		onMounted(() => {
 			initTableData();
 		});
+    const deptFilterNode = (value: string, data:any) => {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    };
 		return {
 			addUserRef,
 			editUserRef,
@@ -170,6 +227,8 @@ export default defineComponent({
 			onRowDel,
 			onHandleSizeChange,
 			onHandleCurrentChange,
+      deptFilterNode,
+      treeRef,
 			...toRefs(state),
 		};
 	},
