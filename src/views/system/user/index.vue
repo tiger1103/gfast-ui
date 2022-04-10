@@ -2,19 +2,21 @@
 	<div class="system-user-container">
     <el-row :gutter="10">
       <el-col :span="4">
-        <el-aside>
-          <el-scrollbar>
-            <el-input v-model="filterText" placeholder="请输入部门名称" style="width: 240px;" clearable/>
-            <el-tree
-                ref="treeRef"
-                class="filter-tree"
-                :data="deptData"
-                :props="deptProps"
-                default-expand-all
-                :filter-node-method="deptFilterNode"
-            />
-          </el-scrollbar>
-        </el-aside>
+        <el-card shadow="hover">
+          <el-aside>
+            <el-scrollbar>
+              <el-input :prefix-icon="search" v-model="filterText" placeholder="请输入部门名称" clearable size="default" style="width: 80%;"/>
+              <el-tree
+                  ref="treeRef"
+                  class="filter-tree"
+                  :data="deptData"
+                  :props="deptProps"
+                  default-expand-all
+                  :filter-node-method="deptFilterNode"
+              />
+            </el-scrollbar>
+          </el-aside>
+        </el-card>
       </el-col>
       <el-col :span="20">
         <el-card shadow="hover">
@@ -78,11 +80,12 @@
 </template>
 
 <script lang="ts">
-import {toRefs, reactive, onMounted, ref, defineComponent, watch} from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
+import {toRefs, reactive, onMounted, ref, defineComponent,watch} from 'vue';
+import {ElMessageBox, ElMessage, ElTree} from 'element-plus';
+import { Search } from '@element-plus/icons-vue'
 import AddUer from '/@/views/system/user/component/addUser.vue';
 import EditUser from '/@/views/system/user/component/editUser.vue';
-import {Ref} from "_@vue_reactivity@3.2.31@@vue/reactivity";
+
 
 // 定义接口来定义对象的类型
 interface TableDataRow {
@@ -100,7 +103,6 @@ interface TableDataRow {
 	createTime: string;
 }
 interface TableDataState {
-  filterText:string;
   deptProps:{};
   deptData:any[];
 	tableData: {
@@ -120,9 +122,10 @@ export default defineComponent({
 	setup() {
 		const addUserRef = ref();
 		const editUserRef = ref();
-    const treeRef = ref<HTMLElement | null>(null);
+    const filterText = ref('');
+    const treeRef = ref<InstanceType<typeof ElTree>>();
+    const search = Search
 		const state = reactive<TableDataState>({
-      filterText:'',
       deptProps:{
         children: 'children',
         label: 'label',
@@ -158,9 +161,6 @@ export default defineComponent({
 				},
 			},
 		});
-    watch(()=>state.filterText, (val) => {
-      console.log(val);
-    });
 		// 初始化表格数据
 		const initTableData = () => {
 			const data: Array<TableDataRow> = [];
@@ -215,9 +215,12 @@ export default defineComponent({
 		onMounted(() => {
 			initTableData();
 		});
+    watch(filterText, (val) => {
+      treeRef.value!.filter(val)
+    });
     const deptFilterNode = (value: string, data:any) => {
       if (!value) return true;
-      return data.label.indexOf(value) !== -1;
+      return data.label.includes(value)
     };
 		return {
 			addUserRef,
@@ -228,7 +231,9 @@ export default defineComponent({
 			onHandleSizeChange,
 			onHandleCurrentChange,
       deptFilterNode,
+      filterText,
       treeRef,
+      search,
 			...toRefs(state),
 		};
 	},
