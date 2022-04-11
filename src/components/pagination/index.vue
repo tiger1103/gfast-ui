@@ -15,7 +15,6 @@
 </template>
 
 <script lang="ts">
-import { scrollTo } from '/@/utils/scrollTo'
 import { toRefs, defineComponent,computed } from 'vue';
 const props = {
   total: {
@@ -49,10 +48,6 @@ const props = {
     type: Boolean,
     default: true
   },
-  autoScroll: {
-    type: Boolean,
-    default: true
-  },
   hidden: {
     type: Boolean,
     default: false
@@ -62,7 +57,7 @@ export default defineComponent({
   name: 'pagination',
   props: props,
   setup(props,{emit}){
-    const { page,limit,pageSizes,autoScroll } = toRefs(props);
+    const { page,limit,pageSizes } = toRefs(props);
     const currentPage = computed({
       get() {
         return page.value;
@@ -81,15 +76,9 @@ export default defineComponent({
     });
     const handleSizeChange = (val:number) => {
       emit('pagination', { page: currentPage.value, limit: val })
-      if (autoScroll.value) {
-        scrollTo(0, 800)
-      }
     };
     const handleCurrentChange=(val:number) => {
       emit('pagination', { page: val, limit: pageSizes.value })
-      if (autoScroll.value) {
-        scrollTo(0, 800)
-      }
     }
     return {
       currentPage,
