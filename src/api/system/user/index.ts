@@ -55,5 +55,21 @@ export function resetUserPwd(userId:number, password:string) {
     })
 }
 
+export function changeUserStatus(userId:number, status:number) {
+    return request({
+        url: '/api/v1/system/user/setStatus',
+        method: 'put',
+        data:{userId,status}
+    })
+}
+
+
+export function deleteUser(ids:number[]) {
+    return request({
+        url: '/api/v1/system/user/delete',
+        method: 'delete',
+        data:{ids}
+    })
+}
 
 

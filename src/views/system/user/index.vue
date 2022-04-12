@@ -22,19 +22,72 @@
       <el-col :span="20">
         <el-card shadow="hover">
           <div class="system-user-search mb15">
-            <el-input size="default" placeholder="请输入用户名称" style="max-width: 180px"> </el-input>
-            <el-button size="default" type="primary" class="ml10">
-              <el-icon>
-                <ele-Search />
-              </el-icon>
-              查询
-            </el-button>
-            <el-button size="default" type="success" class="ml10" @click="onOpenAddUser">
-              <el-icon>
-                <ele-FolderAdd />
-              </el-icon>
-              新增用户
-            </el-button>
+            <el-form :model="tableData.param" ref="queryForm" :inline="true" label-width="68px">
+              <el-form-item label="关键字" prop="userName">
+                <el-input
+                    v-model="tableData.param.keyWords"
+                    placeholder="请输入用户账号或姓名"
+                    clearable
+                    size="default"
+                    style="width: 240px"
+                    @keyup.enter.native="userList"
+                />
+              </el-form-item>
+              <el-form-item label="手机号码" prop="phonenumber">
+                <el-input
+                    v-model="tableData.param.mobile"
+                    placeholder="请输入手机号码"
+                    clearable
+                    size="default"
+                    style="width: 240px"
+                    @keyup.enter.native="userList"
+                />
+              </el-form-item>
+              <el-form-item label="状态" prop="status" style="width: 200px;">
+                <el-select
+                    v-model="tableData.param.status"
+                    placeholder="用户状态"
+                    clearable
+                    size="default"
+                    style="width: 240px"
+                >
+                  <el-option label="启用"  :value="1"/>
+                  <el-option label="禁用"  :value="0"/>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="创建时间">
+                <el-date-picker
+                    v-model="dateRange"
+                    size="default"
+                    style="width: 240px"
+                    value-format="yyyy-MM-dd"
+                    type="daterange"
+                    range-separator="-"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                ></el-date-picker>
+              </el-form-item>
+              <el-form-item>
+                <el-button size="default" type="primary" class="ml10">
+                  <el-icon>
+                    <ele-Search />
+                  </el-icon>
+                  查询
+                </el-button>
+                <el-button size="default" type="success" class="ml10" @click="onOpenAddUser">
+                  <el-icon>
+                    <ele-FolderAdd />
+                  </el-icon>
+                  新增用户
+                </el-button>
+                <el-button size="default" type="danger" class="ml10" @click="onRowDel(null)">
+                  <el-icon>
+                    <ele-Delete />
+                  </el-icon>
+                  删除用户
+                </el-button>
+              </el-form-item>
+            </el-form>
           </div>
           <el-table :data="tableData.data" style="width: 100%" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" align="center" />
@@ -50,8 +103,15 @@
             <el-table-column prop="mobile" label="手机号" show-overflow-tooltip></el-table-column>
             <el-table-column prop="userStatus" label="用户状态" show-overflow-tooltip>
               <template #default="scope">
-                <el-tag type="success" v-if="scope.row.userStatus===1">启用</el-tag>
-                <el-tag type="info" v-else>禁用</el-tag>
+                <el-switch
+                    v-model="scope.row.userStatus"
+                    inline-prompt
+                    :active-value="1"
+                    :inactive-value="0"
+                    active-text="启"
+                    inactive-text="禁"
+                    @change="handleStatusChange(scope.row)">
+                </el-switch>
               </template>
             </el-table-column>
             <el-table-column prop="createdAt" label="创建时间" show-overflow-tooltip></el-table-column>
@@ -82,7 +142,7 @@ import {toRefs, reactive, onMounted, ref, defineComponent,watch,getCurrentInstan
 import {ElMessageBox, ElMessage, ElTree} from 'element-plus';
 import { Search } from '@element-plus/icons-vue'
 import EditUser from '/@/views/system/user/component/editUser.vue';
-import {getUserList, getDeptTree, resetUserPwd} from '/@/api/system/user/index';
+import {getUserList, getDeptTree, resetUserPwd, changeUserStatus, deleteUser} from '/@/api/system/user/index';
 
 interface TableDataState {
   ids:number[];
@@ -185,15 +245,30 @@ export default defineComponent({
 		};
 		// 删除用户
 		const onRowDel = (row:any) => {
-			ElMessageBox.confirm(`此操作将永久删除账户名称：“${row.userName}”，是否继续?`, '提示', {
-				confirmButtonText: '确认',
-				cancelButtonText: '取消',
-				type: 'warning',
-			})
-				.then(() => {
-					ElMessage.success('删除成功');
-				})
-				.catch(() => {});
+      let msg = '你确定要删除所选用户？';
+      let ids:number[] = [] ;
+      if(row){
+        msg = `此操作将永久删除用户：“${row.userName}”，是否继续?`
+        ids = [row.id]
+      }else{
+        ids = state.ids
+      }
+      if(ids.length===0){
+        ElMessage.error('请选择要删除的数据。');
+        return
+      }
+      ElMessageBox.confirm(msg, '提示', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+          .then(() => {
+            deleteUser(ids).then(()=>{
+              ElMessage.success('删除成功');
+              userList();
+            })
+          })
+          .catch(() => {});
 		};
 		// 分页改变
 		const onHandleSizeChange = (val: number) => {
@@ -216,7 +291,7 @@ export default defineComponent({
     };
     // 多选框选中数据
     const handleSelectionChange = (selection:any[])=> {
-      state.ids = selection.map(item => item.postId)
+      state.ids = selection.map(item => item.id)
     };
     // 节点单击事件
     const handleNodeClick = (data:any) => {
@@ -238,6 +313,21 @@ export default defineComponent({
         });
       }).catch(() => {});
     };
+    // 用户状态修改
+    const handleStatusChange = (row:any)=> {
+      let text = row.userStatus === 1 ? "启用" : "停用";
+      ElMessageBox.confirm('确认要"' + text + '"："' + row.userName + '"用户吗?', "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(function() {
+        return changeUserStatus(row.id, row.userStatus);
+      }).then(() => {
+        ElMessage.success(text + "成功");
+      }).catch(function() {
+        row.userStatus =row.userStatus === 0 ?1 : 0;
+      });
+    };
 		return {
 			editUserRef,
 			onOpenAddUser,
@@ -254,6 +344,7 @@ export default defineComponent({
       handleSelectionChange,
       handleNodeClick,
       handleResetPwd,
+      handleStatusChange,
 			...toRefs(state),
 		};
 	},
