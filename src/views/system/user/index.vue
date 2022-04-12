@@ -13,6 +13,7 @@
                   :props="deptProps"
                   default-expand-all
                   :filter-node-method="deptFilterNode"
+                  @node-click="handleNodeClick"
               />
             </el-scrollbar>
           </el-aside>
@@ -43,7 +44,7 @@
             <el-table-column prop="dept.deptName" label="部门" show-overflow-tooltip></el-table-column>
             <el-table-column label="角色" align="center" prop="roleInfo" :show-overflow-tooltip="true" >
               <template #default="scope">
-                <span v-for="(item,index) of scope.row.roleInfo" :key="'role-'+index">   {{item.name}}   </span>
+                <span v-for="(item,index) of scope.row.roleInfo" :key="'role-'+index">   {{item.name+'   '}}   </span>
               </template>
             </el-table-column>
             <el-table-column prop="mobile" label="手机号" show-overflow-tooltip></el-table-column>
@@ -54,10 +55,11 @@
               </template>
             </el-table-column>
             <el-table-column prop="createdAt" label="创建时间" show-overflow-tooltip></el-table-column>
-            <el-table-column label="操作" width="100">
+            <el-table-column label="操作" width="150">
               <template #default="scope">
-                <el-button :disabled="scope.row.userName === 'admin'" size="small" type="text" @click="onOpenEditUser(scope.row)">修改</el-button>
-                <el-button :disabled="scope.row.userName === 'admin'" size="small" type="text" @click="onRowDel(scope.row)">删除</el-button>
+                <el-button size="small" type="text" @click="onOpenEditUser(scope.row)">修改</el-button>
+                <el-button size="small" type="text" @click="onRowDel(scope.row)">删除</el-button>
+                <el-button size="small"  type="text" @click="handleResetPwd(scope.row)">重置</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -71,8 +73,7 @@
         </el-card>
       </el-col>
     </el-row>
-		<AddUer ref="addUserRef" />
-		<EditUser ref="editUserRef" />
+		<EditUser ref="editUserRef" :dept-data="deptData" :gender-data="sys_user_sex" @getUserList="userList"/>
 	</div>
 </template>
 
@@ -80,9 +81,8 @@
 import {toRefs, reactive, onMounted, ref, defineComponent,watch,getCurrentInstance} from 'vue';
 import {ElMessageBox, ElMessage, ElTree} from 'element-plus';
 import { Search } from '@element-plus/icons-vue'
-import AddUer from '/@/views/system/user/component/addUser.vue';
 import EditUser from '/@/views/system/user/component/editUser.vue';
-import {getUserList} from '/@/api/system/user/index';
+import {getUserList, getDeptTree, resetUserPwd} from '/@/api/system/user/index';
 
 interface TableDataState {
   ids:number[];
@@ -97,6 +97,7 @@ interface TableDataState {
 		param: {
 			pageNum: number;
 			pageSize: number;
+      deptId:string;
       mobile:string;
       status:string;
       keyWords:string;
@@ -108,11 +109,10 @@ interface TableDataState {
 
 export default defineComponent({
 	name: 'systemUser',
-	components: { AddUer, EditUser },
+	components: { EditUser },
 	setup() {
     const {proxy} = getCurrentInstance() as any;
     const {sys_user_sex} = proxy.useDict('sys_user_sex')
-		const addUserRef = ref();
 		const editUserRef = ref();
     const filterText = ref('');
     const treeRef = ref<InstanceType<typeof ElTree>>();
@@ -121,8 +121,9 @@ export default defineComponent({
       ids:[],
       dateRange:[],
       deptProps:{
-        children: 'children',
-        label: 'label',
+        id:"deptId",
+        children: "children",
+        label: "deptName"
       },
       deptData:[
         {
@@ -152,6 +153,7 @@ export default defineComponent({
 				param: {
           pageNum: 1,
           pageSize: 10,
+          deptId:'',
           mobile:'',
           status:'',
           keyWords:'',
@@ -162,17 +164,20 @@ export default defineComponent({
 		});
 		// 初始化表格数据
 		const initTableData = () => {
+      getDeptTree().then((res:any)=>{
+        state.deptData = res.data.deps
+      })
       userList();
 		};
     const userList = ()=>{
       getUserList(state.tableData.param).then((res:any)=>{
-        state.tableData.data = res.data.userList;
+        state.tableData.data = res.data.userList??[];
         state.tableData.total = res.data.total;
       });
     };
 		// 打开新增用户弹窗
 		const onOpenAddUser = () => {
-			addUserRef.value.openDialog();
+      editUserRef.value.openDialog();
 		};
 		// 打开修改用户弹窗
 		const onOpenEditUser = (row:any) => {
@@ -213,8 +218,27 @@ export default defineComponent({
     const handleSelectionChange = (selection:any[])=> {
       state.ids = selection.map(item => item.postId)
     };
+    // 节点单击事件
+    const handleNodeClick = (data:any) => {
+      state.tableData.param.deptId = data.deptId;
+      userList();
+    };
+    /** 重置密码按钮操作 */
+    const handleResetPwd = (row:any)=> {
+      ElMessageBox.prompt('请输入"' + row.userName + '"的新密码', "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消"
+      }).then(({ value }) => {
+        if(!value || value==''){
+          ElMessage.success('密码不能为空');
+          return
+        }
+        resetUserPwd(row.id, value).then(() => {
+            ElMessage.success("修改成功，新密码是：" + value);
+        });
+      }).catch(() => {});
+    };
 		return {
-			addUserRef,
 			editUserRef,
 			onOpenAddUser,
 			onOpenEditUser,
@@ -228,6 +252,8 @@ export default defineComponent({
       sys_user_sex,
       userList,
       handleSelectionChange,
+      handleNodeClick,
+      handleResetPwd,
 			...toRefs(state),
 		};
 	},

@@ -1035,7 +1035,7 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 							isLink: 'https://nodejs.org/zh-cn/',
 							isHide: false,
 							isKeepAlive: false,
-							isAffix: true,
+							isAffix: false,
 							isIframe: true,
 							roles: ['admin'],
 							icon: 'iconfont icon-neiqianshujuchucun',

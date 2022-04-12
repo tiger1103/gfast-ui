@@ -1,35 +1,44 @@
 <template>
 	<div class="system-edit-user-container">
-		<el-dialog title="修改用户" v-model="isShowDialog" width="769px">
-			<el-form :model="ruleForm" size="default" label-width="90px">
+		<el-dialog :title="(ruleForm.userId!==0?'修改':'添加')+'用户'" v-model="isShowDialog" width="769px">
+			<el-form ref="formRef" :model="ruleForm" :rules="rules" size="default" label-width="90px">
 				<el-row :gutter="35">
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="账户名称">
+					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" v-if="ruleForm.userId===0">
+						<el-form-item label="用户名" prop="userName">
 							<el-input v-model="ruleForm.userName" placeholder="请输入账户名称" clearable></el-input>
 						</el-form-item>
 					</el-col>
+          <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" v-if="ruleForm.userId===0">
+            <el-form-item label="账户密码" prop="password">
+              <el-input v-model="ruleForm.password" placeholder="请输入" type="password" clearable></el-input>
+            </el-form-item>
+          </el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="用户昵称">
-							<el-input v-model="ruleForm.userNickname" placeholder="请输入用户昵称" clearable></el-input>
+						<el-form-item label="用户昵称" prop="nickName">
+							<el-input v-model="ruleForm.nickName" placeholder="请输入用户昵称" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="关联角色">
-							<el-select v-model="ruleForm.roleSign" placeholder="请选择" clearable class="w100">
-								<el-option label="超级管理员" value="admin"></el-option>
-								<el-option label="普通用户" value="common"></el-option>
+						<el-form-item label="关联角色" prop="roleIds">
+							<el-select v-model="ruleForm.roleIds" placeholder="请选择" clearable class="w100" multiple>
+								<el-option
+                    v-for="role in roleList"
+                    :key="'role-'+role.id"
+                    :label="role.name"
+                    :value="role.id">
+                </el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="部门">
+						<el-form-item label="部门" prop="deptId">
 							<el-cascader
 								:options="deptData"
-								:props="{ checkStrictly: true, value: 'deptName', label: 'deptName' }"
+								:props="{ checkStrictly: true,emitPath: false, value: 'deptId', label: 'deptName' }"
 								placeholder="请选择部门"
 								clearable
 								class="w100"
-								v-model="ruleForm.department"
+								v-model="ruleForm.deptId"
 							>
 								<template #default="{ node, data }">
 									<span>{{ data.deptName }}</span>
@@ -39,41 +48,58 @@
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="手机号">
-							<el-input v-model="ruleForm.phone" placeholder="请输入手机号" clearable></el-input>
+						<el-form-item label="手机号" prop="mobile">
+							<el-input v-model="ruleForm.mobile" placeholder="请输入手机号" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="邮箱">
+						<el-form-item label="邮箱" prop="email">
 							<el-input v-model="ruleForm.email" placeholder="请输入" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="性别">
+						<el-form-item label="性别" prop="sex">
 							<el-select v-model="ruleForm.sex" placeholder="请选择" clearable class="w100">
-								<el-option label="男" value="男"></el-option>
-								<el-option label="女" value="女"></el-option>
+								<el-option
+                   v-for="gender in genderData"
+                   :key="'gender-'+gender.value"
+                   :label="gender.label"
+                   :value="gender.value"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="账户密码">
-							<el-input v-model="ruleForm.password" placeholder="请输入" type="password" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="账户过期">
-							<el-date-picker v-model="ruleForm.overdueTime" type="date" placeholder="请选择" class="w100"> </el-date-picker>
+						<el-form-item label="岗位" prop="postIds">
+              <el-select v-model="ruleForm.postIds" placeholder="请选择" clearable class="w100" multiple>
+                <el-option
+                    v-for="post in postList"
+                    :key="'post-'+post.postId"
+                    :label="post.postName"
+                    :value="post.postId">
+                </el-option>
+              </el-select>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="用户状态">
-							<el-switch v-model="ruleForm.status" inline-prompt active-text="启" inactive-text="禁"></el-switch>
+							<el-switch v-model="ruleForm.status" inline-prompt :active-value="1" :inactive-value="0" active-text="启" inactive-text="禁"></el-switch>
 						</el-form-item>
 					</el-col>
+          <el-col :span="24">
+            <el-form-item label="用户类型">
+              <el-radio-group v-model="ruleForm.isAdmin">
+                <el-radio
+                    :label="1"
+                >后台管理员</el-radio>
+                <el-radio
+                    :label="0"
+                >前台用户</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 						<el-form-item label="用户描述">
-							<el-input v-model="ruleForm.describe" type="textarea" placeholder="请输入用户描述" maxlength="150"></el-input>
+							<el-input v-model="ruleForm.remark" type="textarea" placeholder="请输入用户描述" maxlength="150"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -81,7 +107,7 @@
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="onCancel" size="default">取 消</el-button>
-					<el-button type="primary" @click="onSubmit" size="default">修 改</el-button>
+					<el-button type="primary" @click="onSubmit" size="default">{{ruleForm.userId!==0?'修 改':'添 加'}}</el-button>
 				</span>
 			</template>
 		</el-dialog>
@@ -89,60 +115,99 @@
 </template>
 
 <script lang="ts">
-import { reactive, toRefs, onMounted, defineComponent } from 'vue';
+import { reactive, toRefs, onMounted, defineComponent,ref } from 'vue';
+import {getParams, addUser, editUser, getEditUser} from "/@/api/system/user";
+import {unref} from "_vue@3.2.31@vue";
+import {ElMessage} from "_element-plus@2.1.2@element-plus";
 
-// 定义接口来定义对象的类型
-interface DeptData {
-	deptName: string;
-	createTime: string;
-	status: boolean;
-	sort: number | string;
-	describe: string;
-	id: number;
-	children?: DeptData[];
-}
-interface RuleFormRow {
-	userName: string;
-	userNickname: string;
-	roleSign: string;
-	department: any;
-	phone: string;
-	email: string;
-	sex: string;
-	password: string;
-	overdueTime: string;
-	status: boolean;
-	describe: string;
-}
-interface UserState {
-	isShowDialog: boolean;
-	ruleForm: RuleFormRow;
-	deptData: Array<DeptData>;
-}
 
 export default defineComponent({
 	name: 'systemEditUser',
-	setup() {
-		const state = reactive<UserState>({
+  props:{
+    deptData:{
+      type:Array,
+      default:()=>[]
+    },
+    genderData:{
+      type:Array,
+      default:()=>[]
+    }
+  },
+	setup(prop,{emit}) {
+    const roleList = ref([]);
+    const postList = ref([]);
+    const formRef = ref<HTMLElement | null>(null);
+		const state = reactive({
 			isShowDialog: false,
 			ruleForm: {
-				userName: '', // 账户名称
-				userNickname: '', // 用户昵称
-				roleSign: '', // 关联角色
-				department: [], // 部门
-				phone: '', // 手机号
-				email: '', // 邮箱
-				sex: '', // 性别
-				password: '', // 账户密码
-				overdueTime: '', // 账户过期
-				status: true, // 用户状态
-				describe: '', // 用户描述
+        userId: 0,
+        deptId: 0,
+        userName: '',
+        nickName: '',
+        password: '',
+        mobile:'',
+        email: '',
+        sex: '',
+        status: 1,
+        remark: '',
+        postIds: [],
+        roleIds: [],
+        isAdmin:0,
 			},
-			deptData: [], // 部门数据
+      //表单校验
+      rules: {
+        userName: [
+          { required: true, message: "用户名称不能为空", trigger: "blur" }
+        ],
+        nickName: [
+          { required: true, message: "用户昵称不能为空", trigger: "blur" }
+        ],
+        deptId: [
+          { required: true, message: "归属部门不能为空", trigger: "blur" }
+        ],
+        password: [
+          { required: true, message: "用户密码不能为空", trigger: "blur" }
+        ],
+        email: [
+          {
+            type: "email",
+            message: "'请输入正确的邮箱地址",
+            trigger: ["blur", "change"]
+          }
+        ],
+        mobile: [
+          { required: true, message: "手机号码不能为空", trigger: "blur" },
+          {
+            pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/,
+            message: "请输入正确的手机号码",
+            trigger: "blur"
+          }
+        ]
+      }
 		});
 		// 打开弹窗
-		const openDialog = (row: RuleFormRow) => {
-			state.ruleForm = row;
+		const openDialog = (row?:any) => {
+      resetForm()
+      if(row) {
+        getEditUser(row.id).then((res:any)=>{
+          const user = res.data.user;
+          state.ruleForm = {
+            userId: user.id,
+            deptId: user.deptId,
+            userName: user.userName,
+            nickName: user.userNickname,
+            password: '-',
+            mobile:user.mobile,
+            email: user.userEmail,
+            sex: String(user.sex),
+            status: user.userStatus,
+            remark: user.remark,
+            postIds: res.data.checkedPosts??[],
+            roleIds: res.data.checkedRoleIds??[],
+            isAdmin:user.isAdmin,
+          };
+        })
+      }
 			state.isShowDialog = true;
 		};
 		// 关闭弹窗
@@ -155,46 +220,65 @@ export default defineComponent({
 		};
 		// 新增
 		const onSubmit = () => {
-			closeDialog();
+      const formWrap = unref(formRef) as any;
+      if (!formWrap) return;
+      formWrap.validate((valid: boolean) => {
+        if (valid) {
+          if(state.ruleForm.userId===0){
+            //添加
+            addUser(state.ruleForm).then(()=>{
+              ElMessage.success('用户添加成功');
+              closeDialog(); // 关闭弹窗
+              emit('getUserList')
+            });
+          }else{
+            //修改
+            editUser(state.ruleForm).then(()=>{
+              ElMessage.success('用户修改成功');
+              closeDialog(); // 关闭弹窗
+              emit('getUserList')
+            });
+          }
+        }
+      });
 		};
 		// 初始化部门数据
 		const initTableData = () => {
-			state.deptData.push({
-				deptName: 'vueNextAdmin',
-				createTime: new Date().toLocaleString(),
-				status: true,
-				sort: Math.random(),
-				describe: '顶级部门',
-				id: Math.random(),
-				children: [
-					{
-						deptName: 'IT外包服务',
-						createTime: new Date().toLocaleString(),
-						status: true,
-						sort: Math.random(),
-						describe: '总部',
-						id: Math.random(),
-					},
-					{
-						deptName: '资本控股',
-						createTime: new Date().toLocaleString(),
-						status: true,
-						sort: Math.random(),
-						describe: '分部',
-						id: Math.random(),
-					},
-				],
-			});
+      //获取角色岗位选项
+      getParams().then((res:any)=>{
+        roleList.value = res.data.roleList??[];
+        postList.value = res.data.posts??[];
+      });
 		};
 		// 页面加载时
 		onMounted(() => {
 			initTableData();
 		});
+    const resetForm = ()=>{
+      state.ruleForm = {
+        userId: 0,
+        deptId: 0,
+        userName: '',
+        nickName: '',
+        password: '',
+        mobile:'',
+        email: '',
+        sex: '',
+        status: 1,
+        remark: '',
+        postIds: [],
+        roleIds: [],
+        isAdmin:0,
+      }
+    };
 		return {
 			openDialog,
 			closeDialog,
 			onCancel,
 			onSubmit,
+      roleList,
+      postList,
+      formRef,
 			...toRefs(state),
 		};
 	},
