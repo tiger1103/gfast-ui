@@ -22,8 +22,8 @@
       <el-col :span="20">
         <el-card shadow="hover">
           <div class="system-user-search mb15">
-            <el-form :model="tableData.param" ref="queryForm" :inline="true" label-width="68px">
-              <el-form-item label="关键字" prop="userName">
+            <el-form :model="tableData.param" ref="queryRef" :inline="true" label-width="68px">
+              <el-form-item label="关键字" prop="keyWords">
                 <el-input
                     v-model="tableData.param.keyWords"
                     placeholder="请输入用户账号或姓名"
@@ -33,7 +33,7 @@
                     @keyup.enter.native="userList"
                 />
               </el-form-item>
-              <el-form-item label="手机号码" prop="phonenumber">
+              <el-form-item label="手机号码" prop="mobile">
                 <el-input
                     v-model="tableData.param.mobile"
                     placeholder="请输入手机号码"
@@ -55,12 +55,12 @@
                   <el-option label="禁用"  :value="0"/>
                 </el-select>
               </el-form-item>
-              <el-form-item label="创建时间">
+              <el-form-item label="创建时间" prop="dateRange">
                 <el-date-picker
-                    v-model="dateRange"
+                    v-model="tableData.param.dateRange"
                     size="default"
                     style="width: 240px"
-                    value-format="yyyy-MM-dd"
+                    value-format="YYYY-MM-DD"
                     type="daterange"
                     range-separator="-"
                     start-placeholder="开始日期"
@@ -68,11 +68,17 @@
                 ></el-date-picker>
               </el-form-item>
               <el-form-item>
-                <el-button size="default" type="primary" class="ml10">
+                <el-button size="default" type="primary" class="ml10" @click="userList">
                   <el-icon>
                     <ele-Search />
                   </el-icon>
                   查询
+                </el-button>
+                <el-button size="default" @click="resetQuery(queryRef)">
+                  <el-icon>
+                    <ele-Refresh />
+                  </el-icon>
+                  重置
                 </el-button>
                 <el-button size="default" type="success" class="ml10" @click="onOpenAddUser">
                   <el-icon>
@@ -138,16 +144,14 @@
 </template>
 
 <script lang="ts">
-import {toRefs, reactive, onMounted, ref, defineComponent,watch,getCurrentInstance} from 'vue';
-import {ElMessageBox, ElMessage, ElTree} from 'element-plus';
+import {toRefs, reactive, onMounted, ref, defineComponent, watch, getCurrentInstance, toRaw} from 'vue';
+import {ElMessageBox, ElMessage, ElTree,FormInstance} from 'element-plus';
 import { Search } from '@element-plus/icons-vue'
 import EditUser from '/@/views/system/user/component/editUser.vue';
 import {getUserList, getDeptTree, resetUserPwd, changeUserStatus, deleteUser} from '/@/api/system/user/index';
 
 interface TableDataState {
   ids:number[];
-  // 日期范围
-  dateRange: string[];
   deptProps:{};
   deptData:any[];
 	tableData: {
@@ -161,8 +165,7 @@ interface TableDataState {
       mobile:string;
       status:string;
       keyWords:string;
-      beginTime:string;
-      endTime:string;
+      dateRange: string[];
 		};
 	};
 }
@@ -171,15 +174,15 @@ export default defineComponent({
 	name: 'systemUser',
 	components: { EditUser },
 	setup() {
-    const {proxy} = getCurrentInstance() as any;
+    const {proxy} = <any>getCurrentInstance();
     const {sys_user_sex} = proxy.useDict('sys_user_sex')
 		const editUserRef = ref();
+		const queryRef = ref();
     const filterText = ref('');
     const treeRef = ref<InstanceType<typeof ElTree>>();
     const search = Search
 		const state = reactive<TableDataState>({
       ids:[],
-      dateRange:[],
       deptProps:{
         id:"deptId",
         children: "children",
@@ -217,8 +220,7 @@ export default defineComponent({
           mobile:'',
           status:'',
           keyWords:'',
-          beginTime:'',
-          endTime:''
+          dateRange:[]
 				},
 			},
 		});
@@ -230,6 +232,7 @@ export default defineComponent({
       userList();
 		};
     const userList = ()=>{
+      console.log(toRaw(state.tableData.param.dateRange));
       getUserList(state.tableData.param).then((res:any)=>{
         state.tableData.data = res.data.userList??[];
         state.tableData.total = res.data.total;
@@ -328,7 +331,14 @@ export default defineComponent({
         row.userStatus =row.userStatus === 0 ?1 : 0;
       });
     };
+    /** 重置按钮操作 */
+    const resetQuery = (formEl: FormInstance | undefined) => {
+      if (!formEl) return
+      formEl.resetFields()
+      userList()
+    };
 		return {
+      queryRef,
 			editUserRef,
 			onOpenAddUser,
 			onOpenEditUser,
@@ -345,6 +355,7 @@ export default defineComponent({
       handleNodeClick,
       handleResetPwd,
       handleStatusChange,
+      resetQuery,
 			...toRefs(state),
 		};
 	},
