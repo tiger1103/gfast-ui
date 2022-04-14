@@ -60,8 +60,7 @@ export default defineComponent({
 		}
 	}
 	&-medium-img {
-		width: 20px;
-		margin-right: 5px;
+		width: 45px;
 	}
 }
 .layout-logo-size {

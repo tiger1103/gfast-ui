@@ -7,6 +7,7 @@ import { i18n } from '/@/i18n/index';
 import { Local } from '/@/utils/storage';
 import SvgIcon from '/@/components/svgIcon/index.vue';
 
+
 /**
  * 导出全局注册 element plus svg 图标
  * @param app vue 实例
@@ -17,7 +18,7 @@ export function elSvg(app: App) {
 	for (const i in icons) {
 		app.component(`ele-${icons[i].name}`, icons[i]);
 	}
-	app.component('SvgIcon', SvgIcon);
+	app.component('SvgIcon', <any>SvgIcon);
 }
 
 /**
