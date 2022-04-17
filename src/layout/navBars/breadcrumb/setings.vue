@@ -17,12 +17,12 @@
 						<el-color-picker v-model="getThemeConfig.primary" size="default" @change="onColorPickerChange"> </el-color-picker>
 					</div>
 				</div>
-				<div class="layout-breadcrumb-seting-bar-flex mt15">
+        <!--<div class="layout-breadcrumb-seting-bar-flex mt15">
 					<div class="layout-breadcrumb-seting-bar-flex-label">{{ $t('message.layout.fourIsDark') }}</div>
 					<div class="layout-breadcrumb-seting-bar-flex-value">
 						<el-switch v-model="getThemeConfig.isIsDark" size="small" @change="onAddDarkChange"></el-switch>
 					</div>
-				</div>
+				</div>-->
 
 				<!-- 顶栏设置 -->
 				<el-divider content-position="left">{{ $t('message.layout.twoTopTitle') }}</el-divider>

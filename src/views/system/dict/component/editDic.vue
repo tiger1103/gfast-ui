@@ -24,12 +24,12 @@
 							<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 								<el-form-item :prop="`list[${k}].label`">
 									<template #label>
-										<el-button type="primary" circle size="small" @click="onAddRow" v-if="k === 0">
+										<el-button type="primary" size="small" @click="onAddRow" v-if="k === 0">
 											<el-icon>
 												<ele-Plus />
 											</el-icon>
 										</el-button>
-										<el-button type="danger" circle size="small" @click="onDelRow(k)" v-else>
+										<el-button type="danger" size="small" @click="onDelRow(k)" v-else>
 											<el-icon>
 												<ele-Delete />
 											</el-icon>
@@ -107,21 +107,23 @@ export default defineComponent({
 			},
 		});
 		// 打开弹窗
-		const openDialog = (row: RuleFormState) => {
-			if (row.fieldName === 'SYS_UERINFO') {
-				row.list = [
-					{ id: Math.random(), label: 'sex', value: '1' },
-					{ id: Math.random(), label: 'sex', value: '0' },
-				];
-			} else {
-				row.list = [
-					{ id: Math.random(), label: 'role', value: 'admin' },
-					{ id: Math.random(), label: 'role', value: 'common' },
-					{ id: Math.random(), label: 'roleName', value: '超级管理员' },
-					{ id: Math.random(), label: 'roleName', value: '普通用户' },
-				];
-			}
-			state.ruleForm = row;
+		const openDialog = (row: RuleFormState|null) => {
+      if (row){
+        if (row.fieldName === 'SYS_UERINFO') {
+          row.list = [
+            { id: Math.random(), label: 'sex', value: '1' },
+            { id: Math.random(), label: 'sex', value: '0' },
+          ];
+        } else {
+          row.list = [
+            { id: Math.random(), label: 'role', value: 'admin' },
+            { id: Math.random(), label: 'role', value: 'common' },
+            { id: Math.random(), label: 'roleName', value: '超级管理员' },
+            { id: Math.random(), label: 'roleName', value: '普通用户' },
+          ];
+        }
+        state.ruleForm = row;
+      }
 			state.isShowDialog = true;
 		};
 		// 关闭弹窗

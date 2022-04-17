@@ -60,6 +60,32 @@ export const dynamicRoutes: Array<RouteRecordRaw> = [
 					icon: 'iconfont icon-gerenzhongxin',
 				},
 			},
+			{
+				path: '/404',
+				name: 'notFound',
+				component: () => import('/@/views/error/404.vue'),
+				meta: {
+					title: 'message.staticRoutes.notFound',
+					isLink: '',
+					isHide: true,
+					isKeepAlive: true,
+					isAffix: false,
+					isIframe: false,
+				},
+			},
+			{
+				path: '/401',
+				name: 'noPower',
+				component: () => import('/@/views/error/401.vue'),
+				meta: {
+					title: 'message.staticRoutes.noPower',
+					isLink: '',
+					isHide: true,
+					isKeepAlive: true,
+					isAffix: false,
+					isIframe: false,
+				},
+			},
 		],
 	},
 ];
@@ -969,22 +995,6 @@ export const staticRoutes: Array<RouteRecordRaw> = [
 		component: () => import('/@/views/login/index.vue'),
 		meta: {
 			title: '登录',
-		},
-	},
-	{
-		path: '/404',
-		name: 'notFound',
-		component: () => import('/@/views/error/404.vue'),
-		meta: {
-			title: 'message.staticRoutes.notFound',
-		},
-	},
-	{
-		path: '/401',
-		name: 'noPower',
-		component: () => import('/@/views/error/401.vue'),
-		meta: {
-			title: 'message.staticRoutes.noPower',
 		},
 	},
 	/**

@@ -92,9 +92,9 @@ const themeConfigModule: Module<ThemeConfigState, RootStateTypes> = {
 			// 是否开启深色模式
 			isIsDark: false,
 			// 是否开启水印
-			isWartermark: false,
+			isWartermark: true,
 			// 水印文案
-			wartermarkText: 'small@小柒',
+			wartermarkText: 'GFast-v3.0',
 
 			/**
 			 * 其它设置

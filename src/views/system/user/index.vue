@@ -144,7 +144,7 @@
 </template>
 
 <script lang="ts">
-import {toRefs, reactive, onMounted, ref, defineComponent, watch, getCurrentInstance, toRaw} from 'vue';
+import {toRefs, reactive, onMounted, ref, defineComponent, watch, getCurrentInstance} from 'vue';
 import {ElMessageBox, ElMessage, ElTree,FormInstance} from 'element-plus';
 import { Search } from '@element-plus/icons-vue'
 import EditUser from '/@/views/system/user/component/editUser.vue';
@@ -232,7 +232,6 @@ export default defineComponent({
       userList();
 		};
     const userList = ()=>{
-      console.log(toRaw(state.tableData.param.dateRange));
       getUserList(state.tableData.param).then((res:any)=>{
         state.tableData.data = res.data.userList??[];
         state.tableData.total = res.data.total;
