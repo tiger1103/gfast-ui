@@ -49,7 +49,7 @@ export function handleTree(data:[], id:string, parentId:string, children:string,
 
 
 // 回显数据字典
-export function selectDictLabel(data:Array<any>, value:string):string {
+export function selectDictLabel(data:any[], value:string):string {
     let actions:string[]=[]
     data.map((item) => {
         if (item.value == value) {
