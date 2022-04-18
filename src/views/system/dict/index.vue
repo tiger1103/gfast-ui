@@ -75,13 +75,13 @@
           </el-form-item>
         </el-form>
 			</div>
-			<el-table :data="tableData.data" style="width: 100%">
+			<el-table :data="tableData.data" style="width: 100%" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55" align="center" />
         <el-table-column label="字典ID" align="center" prop="dictId" width="120"/>
         <el-table-column label="字典名称" align="center" prop="dictName" :show-overflow-tooltip="true" />
         <el-table-column label="字典类型" align="center" :show-overflow-tooltip="true">
           <template #default="scope">
-            <router-link :to="'/dict/dataList/' + scope.row.dictType" class="link-type">
+            <router-link :to="'/system/dict/data/list/' + scope.row.dictType" class="link-type">
               <span>{{ scope.row.dictType }}</span>
             </router-link>
           </template>
@@ -109,16 +109,16 @@
           @pagination="typeList"
       />
 		</el-card>
-		<EditDic ref="editDicRef" />
+		<EditDic ref="editDicRef" @typeList="typeList"/>
 	</div>
 </template>
 
 <script lang="ts">
 import { toRefs, reactive, onMounted, ref, defineComponent } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
+import { ElMessageBox, ElMessage,FormInstance} from 'element-plus';
 import EditDic from '/@/views/system/dict/component/editDic.vue';
-import {getTypeList} from "/@/api/system/dict/type";
-import {FormInstance} from "_element-plus@2.1.7@element-plus";
+import {deleteType, getTypeList} from "/@/api/system/dict/type";
+
 
 // 定义接口来定义对象的类型
 interface TableDataRow {
@@ -130,6 +130,7 @@ interface TableDataRow {
   createdAt:string;
 }
 interface TableDataState {
+  ids:number[];
 	tableData: {
 		data: Array<TableDataRow>;
 		total: number;
@@ -153,6 +154,7 @@ export default defineComponent({
 		const editDicRef = ref();
     const queryRef = ref();
 		const state = reactive<TableDataState>({
+      ids:[],
 			tableData: {
 				data: [],
 				total: 0,
@@ -187,13 +189,28 @@ export default defineComponent({
 		};
 		// 删除字典
 		const onRowDel = (row: TableDataRow) => {
-			ElMessageBox.confirm(`此操作将永久删除字典名称：“${row.dictName}”，是否继续?`, '提示', {
+      let msg = '你确定要删除所选数据？';
+      let ids:number[] = [] ;
+      if(row){
+        msg = `此操作将永久删除用户：“${row.dictName}”，是否继续?`
+        ids = [row.dictId]
+      }else{
+        ids = state.ids
+      }
+      if(ids.length===0){
+        ElMessage.error('请选择要删除的数据。');
+        return
+      }
+			ElMessageBox.confirm(msg, '提示', {
 				confirmButtonText: '确认',
 				cancelButtonText: '取消',
 				type: 'warning',
 			})
 				.then(() => {
-					ElMessage.success('删除成功');
+          deleteType(ids).then(()=>{
+            ElMessage.success('删除成功');
+            typeList();
+          })
 				})
 				.catch(() => {});
 		};
@@ -207,6 +224,10 @@ export default defineComponent({
       formEl.resetFields()
       typeList()
     };
+    // 多选框选中数据
+    const handleSelectionChange = (selection:TableDataRow[])=> {
+      state.ids = selection.map(item => item.dictId)
+    };
 		return {
 			addDicRef,
 			editDicRef,
@@ -216,6 +237,7 @@ export default defineComponent({
 			onRowDel,
       typeList,
       resetQuery,
+      handleSelectionChange,
 			...toRefs(state),
 		};
 	},

@@ -1,62 +1,27 @@
 <template>
 	<div class="system-edit-dic-container">
-		<el-dialog title="修改字典" v-model="isShowDialog" width="769px">
-			<el-alert title="半成品，交互过于复杂，请自行扩展！" type="warning" :closable="false" class="mb20"> </el-alert>
-			<el-form :model="ruleForm" size="default" label-width="90px">
-				<el-row :gutter="35">
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="字典名称">
-							<el-input v-model="ruleForm.dicName" placeholder="请输入字典名称" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="字段名">
-							<el-input v-model="ruleForm.fieldName" placeholder="请输入字段名，拼接 ruleForm.list" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="字典状态">
-							<el-switch v-model="ruleForm.status" inline-prompt active-text="启" inactive-text="禁"></el-switch>
-						</el-form-item>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-row :gutter="35" v-for="(v, k) in ruleForm.list" :key="k">
-							<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-								<el-form-item :prop="`list[${k}].label`">
-									<template #label>
-										<el-button type="primary" size="small" @click="onAddRow" v-if="k === 0">
-											<el-icon>
-												<ele-Plus />
-											</el-icon>
-										</el-button>
-										<el-button type="danger" size="small" @click="onDelRow(k)" v-else>
-											<el-icon>
-												<ele-Delete />
-											</el-icon>
-										</el-button>
-										<span class="ml10">字段</span>
-									</template>
-									<el-input v-model="v.label" style="width: 100%" placeholder="请输入字段名"> </el-input>
-								</el-form-item>
-							</el-col>
-							<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-								<el-form-item label="属性" :prop="`list[${k}].value`">
-									<el-input v-model="v.value" style="width: 100%" placeholder="请输入属性值"> </el-input>
-								</el-form-item>
-							</el-col>
-						</el-row>
-					</el-col>
-					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="字典描述">
-							<el-input v-model="ruleForm.describe" type="textarea" placeholder="请输入字典描述" maxlength="150"></el-input>
-						</el-form-item>
-					</el-col>
-				</el-row>
+		<el-dialog :title="(ruleForm.dictId!==0?'修改':'添加')+'字典'" v-model="isShowDialog" width="769px">
+			<el-form :model="ruleForm" ref="formRef" :rules="rules" size="default" label-width="90px">
+        <el-form-item label="字典名称" prop="dictName">
+          <el-input v-model="ruleForm.dictName" placeholder="请输入字典名称" />
+        </el-form-item>
+        <el-form-item label="字典类型" prop="dictType">
+          <el-input v-model="ruleForm.dictType" placeholder="请输入字典类型" />
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="ruleForm.status">
+            <el-radio :label="1" >启用</el-radio>
+            <el-radio :label="0" >禁用</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="ruleForm.remark" type="textarea" placeholder="请输入内容"></el-input>
+        </el-form-item>
 			</el-form>
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="onCancel" size="default">取 消</el-button>
-					<el-button type="primary" @click="onSubmit" size="default">修 改</el-button>
+					<el-button type="primary" @click="onSubmit" size="default">{{ruleForm.dictId!==0?'修 改':'添 加'}}</el-button>
 				</span>
 			</template>
 		</el-dialog>
@@ -64,68 +29,64 @@
 </template>
 
 <script lang="ts">
-import { reactive, toRefs, defineComponent } from 'vue';
-
-// 定义接口来定义对象的类型
-interface RuleFormList {
-	id: number;
-	label: string;
-	value: string;
-}
+import { reactive, toRefs, defineComponent,ref, unref } from 'vue';
+import { getType,addType,editType } from '/@/api/system/dict/type';
+import {ElMessage} from "element-plus";
 interface RuleFormState {
-	dicName: string;
-	fieldName: string;
-	status: boolean;
-	list: RuleFormList[];
-	describe: string;
-	fieldNameList: Array<any>;
+  dictId:number;
+  dictName:string;
+  dictType:string;
+  status:number;
+  remark:string;
 }
 interface DicState {
 	isShowDialog: boolean;
 	ruleForm: RuleFormState;
+  rules:{}
 }
 
 export default defineComponent({
 	name: 'systemEditDic',
-	setup() {
+	setup(prop,{emit}) {
+    const formRef = ref<HTMLElement | null>(null);
 		const state = reactive<DicState>({
 			isShowDialog: false,
 			ruleForm: {
-				dicName: '', // 字典名称
-				fieldName: '', // 字段名
-				status: true, // 字典状态
-				list: [
-					// 子集字段 + 属性值
-					{
-						id: Math.random(),
-						label: '',
-						value: '',
-					},
-				],
-				describe: '', // 字典描述
-				fieldNameList: [], // 字段名: [{子集字段 + 属性值}]
+        dictId:0,
+        dictName:'',
+        dictType:'',
+        status:1,
+        remark:''
 			},
+      rules: {
+        dictName: [
+          { required: true, message: "字典名称不能为空", trigger: "blur" }
+        ],
+        dictType: [
+          { required: true, message: "字典类型不能为空", trigger: "blur" }
+        ]
+      }
 		});
 		// 打开弹窗
 		const openDialog = (row: RuleFormState|null) => {
+      resetForm();
       if (row){
-        if (row.fieldName === 'SYS_UERINFO') {
-          row.list = [
-            { id: Math.random(), label: 'sex', value: '1' },
-            { id: Math.random(), label: 'sex', value: '0' },
-          ];
-        } else {
-          row.list = [
-            { id: Math.random(), label: 'role', value: 'admin' },
-            { id: Math.random(), label: 'role', value: 'common' },
-            { id: Math.random(), label: 'roleName', value: '超级管理员' },
-            { id: Math.random(), label: 'roleName', value: '普通用户' },
-          ];
-        }
+        getType(row.dictId).then((res:any)=>{
+          state.ruleForm = res.data.dictType
+        })
         state.ruleForm = row;
       }
 			state.isShowDialog = true;
 		};
+    const resetForm = ()=>{
+      state.ruleForm = {
+        dictId:0,
+        dictName:'',
+        dictType:'',
+        status:1,
+        remark:''
+      }
+    };
 		// 关闭弹窗
 		const closeDialog = () => {
 			state.isShowDialog = false;
@@ -136,27 +97,36 @@ export default defineComponent({
 		};
 		// 新增
 		const onSubmit = () => {
-			closeDialog();
+      const formWrap = unref(formRef) as any;
+      if (!formWrap) return;
+      formWrap.validate((valid: boolean) => {
+        if (valid) {
+          if(state.ruleForm.dictId!==0){
+            //修改
+            editType(state.ruleForm).then(()=>{
+              ElMessage.success('字典类型修改成功');
+              closeDialog(); // 关闭弹窗
+              emit('typeList')
+            })
+          }else{
+            //添加
+            addType(state.ruleForm).then(()=>{
+              ElMessage.success('字典类型添加成功');
+              closeDialog(); // 关闭弹窗
+              emit('typeList')
+            })
+          }
+        }
+      });
 		};
-		// 新增行
-		const onAddRow = () => {
-			state.ruleForm.list.push({
-				id: Math.random(),
-				label: '',
-				value: '',
-			});
-		};
-		// 删除行
-		const onDelRow = (k: number) => {
-			state.ruleForm.list.splice(k, 1);
-		};
+
+
 		return {
 			openDialog,
 			closeDialog,
 			onCancel,
 			onSubmit,
-			onAddRow,
-			onDelRow,
+      formRef,
 			...toRefs(state),
 		};
 	},
