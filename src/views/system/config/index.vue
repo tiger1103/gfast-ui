@@ -3,35 +3,49 @@
     <el-card shadow="hover">
       <div class="system-user-search mb15">
         <el-form :model="tableData.param" ref="queryRef" :inline="true" label-width="68px">
-          <el-form-item label="字典类型" prop="dictType">
+          <el-form-item label="参数名称" prop="configName">
             <el-input
-                v-model="tableData.param.dictType"
-                placeholder="请输入字典类型"
+                v-model="tableData.param.configName"
+                placeholder="请输入参数名称"
                 clearable
                 size="default"
                 @keyup.enter.native="dataList"
             />
           </el-form-item>
-          <el-form-item label="字典标签" prop="dictLabel">
+          <el-form-item label="参数键名" prop="configKey">
             <el-input
-                v-model="tableData.param.dictLabel"
-                placeholder="请输入字典标签"
+                v-model="tableData.param.configKey"
+                placeholder="请输入参数键名"
                 clearable
                 size="default"
                 @keyup.enter.native="dataList"
             />
           </el-form-item>
-          <el-form-item label="状态" prop="status" style="width: 200px;">
+          <el-form-item label="系统内置" prop="configType" style="width: 200px;">
             <el-select
-                v-model="tableData.param.status"
-                placeholder="字典状态"
+                v-model="tableData.param.configType"
+                placeholder="系统内置"
                 clearable
                 size="default"
                 style="width: 240px"
             >
-              <el-option label="启用"  :value="1"/>
-              <el-option label="禁用"  :value="0"/>
+              <el-option v-for="dict in sys_yes_no"
+                 :key="dict.value"
+                 :label="dict.label"
+                 :value="dict.value"/>
             </el-select>
+          </el-form-item>
+          <el-form-item label="创建时间" prop="dateRange">
+            <el-date-picker
+                v-model="tableData.param.dateRange"
+                size="default"
+                style="width: 240px"
+                value-format="YYYY-MM-DD"
+                type="daterange"
+                range-separator="-"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+            ></el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button size="default" type="primary" class="ml10" @click="dataList">
@@ -50,13 +64,13 @@
               <el-icon>
                 <ele-FolderAdd />
               </el-icon>
-              新增字典
+              新增参数
             </el-button>
             <el-button size="default" type="danger" class="ml10" @click="onRowDel(null)">
               <el-icon>
                 <ele-Delete />
               </el-icon>
-              删除字典
+              删除参数
             </el-button>
           </el-form-item>
         </el-form>
@@ -85,15 +99,14 @@
           @pagination="dataList"
       />
     </el-card>
-    <EditParams ref="editDicRef" @dataList="dataList" :dict-type="tableData.param.dictType"/>
+    <EditConfig ref="editDicRef" @dataList="dataList" :sysYesNoOptions="sys_yes_no"/>
   </div>
 </template>
 
 <script lang="ts">
-import {toRefs, reactive, onMounted, ref, defineComponent, toRaw, unref, getCurrentInstance, isRef} from 'vue';
+import {toRefs,reactive,onMounted,ref,defineComponent,unref,getCurrentInstance} from 'vue';
 import { ElMessageBox, ElMessage,FormInstance} from 'element-plus';
-import EditParams from '/@/views/system/config/component/editParams.vue';
-import { useRoute } from 'vue-router';
+import EditConfig from '/@/views/system/config/component/editConfig.vue';
 import {deleteConfig, getConfigList} from "/@/api/system/config";
 
 
@@ -117,19 +130,19 @@ interface TableDataState {
     param: {
       pageNum: number;
       pageSize: number;
-      dictType: string;
-      dictLabel:string;
-      status: string;
+      configName:string;
+      configKey:string;
+      configType:string;
+      dateRange:string[];
     };
   };
 }
 
 export default defineComponent({
   name: 'apiV1SystemDictDataList',
-  components: { EditParams },
+  components: { EditConfig },
   setup() {
     const {proxy} = getCurrentInstance() as any;
-    const route = useRoute();
     const addDicRef = ref();
     const editDicRef = ref();
     const queryRef = ref();
@@ -141,11 +154,12 @@ export default defineComponent({
         total: 0,
         loading: false,
         param: {
+          dateRange:[],
           pageNum: 1,
           pageSize: 10,
-          dictLabel:'',
-          dictType:'',
-          status:''
+          configName:'',
+          configKey:'',
+          configType:''
         },
       },
     });
@@ -196,8 +210,6 @@ export default defineComponent({
     };
     // 页面加载时
     onMounted(() => {
-      const dictType = route.params && route.params.dictType;
-      state.tableData.param.dictType = <string>dictType
       initTableData();
     });
     /** 重置按钮操作 */
