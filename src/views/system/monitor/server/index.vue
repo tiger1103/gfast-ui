@@ -242,12 +242,12 @@
 </template>
 
 <script lang="ts">
-	import { toRefs, reactive, onMounted, getCurrentInstance } from 'vue';
+	import { toRefs, reactive, onMounted, getCurrentInstance, defineComponent  } from 'vue';
 	import * as echarts from 'echarts';
 	import 'echarts-wordcloud';
   import { getSysInfo } from "/@/api/system/monitor";
-  let interval = null
-	export default {
+  let interval: any = null
+	export default defineComponent({
 		name: 'monitor',
 		components: {},
 		setup() {
@@ -258,9 +258,9 @@
 			});
 
 
-      let myChart1;
-      let myChart2;
-      function setOptChart1 (value) {
+      let myChart1: any;
+      let myChart2: any;
+      function setOptChart1 (value:number) {
         myChart1.setOption({
           series: [
             {
@@ -273,7 +273,7 @@
         })
       }
 
-      function setOptChart2 (value) {
+      function setOptChart2 (value:number) {
         myChart2.setOption({
           series: [
             {
@@ -340,7 +340,6 @@
 			};
 
 			//内存
-
 			const initChartRAM = () => {
         myChart2 = echarts.init(proxy.$refs.chartsWarningRef2);
 				const option = {
@@ -400,8 +399,8 @@
 
 
       function getSystemInfo() {
-       getSysInfo().then(res=>{
-          const {code, data} = res
+       getSysInfo().then((res:any)=>{
+          const {code , data} = res
           if(code === 0) {
             state.sysInfo = data
             setOptChart1(data.cpuUsed)
@@ -432,12 +431,10 @@
       }
     },
     data() {
-      return {
-
-      }
+      return {}
     },
     methods:{
-      memorySizeFormat(size){
+      memorySizeFormat(size:any){
         size  = parseFloat(size);
         let rank =0;
         let rankchar ='Bytes';
@@ -456,7 +453,7 @@
         }
         return size.toFixed(2)+ " "+ rankchar;
       },
-      timeFormat(second){
+      timeFormat(second:any){
         second = parseFloat(second)
         let rank = 0
         let rankchar = '秒'
@@ -472,7 +469,7 @@
         return second.toFixed(2)+" "+rankchar
       }
     }
-  };
+  });
 </script>
 
 <style scoped lang="scss">
