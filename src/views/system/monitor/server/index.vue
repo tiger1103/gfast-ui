@@ -16,7 +16,7 @@
                                     <div class="cell">操作系统:</div>
                                 </td>
                                 <td>
-                                    <div class="cell">linux</div>
+                                    <div class="cell">{{sysInfo.sysOsName}}</div>
                                 </td>
                             </tr>
                             <tr>
@@ -24,7 +24,7 @@
                                     <div class="cell">系统架构:</div>
                                 </td>
                                 <td>
-                                    <div class="cell">amd64</div>
+                                    <div class="cell">{{sysInfo.sysOsArch}}</div>
                                 </td>
                             </tr>
                             <tr>
@@ -32,7 +32,7 @@
                                 <div class="cell">服务器名称:</div>
                               </td>
                               <td>
-                                <div class="cell">DESKTOP-126SOOG</div>
+                                <div class="cell">{{sysInfo.sysComputerName}}</div>
                               </td>
                             </tr>
                             <tr>
@@ -40,7 +40,7 @@
                                 <div class="cell">服务器IP:</div>
                               </td>
                               <td>
-                                <div class="cell">192.168.0.11</div>
+                                <div class="cell">{{sysInfo.sysComputerIp}}</div>
                               </td>
                             </tr>
                             <tr>
@@ -48,7 +48,7 @@
                                     <div class="cell">Go语言版本</div>
                                 </td>
                                 <td>
-                                    <div class="cell">go1.16.3</div>
+                                    <div class="cell">{{sysInfo.goVersion}}</div>
                                 </td>
                             </tr>
                             <tr>
@@ -56,7 +56,7 @@
                                 <div class="cell">启动时间</div>
                               </td>
                               <td>
-                                <div class="cell">2022-04-19 08:47:54</div>
+                                <div class="cell">{{sysInfo.goStartTime}}</div>
                               </td>
                             </tr>
                             <tr>
@@ -64,7 +64,7 @@
                                 <div class="cell">运行时长:</div>
                               </td>
                               <td>
-                                <div class="cell">30天</div>
+                                <div class="cell">{{timeFormat(sysInfo.goRunTime)}}</div>
                               </td>
                             </tr>
                             </tbody>
@@ -103,24 +103,24 @@
                           <div class="cell">已用百分比</div>
                         </td>
                       </tr>
-                      <tr>
+                      <tr v-for="(sysFile, index) in sysInfo.diskList" :key="index">
                         <td>
-                          <div class="cell">C:</div>
+                          <div class="cell">{{ sysFile.path }}</div>
                         </td>
                         <td>
-                          <div class="cell">ntfs</div>
+                          <div class="cell">{{ sysFile.fstype }}</div>
                         </td>
                         <td>
-                          <div class="cell">99.45GB</div>
+                          <div class="cell">{{ memorySizeFormat(sysFile.total) }}</div>
                         </td>
                         <td>
-                          <div class="cell">47.45GB</div>
+                          <div class="cell">{{ memorySizeFormat(sysFile.free) }}</div>
                         </td>
                         <td>
-                          <div class="cell">51.45GB</div>
+                          <div class="cell">{{ memorySizeFormat(sysFile.used) }}</div>
                         </td>
                         <td>
-                          <div class="cell">51.75%</div>
+                          <div class="cell">{{ sysFile.usedPercent }}%</div>
                         </td>
                       </tr>
                       </tbody>
@@ -146,7 +146,7 @@
                                             <div class="cell">核心数:</div>
                                         </td>
                                         <td>
-                                            <div class="cell">8</div>
+                                            <div class="cell">{{sysInfo.cpuNum}}</div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -154,7 +154,7 @@
                                             <div class="cell">使用率:</div>
                                         </td>
                                         <td>
-                                            <div class="cell">15.15%</div>
+                                            <div class="cell">{{sysInfo.cpuUsed}}%</div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -162,7 +162,7 @@
                                             <div class="cell">Load Avg 5:</div>
                                         </td>
                                         <td>
-                                            <div class="cell">0.07%</div>
+                                            <div class="cell">{{sysInfo.cupAvg5}}%</div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -170,7 +170,7 @@
                                         <div class="cell">Load Avg 15:</div>
                                       </td>
                                       <td>
-                                        <div class="cell">0.06%</div>
+                                        <div class="cell">{{sysInfo.cpuAvg15}}%</div>
                                       </td>
                                     </tr>
                                     </tbody>
@@ -197,34 +197,34 @@
                                     <tbody>
                                     <tr>
                                         <td>
-                                            <div class="cell">总数（GB）:</div>
+                                            <div class="cell">总数:</div>
                                         </td>
                                         <td>
-                                            <div class="cell">200</div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="cell">已使用（GB）:</div>
-                                        </td>
-                                        <td>
-                                            <div class="cell">63</div>
+                                            <div class="cell">{{ memorySizeFormat(sysInfo.memTotal) }}</div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <div class="cell">剩余（GB）:</div>
+                                            <div class="cell">已使用:</div>
                                         </td>
                                         <td>
-                                            <div class="cell">137</div>
+                                            <div class="cell">{{ memorySizeFormat(sysInfo.memUsed)}}</div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="cell">剩余:</div>
+                                        </td>
+                                        <td>
+                                            <div class="cell">{{ memorySizeFormat(sysInfo.memFree) }}</div>
                                         </td>
                                     </tr>
                                     <tr>
                                       <td>
-                                        <div class="cell">本系统使用（MB）:</div>
+                                        <div class="cell">系统使用:</div>
                                       </td>
                                       <td>
-                                        <div class="cell">87</div>
+                                        <div class="cell">{{ memorySizeFormat(sysInfo.goUsed)}}</div>
                                       </td>
                                     </tr>
                                     </tbody>
@@ -245,18 +245,52 @@
 	import { toRefs, reactive, onMounted, getCurrentInstance } from 'vue';
 	import * as echarts from 'echarts';
 	import 'echarts-wordcloud';
-
+  import { getSysInfo } from "/@/api/system/monitor";
+  let interval = null
 	export default {
-		name: 'index',
+		name: 'monitor',
 		components: {},
 		setup() {
 			const { proxy } = getCurrentInstance() as any;
 			const state: any = reactive({
 				myCharts: [],
+        sysInfo:{}
 			});
+
+
+      let myChart1;
+      let myChart2;
+      function setOptChart1 (value) {
+        myChart1.setOption({
+          series: [
+            {
+              data: [{
+                value: value,
+                name: 'CPU使用率',
+              }],
+            },
+          ],
+        })
+      }
+
+      function setOptChart2 (value) {
+        myChart2.setOption({
+          series: [
+            {
+              data: [{
+                value: value,
+                name: '内存使用率',
+              }],
+            },
+          ],
+        })
+      }
+
+
 			//CPU
+
 			const initChartCPU = () => {
-				const myChart1 = echarts.init(proxy.$refs.chartsWarningRef1);
+        myChart1 = echarts.init(proxy.$refs.chartsWarningRef1);
 				const option = {
 					tooltip: {
 						formatter: '{a} <br/>{b} : {c}%',
@@ -292,21 +326,23 @@
 								},
 								offsetCenter: ['0', '80%'],    //表盘数据(30%)位置
 							},
-							data: [
-								{
-									value: 15,
-									name: 'CPU使用率',
-								},
-							],
+							// data: [
+							// 	{
+							// 		value: 15,
+							// 		name: 'CPU使用率',
+							// 	},
+							// ],
 						},
 					],
 				};
 				myChart1.setOption(option);
 				state.myCharts.push(myChart1);
 			};
+
 			//内存
+
 			const initChartRAM = () => {
-				const myChart2 = echarts.init(proxy.$refs.chartsWarningRef2);
+        myChart2 = echarts.init(proxy.$refs.chartsWarningRef2);
 				const option = {
 					tooltip: {
 						formatter: '{a} <br/>{b} : {c}%',
@@ -342,28 +378,101 @@
 								},
 								offsetCenter: ['0', '80%'],    //表盘数据(30%)位置
 							},
-							data: [
-								{
-									value: 30,
-									name: '内存使用率',
-								},
-							],
+							// data: [
+							// 	{
+							// 		value: 30,
+							// 		name: '内存使用率',
+							// 	},
+							// ],
 						},
 					],
 				};
 				myChart2.setOption(option);
 				state.myCharts.push(myChart2);
 			};
+
+
 			// 页面加载时
 			onMounted(() => {
 				initChartCPU();
 				initChartRAM();
 			});
+
+
+      function getSystemInfo() {
+       getSysInfo().then(res=>{
+          const {code, data} = res
+          if(code === 0) {
+            state.sysInfo = data
+            setOptChart1(data.cpuUsed)
+            setOptChart2(data.memUsage)
+          }
+        })
+      }
+
 			return {
 				...toRefs(state),
+        getSystemInfo,
+        setOptChart1,
+        setOptChart2,
 			};
 		},
-	};
+    created() {
+      this.getSystemInfo()
+      if (interval === null) {
+        interval = setInterval(()=> {
+          this.getSystemInfo()
+        }, 3000)
+      }
+    },
+    unmounted() {
+      if (interval !== null) {
+        clearInterval(interval)
+        interval = null
+      }
+    },
+    data() {
+      return {
+
+      }
+    },
+    methods:{
+      memorySizeFormat(size){
+        size  = parseFloat(size);
+        let rank =0;
+        let rankchar ='Bytes';
+        while(size>1024&&rankchar!='GB'){
+          size = size/1024;
+          rank++;
+          if(rank==1){
+            rankchar="KB";
+          }
+          else if(rank==2){
+            rankchar="MB";
+          }
+          else if(rank==3){
+            rankchar="GB";
+          }
+        }
+        return size.toFixed(2)+ " "+ rankchar;
+      },
+      timeFormat(second){
+        second = parseFloat(second)
+        let rank = 0
+        let rankchar = '秒'
+        while(second>60&&rankchar!='小时'){
+          second = second/60;
+          rank++
+          if(rank==1){
+            rankchar = '分'
+          }else if(rank==2){
+            rankchar='小时'
+          }
+        }
+        return second.toFixed(2)+" "+rankchar
+      }
+    }
+  };
 </script>
 
 <style scoped lang="scss">
