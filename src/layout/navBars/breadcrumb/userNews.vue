@@ -45,7 +45,7 @@ export default defineComponent({
 		};
 		// 前往通知中心点击
 		const onGoToGiteeClick = () => {
-			window.open('https://gitee.com/lyt-top/vue-next-admin');
+			window.open('https://github.com/tiger1103/gfast');
 		};
 		return {
 			onAllReadClick,

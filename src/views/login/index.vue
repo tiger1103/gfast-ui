@@ -79,7 +79,7 @@ export default defineComponent({
 	width: 100%;
 	height: 100%;
 	position: relative;
-  background-image: url("./src/assets/bg.jpg");
+  background-image: url("/@/assets/bg.jpg");
   background-size: cover;
 	.login-icon-group {
 		width: 100%;
