@@ -162,7 +162,7 @@
                                             <div class="cell">Load Avg 5:</div>
                                         </td>
                                         <td>
-                                            <div class="cell">{{sysInfo.cupAvg5}}%</div>
+                                            <div class="cell">{{sysInfo.cpuAvg5}}%</div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -421,7 +421,7 @@
       if (interval === null) {
         interval = setInterval(()=> {
           this.getSystemInfo()
-        }, 3000)
+        }, 5000)
       }
     },
     unmounted() {
@@ -481,6 +481,10 @@
 </script>
 
 <style scoped lang="scss">
+    .el-card{
+      height:300px;
+      overflow-y: auto;
+    }
     .system-user-container {
     }
 
