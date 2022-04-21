@@ -221,7 +221,7 @@
                                     </tr>
                                     <tr>
                                       <td>
-                                        <div class="cell">系统使用:</div>
+                                        <div class="cell">GFast系统使用:</div>
                                       </td>
                                       <td>
                                         <div class="cell">{{ memorySizeFormat(sysInfo.goUsed)}}</div>

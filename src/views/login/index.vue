@@ -108,19 +108,18 @@ export default defineComponent({
   .login-content-out {
     width: 100%;
     height: 100%;
-    padding-top: 400px;
+    padding-top: 150px;
   }
 	.login-content {
 		width: 500px;
 		padding: 20px;
     margin: auto;
-		transform: translateY(-50%) translate3d(0, 0, 0);
 		background-color: var(--el-color-white);
 		border: 5px solid var(--el-color-primary-light-8);
 		border-radius: 5px;
 		overflow: hidden;
 		z-index: 1;
-		height: 460px;
+    position: relative;
 		.login-content-main {
 			margin: 0 auto;
 			width: 80%;
