@@ -1017,4 +1017,12 @@ export const staticRoutes: Array<RouteRecordRaw> = [
 			title: 'message.router.visualizingLinkDemo2',
 		},
 	},
+	{
+		path: '/dbInit',
+		name: 'dbInit',
+		component: () => import('/@/views/dbInit/index.vue'),
+		meta: {
+			title: '系统初始化',
+		},
+	},
 ];

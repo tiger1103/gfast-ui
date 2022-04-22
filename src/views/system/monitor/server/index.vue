@@ -286,9 +286,7 @@
         })
       }
 
-
 			//CPU
-
 			const initChartCPU = () => {
         myChart1 = echarts.init(proxy.$refs.chartsWarningRef1);
 				const option = {

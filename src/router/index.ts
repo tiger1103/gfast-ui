@@ -187,10 +187,26 @@ const { isRequestRoutes } = store.state.themeConfig.themeConfig;
 // 前端控制路由：初始化方法，防止刷新时路由丢失
 if (!isRequestRoutes) initFrontEndControlRoutes();
 
+
+import {isInit} from "/@/api/system/dbInit"
 // 路由加载前
 router.beforeEach(async (to, from, next) => {
 	NProgress.configure({ showSpinner: false });
 	if (to.meta.title) NProgress.start();
+	//  系统初始化
+	if (to.path === '/dbInit') {
+		next();
+		NProgress.done();
+	}
+	const res:any  = await isInit()
+	let {code, data}  = res
+	if (code === 0 && data === false) {
+		next('/dbInit');
+		NProgress.done();
+		return
+	}
+
+	// 正常流程
 	const token = Session.get('token');
 	if (to.path === '/login' && !token) {
 		next();
