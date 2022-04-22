@@ -24,9 +24,7 @@
 ------------------------------- */
 @media screen and (max-width: $md) {
 	.login-content {
-		right: unset !important;
-		left: 50% !important;
-		transform: translate(-50%, -50%) translate3d(0, 0, 0) !important;
+		width: 90% !important;
 	}
 }
 
@@ -38,8 +36,7 @@
 			display: none !important;
 		}
 		.login-content {
-			width: 100% !important;
-			height: 100% !important;
+			width: 90% !important;
 			padding: 20px 0 !important;
 			border-radius: 0 !important;
 			box-shadow: unset !important;

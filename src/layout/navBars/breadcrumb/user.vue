@@ -170,7 +170,7 @@ export default defineComponent({
 					})
 					.catch(() => {});
 			} else if (path === 'wareHouse') {
-				window.open('https://gitee.com/lyt-top/vue-next-admin');
+				window.open('https://github.com/tiger1103/gfast');
 			} else {
 				router.push(path);
 			}

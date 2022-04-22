@@ -162,7 +162,7 @@
                                             <div class="cell">Load Avg 5:</div>
                                         </td>
                                         <td>
-                                            <div class="cell">{{sysInfo.cupAvg5}}%</div>
+                                            <div class="cell">{{sysInfo.cpuAvg5}}%</div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -221,7 +221,7 @@
                                     </tr>
                                     <tr>
                                       <td>
-                                        <div class="cell">系统使用:</div>
+                                        <div class="cell">GFast系统使用:</div>
                                       </td>
                                       <td>
                                         <div class="cell">{{ memorySizeFormat(sysInfo.goUsed)}}</div>
@@ -419,7 +419,7 @@
       if (interval === null) {
         interval = setInterval(()=> {
           this.getSystemInfo()
-        }, 3000)
+        }, 5000)
       }
     },
     unmounted() {
@@ -436,7 +436,7 @@
         size  = parseFloat(size);
         let rank =0;
         let rankchar ='Bytes';
-        while(size>1024&&rankchar!='GB'){
+        while(size>1024&&rankchar!='TB'){
           size = size/1024;
           rank++;
           if(rank==1){
@@ -447,6 +447,8 @@
           }
           else if(rank==3){
             rankchar="GB";
+          }else if(rank==4){
+            rankchar="TB";
           }
         }
         return size.toFixed(2)+ " "+ rankchar;
@@ -455,13 +457,19 @@
         second = parseFloat(second)
         let rank = 0
         let rankchar = '秒'
-        while(second>60&&rankchar!='小时'){
-          second = second/60;
+        while((second>60&&rankchar!='小时'&&rankchar!='天')||(second>24&&rankchar=='小时')){
+          if(rankchar=='小时'){
+            second = second/24;
+          }else{
+            second = second/60;
+          }
           rank++
           if(rank==1){
             rankchar = '分'
           }else if(rank==2){
             rankchar='小时'
+          }else if(rank==3){
+            rankchar='天'
           }
         }
         return second.toFixed(2)+" "+rankchar
@@ -471,6 +479,10 @@
 </script>
 
 <style scoped lang="scss">
+    .el-card{
+      height:300px;
+      overflow-y: auto;
+    }
     .system-user-container {
     }
 

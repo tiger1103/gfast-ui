@@ -1,5 +1,77 @@
 <template>
 	<div class="home-container">
+    <el-row :gutter="15" class="home-card-two mb15">
+      <el-col :xs="24" :sm="24" :md="24" :lg="26" :xl="26">
+        <div class="home-card-top">
+          <div class="box-card">
+            <div class="box-card-item">
+              <p>领取阿里云通用云产品优惠券</p>
+              <p><a target="_blank" class="text-info" href="https://www.aliyun.com/minisite/goods?userCode=fcor2omk">https://www.aliyun.com/minisite/goods?userCode=fcor2omk</a></p>
+            </div>
+            <div class="box-card-item">
+              <p>领取腾讯云通用云产品优惠券</p>
+              <p><a target="_blank" class="text-info" href="https://cloud.tencent.com/act/cps/redirect?redirect=1062&cps_key=20b1c3842f74986b2894e2c5fcde7ea2&from=console">https://cloud.tencent.com/act/cps/redirect?redirect=1062&cps_key=20b1c3842f74986b2894e2c5fcde7ea2&from=console</a></p>
+            </div>
+            <div class="box-card-item">
+              <p class="text-danger" style="font-weight: bold;font-size: 18px;">插件商城(目前只支持gfast2.0)</p>
+              <p>
+                <a target="_blank" class="text-danger" style="font-weight: bold;font-size: 18px;" href="https://plugins.g-fast.cn/store">https://plugins.g-fast.cn/store</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+    <el-row :gutter="15" class="home-card-two mb15">
+      <el-col :xs="24" :sm="8" :md="8" :lg="10" :xl="10">
+        <div class="home-card-item">
+          <el-card class="box-card kj">
+            <template #header>
+              <div class="clearfix">
+                <span class="title">gfast后台管理框架</span>
+              </div>
+            </template>
+            <p>基于GF(Go Frame)的后台管理系统 ，完善的权限用户管理，致力于快速高效开发cms系统、督办系统、后续将加入流程审批、工作流引擎、项目管理、挂图作战、数据大屏等功能。</p>
+            <div class="git-res">
+              <el-link type="primary" icon="el-icon-cloudy" href="https://gitee.com/tiger1103/gfast" >访问码云</el-link>
+              <el-link type="success" icon="el-icon-user" href="https://github.com/tiger1103/gfast">访问github</el-link>
+              <el-link type="info" icon="el-icon-s-home" href="http://www.g-fast.cn">访问官网</el-link>
+            </div>
+            <div class="product">
+              <h3>公司产品</h3>
+              <ul>
+                <li><a href="http://www.qjit.cn/wallchartoperation.html" target="_blank" class="text-danger">挂图作战指挥平台</a></li>
+                <li><a href="http://www.qjit.cn/macrodata.html" target="_blank" class="text-danger">宏观数据库平台</a></li>
+                <li><a href="http://www.qjit.cn/usedcar.html" target="_blank" class="text-danger">二手车管理系统</a></li>
+                <li><a href="http://www.qjit.cn/" target="_blank" class="text-danger">公租房管理系统</a></li>
+              </ul>
+            </div>
+          </el-card>
+          <el-card class="box-card xx">
+            <template #header>
+              <div class="clearfix">
+                <span class="title">联系信息</span>
+              </div>
+            </template>
+            <p><i class="el-icon-s-promotion"></i> 官网：<a href="http://www.g-fast.cn" class="text-info" target="_blank">http://www.g-fast.cn</a></p>
+            <p><i class="el-icon-s-custom"></i> QQ群：865697297</p>
+          </el-card>
+        </div>
+      </el-col>
+      <el-col :xs="24" :sm="16" :md="16" :lg="14" :xl="14" class="home-media">
+        <div class="home-card-item">
+          <el-card class="box-card jz">
+            <template #header>
+            <div class="clearfix">
+              <span class="title">捐赠</span>
+            </div>
+            </template>
+            <p>若框架对您有帮助，您可以捐赠表达一下心意：</p>
+            <img style="width: 700px; height: 360px" src="https://yxh-1301841944.cos.ap-chongqing.myqcloud.com/gfast/2022-04-19/jz.jpg"/>
+          </el-card>
+        </div>
+      </el-col>
+    </el-row>
 		<el-row :gutter="15" class="home-card-one mb15">
 			<el-col
 				:xs="24"
@@ -554,7 +626,7 @@ $homeNavLengh: 8;
 	.home-card-one,
 	.home-card-two,
 	.home-card-three {
-		.home-card-item {
+		.home-card-item,.home-card-top {
 			width: 100%;
 			height: 130px;
 			border-radius: 4px;
@@ -597,8 +669,18 @@ $homeNavLengh: 8;
 	}
 	.home-card-two,
 	.home-card-three {
-		.home-card-item {
-			height: 400px;
+    .home-card-item{
+      height: 500px;
+    }
+    .home-card-top{
+      height: 250px;
+      .box-card{
+        padding: 15px 20px 20px 20px;
+        p{margin-bottom: 10px;}
+        &-item{margin-bottom: 20px;}
+      }
+    }
+		.home-card-item, .home-card-top{
 			width: 100%;
 			overflow: hidden;
 			.home-monitor {
@@ -634,5 +716,27 @@ $homeNavLengh: 8;
 			}
 		}
 	}
+  .text-info{color: #23c6c8;}
+  .text-danger{color:#ed5565;}
+
+  .git-res{
+    margin-top: 20px;
+  }
+  .git-res .el-link{
+    margin-right: 30px;
+  }
+  ul,li{ padding:0;margin:0;list-style:none}
+  .product{
+    margin-top: 50px;
+    h3{margin-bottom: 15px;}
+  }
+  .product li{
+    margin-bottom: 20px;
+    float: left;
+    width: 150px;
+  }
+  .box-card.xx{
+    margin-top: 20px;
+  }
 }
 </style>

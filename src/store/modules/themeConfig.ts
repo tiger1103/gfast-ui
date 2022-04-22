@@ -92,7 +92,7 @@ const themeConfigModule: Module<ThemeConfigState, RootStateTypes> = {
 			// 是否开启深色模式
 			isIsDark: false,
 			// 是否开启水印
-			isWartermark: true,
+			isWartermark: false,
 			// 水印文案
 			wartermarkText: 'GFast-v3.0',
 

@@ -40,8 +40,7 @@
 import { reactive, toRefs, ref, computed, onMounted, nextTick, getCurrentInstance, watch, onUnmounted, defineComponent } from 'vue';
 import { useRoute, useRouter, onBeforeRouteUpdate, RouteRecordRaw } from 'vue-router';
 import { useStore } from '/@/store/index';
-import {i18n} from '/@/i18n/index';
-import {useI18n} from "_vue-i18n@9.1.9@vue-i18n";
+import {useI18n} from "vue-i18n";
 
 // 定义接口来定义对象的类型
 interface ColumnsAsideState {
