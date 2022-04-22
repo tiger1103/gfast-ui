@@ -198,13 +198,21 @@ router.beforeEach(async (to, from, next) => {
 		next();
 		NProgress.done();
 	}
-	const res:any  = await isInit()
-	let {code, data}  = res
-	if (code === 0 && data === false) {
-		next('/dbInit');
-		NProgress.done();
-		return
+
+	if (Session.get("isInit") !== true) {
+		const res:any  = await isInit()
+		let {code, data}  = res
+		if (code === 0 ) {
+			if (data === false) {
+				next('/dbInit');
+				NProgress.done();
+				return
+			} else {
+				Session.set("isInit", true)
+			}
+		}
 	}
+
 
 	// 正常流程
 	const token = Session.get('token');
