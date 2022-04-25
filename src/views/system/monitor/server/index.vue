@@ -245,7 +245,7 @@
 	import { toRefs, reactive, onMounted, getCurrentInstance, defineComponent  } from 'vue';
 	import * as echarts from 'echarts';
 	import 'echarts-wordcloud';
-  import { getSysInfo } from "/@/api/system/monitor";
+  import { getSysInfo } from "/@/api/system/monitor/server";
   let interval: any = null
 	export default defineComponent({
 		name: 'monitor',
