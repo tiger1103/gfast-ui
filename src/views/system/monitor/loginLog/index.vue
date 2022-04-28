@@ -118,10 +118,9 @@
 </template>
 
 <script lang="ts">
-import { toRefs, reactive, onMounted, ref, defineComponent,getCurrentInstance } from 'vue';
+import { toRefs, reactive, onMounted, ref, defineComponent,getCurrentInstance,unref } from 'vue';
 import { ElMessageBox, ElMessage,FormInstance} from 'element-plus';
 import { logList,deleteLog,clearLog } from '/@/api/system/monitor/loginLog';
-import {unref} from "_vue@3.2.31@vue";
 
 // 定义接口来定义对象的类型
 interface TableDataRow {
