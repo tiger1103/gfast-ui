@@ -15,13 +15,13 @@
 					:class="{ 'layout-columns-active': liIndex === k, 'layout-columns-hover': liHoverIndex === k }"
 					:title="v.meta.title.indexOf('.')>0?$t(v.meta.title):v.meta.title"
 				>
-					<div :class="setColumnsAsidelayout" v-if="!v.meta.isLink || (v.meta.isLink && v.meta.isIframe)">
+					<div :class="themeConfig.columnsAsideLayout" v-if="!v.meta.isLink || (v.meta.isLink && v.meta.isIframe)">
 						<SvgIcon :name="v.meta.icon" />
 						<div class="columns-vertical-title font12">
 							{{tMenuTitle(v.meta.title)}}
 						</div>
 					</div>
-					<div :class="setColumnsAsidelayout" v-else>
+					<div :class="themeConfig.columnsAsideLayout" v-else>
 						<a :href="v.meta.isLink" target="_blank">
 							<SvgIcon :name="v.meta.icon" />
 							<div class="columns-vertical-title font12">
@@ -30,17 +30,20 @@
 						</a>
 					</div>
 				</li>
-				<div ref="columnsAsideActiveRef" :class="setColumnsAsideStyle"></div>
+				<div ref="columnsAsideActiveRef" :class="themeConfig.columnsAsideStyle"></div>
 			</ul>
 		</el-scrollbar>
 	</div>
 </template>
 
 <script lang="ts">
-import { reactive, toRefs, ref, computed, onMounted, nextTick, getCurrentInstance, watch, onUnmounted, defineComponent } from 'vue';
+import { reactive, toRefs, ref, onMounted, nextTick, getCurrentInstance, watch, onUnmounted, defineComponent } from 'vue';
 import { useRoute, useRouter, onBeforeRouteUpdate, RouteRecordRaw } from 'vue-router';
-import { useStore } from '/@/store/index';
 import {useI18n} from "vue-i18n";
+import { storeToRefs } from 'pinia';
+import pinia from '/@/stores/index';
+import { useRoutesList } from '/@/stores/routesList';
+import { useThemeConfig } from '/@/stores/themeConfig';
 
 // 定义接口来定义对象的类型
 interface ColumnsAsideState {
@@ -51,7 +54,6 @@ interface ColumnsAsideState {
 	liOldPath: null | string;
 	difference: number;
 	routeSplit: string[];
-	isNavHover: boolean;
 }
 
 export default defineComponent({
@@ -61,7 +63,10 @@ export default defineComponent({
 		const columnsAsideActiveRef = ref();
     const { t } = useI18n();
 		const { proxy } = <any>getCurrentInstance();
-		const store = useStore();
+		const stores = useRoutesList();
+		const storesThemeConfig = useThemeConfig();
+		const { routesList, isColumnsMenuHover, isColumnsNavHover } = storeToRefs(stores);
+		const { themeConfig } = storeToRefs(storesThemeConfig);
 		const route = useRoute();
 		const router = useRouter();
 		const state = reactive<ColumnsAsideState>({
@@ -109,19 +114,16 @@ export default defineComponent({
 			state.liOldIndex = k;
 			state.liHoverIndex = k;
 			proxy.mittBus.emit('setSendColumnsChildren', setSendChildren(path));
-			store.dispatch('routesList/setColumnsMenuHover', false);
-			store.dispatch('routesList/setColumnsNavHover', true);
-			state.isNavHover = true;
+			stores.setColumnsMenuHover(false);
+			stores.setColumnsNavHover(true);
 		};
 		// 鼠标移走时，显示原来的子级菜单
 		const onColumnsAsideMenuMouseleave = async () => {
-			await store.dispatch('routesList/setColumnsNavHover', false);
+			await stores.setColumnsNavHover(false);
 			// 添加延时器，防止拿到的 store.state.routesList 值不是最新的
 			setTimeout(() => {
-				const { isColumnsMenuHover, isColumnsNavHover } = store.state.routesList;
 				if (!isColumnsMenuHover && !isColumnsNavHover) proxy.mittBus.emit('restoreDefault');
 			}, 100);
-			// state.isNavHover = false;
 		};
 		// 设置高亮动态位置
 		const onColumnsAsideDown = (k: number) => {
@@ -131,7 +133,7 @@ export default defineComponent({
 		};
 		// 设置/过滤路由（非静态路由/是否显示在菜单中）
 		const setFilterRoutes = () => {
-			state.columnsAsideList = filterRoutesFun(store.state.routesList.routesList);
+			state.columnsAsideList = filterRoutesFun(routesList.value);
 			const resData: any = setSendChildren(route.path);
 			if (Object.keys(resData).length <= 0) return false;
 			onColumnsAsideDown(resData.item[0].k);
@@ -152,7 +154,7 @@ export default defineComponent({
 			return currentData;
 		};
 		// 路由过滤递归函数
-		const filterRoutesFun = (arr: Array<object>) => {
+		const filterRoutesFun = (arr: Array<string>) => {
 			return arr
 				.filter((item: any) => !item.meta.isHide)
 				.map((item: any) => {
@@ -174,17 +176,23 @@ export default defineComponent({
 			}, 0);
 		};
 		// 监听布局配置信息的变化，动态增加菜单高亮位置移动像素
-		watch(store.state, (val) => {
-			val.themeConfig.themeConfig.columnsAsideStyle === 'columnsRound' ? (state.difference = 3) : (state.difference = 0);
-			if (!val.routesList.isColumnsMenuHover && !val.routesList.isColumnsNavHover) {
-				state.liHoverIndex = null;
-				proxy.mittBus.emit('setSendColumnsChildren', setSendChildren(route.path));
-			} else {
-				state.liHoverIndex = state.liOldIndex;
-				if (!state.liOldPath) return false;
-				proxy.mittBus.emit('setSendColumnsChildren', setSendChildren(state.liOldPath));
+		watch(
+			pinia.state,
+			(val) => {
+				val.themeConfig.themeConfig.columnsAsideStyle === 'columnsRound' ? (state.difference = 3) : (state.difference = 0);
+				if (!val.routesList.isColumnsMenuHover && !val.routesList.isColumnsNavHover) {
+					state.liHoverIndex = null;
+					proxy.mittBus.emit('setSendColumnsChildren', setSendChildren(route.path));
+				} else {
+					state.liHoverIndex = state.liOldIndex;
+					if (!state.liOldPath) return false;
+					proxy.mittBus.emit('setSendColumnsChildren', setSendChildren(state.liOldPath));
+				}
+			},
+			{
+				deep: true,
 			}
-		});
+		);
 		// 页面加载时
 		onMounted(() => {
 			setFilterRoutes();
@@ -204,11 +212,10 @@ export default defineComponent({
 			proxy.mittBus.emit('setSendColumnsChildren', setSendChildren(to.path));
 		});
 		return {
+			themeConfig,
 			columnsAsideOffsetTopRefs,
 			columnsAsideActiveRef,
 			onColumnsAsideDown,
-			setColumnsAsideStyle,
-			setColumnsAsidelayout,
 			onColumnsAsideMenuClick,
 			onColumnsAsideMenuMouseenter,
 			onColumnsAsideMenuMouseleave,
@@ -263,7 +270,7 @@ export default defineComponent({
 			}
 		}
 		.layout-columns-active {
-			color: var(--el-color-white);
+			color: var(--next-bg-columnsMenuBarColor) !important;
 			transition: 0.3s ease-in-out;
 		}
 		.layout-columns-hover {

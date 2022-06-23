@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
+import pinia from '/@/stores/index';
 import App from './App.vue';
 import router from './router';
-import { store, key } from './store';
 import { directive } from '/@/utils/directive';
 import { i18n } from '/@/i18n/index';
 import other from '/@/utils/other';
@@ -22,14 +22,7 @@ directive(app);
 other.elSvg(app);
 
 app.component('pagination', pagination)
-
-app.use(router)
-    .use(store, key)
-    .use(ElementPlus, { i18n: i18n.global.t })
-    .use(i18n)
-    .use(VueGridLayout)
-    .mount('#app');
-
+app.use(pinia).use(router).use(ElementPlus, { i18n: i18n.global.t }).use(i18n).use(VueGridLayout).mount('#app');
 
 // 全局挂载
 app.config.globalProperties.getUpFileUrl=getUpFileUrl
