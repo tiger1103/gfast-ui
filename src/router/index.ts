@@ -200,16 +200,20 @@ router.beforeEach(async (to, from, next) => {
 	}
 
 	if (Session.get("isInit") !== true) {
-		const res:any  = await isInit()
-		let {code, data}  = res
-		if (code === 0 ) {
-			if (data === false) {
-				next('/dbInit');
-				NProgress.done();
-				return
-			} else {
-				Session.set("isInit", true)
+		try{
+			const res:any  = await isInit()
+			let {code, data}  = res
+			if (code === 0 ) {
+				if (data === false) {
+					next('/dbInit');
+					NProgress.done();
+					return
+				} else {
+					Session.set("isInit", true)
+				}
 			}
+		}catch (e){
+		 	console.log(e)
 		}
 	}
 
