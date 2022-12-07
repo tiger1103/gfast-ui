@@ -33,7 +33,6 @@ const dynamicViewsModules: Record<string, Function> = Object.assign({}, { ...lay
  * @method setAddRoute 添加动态路由
  * @method setFilterMenuAndCacheTagsViewRoutes 设置路由到 vuex routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
  */
-
 export async function initBackEndControlRoutes() {
 	// 界面 loading 动画开始执行
 	if (window.nextLoading === undefined) NextLoading.start();
