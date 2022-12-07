@@ -66,7 +66,7 @@
 					<el-row :gutter="15" class="personal-recommend-row">
 						<el-col :sm="6" v-for="(v, k) in recommendList" :key="k" class="personal-recommend-col">
 							<div class="personal-recommend" :style="{ 'background-color': v.bg }">
-								<SvgIcon :name="v.icon" :style="{ color: v.iconColor }" />
+								<SvgIcon :name="v.icon" :size="70" :style="{ color: v.iconColor }" />
 								<div class="personal-recommend-auto">
 									<div>{{ v.title }}</div>
 									<div class="personal-recommend-msg">{{ v.msg }}</div>
@@ -140,7 +140,7 @@
 								<div class="personal-edit-safe-item-left-value">当前密码强度：强</div>
 							</div>
 							<div class="personal-edit-safe-item-right">
-								<el-button type="text">立即修改</el-button>
+								<el-button text type="primary">立即修改</el-button>
 							</div>
 						</div>
 					</div>
@@ -151,7 +151,7 @@
 								<div class="personal-edit-safe-item-left-value">已绑定手机：132****4108</div>
 							</div>
 							<div class="personal-edit-safe-item-right">
-								<el-button type="text">立即修改</el-button>
+								<el-button text type="primary">立即修改</el-button>
 							</div>
 						</div>
 					</div>
@@ -162,7 +162,7 @@
 								<div class="personal-edit-safe-item-left-value">已设置密保问题，账号安全大幅度提升</div>
 							</div>
 							<div class="personal-edit-safe-item-right">
-								<el-button type="text">立即设置</el-button>
+								<el-button text type="primary">立即设置</el-button>
 							</div>
 						</div>
 					</div>
@@ -173,7 +173,7 @@
 								<div class="personal-edit-safe-item-left-value">已绑定QQ：110****566</div>
 							</div>
 							<div class="personal-edit-safe-item-right">
-								<el-button type="text">立即设置</el-button>
+								<el-button text type="primary">立即设置</el-button>
 							</div>
 						</div>
 					</div>
@@ -276,7 +276,7 @@ export default defineComponent({
 			color: var(--el-text-color-secondary);
 			font-size: 13px;
 			&:hover {
-				color: var(--color-primary);
+				color: var(--el-color-primary);
 				cursor: pointer;
 			}
 		}
@@ -295,7 +295,7 @@ export default defineComponent({
 						text-decoration: none;
 					}
 					& a:hover {
-						color: var(--color-primary);
+						color: var(--el-color-primary);
 						cursor: pointer;
 					}
 				}
@@ -307,7 +307,6 @@ export default defineComponent({
 			.personal-recommend {
 				position: relative;
 				height: 100px;
-				color: var(--color-whites);
 				border-radius: 3px;
 				overflow: hidden;
 				cursor: pointer;
@@ -331,6 +330,7 @@ export default defineComponent({
 					position: absolute;
 					left: 0;
 					top: 5%;
+					color: var(--next-color-white);
 					.personal-recommend-msg {
 						font-size: 12px;
 						margin-top: 10px;
@@ -352,7 +352,7 @@ export default defineComponent({
 				left: 0;
 				top: 50%;
 				transform: translateY(-50%);
-				background: var(--color-primary);
+				background: var(--el-color-primary);
 			}
 		}
 		.personal-edit-safe-box {

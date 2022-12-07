@@ -66,7 +66,7 @@
               </el-icon>
               新增字典
             </el-button>
-            <el-button size="default" type="danger" class="ml10" @click="onRowDel(null)">
+            <el-button size="default" type="danger" class="ml10" @click="onRowDel()">
               <el-icon>
                 <ele-Delete />
               </el-icon>
@@ -94,10 +94,10 @@
 				</el-table-column>
 				<el-table-column prop="remark" label="字典描述" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="createdAt" label="创建时间" show-overflow-tooltip width="180"></el-table-column>
-				<el-table-column label="操作" width="100">
+				<el-table-column label="操作" width="110">
 					<template #default="scope">
-						<el-button size="small" type="text" @click="onOpenEditDic(scope.row)">修改</el-button>
-						<el-button size="small" type="text" @click="onRowDel(scope.row)">删除</el-button>
+						<el-button size="small" text type="primary" @click="onOpenEditDic(scope.row)">修改</el-button>
+						<el-button size="small" text type="primary" @click="onRowDel(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -188,11 +188,11 @@ export default defineComponent({
 			editDicRef.value.openDialog(row);
 		};
 		// 删除字典
-		const onRowDel = (row: TableDataRow) => {
+		const onRowDel = (row?: TableDataRow) => {
       let msg = '你确定要删除所选数据？';
       let ids:number[] = [] ;
       if(row){
-        msg = `此操作将永久删除用户：“${row.dictName}”，是否继续?`
+        msg = `此操作将永久删除该数据：“${row.dictName}”，是否继续?`
         ids = [row.dictId]
       }else{
         ids = state.ids

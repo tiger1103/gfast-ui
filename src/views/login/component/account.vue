@@ -75,9 +75,12 @@ import {toRefs, reactive, defineComponent, computed, onMounted,getCurrentInstanc
 import { useRoute, useRouter } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import { useI18n } from 'vue-i18n';
+import { useUserInfo } from '/@/stores/userInfo';
+import Cookies from 'js-cookie';
+import { storeToRefs } from 'pinia';
+import { useThemeConfig } from '/@/stores/themeConfig';
 import { initFrontEndControlRoutes } from '/@/router/frontEnd';
 import { initBackEndControlRoutes } from '/@/router/backEnd';
-import { useStore } from '/@/store/index';
 import { Session } from '/@/utils/storage';
 import { formatAxis } from '/@/utils/formatTime';
 import {login,captcha} from '/@/api/login';
@@ -85,9 +88,11 @@ export default defineComponent({
   name: 'loginAccount',
   setup() {
     const { t } = useI18n();
-    const store = useStore();
+		const storesThemeConfig = useThemeConfig();
+		const { themeConfig } = storeToRefs(storesThemeConfig);
     const route = useRoute();
     const router = useRouter();
+    const userInfoStore=useUserInfo()
     const { proxy } = <any>getCurrentInstance();
     const state = reactive({
       isShowPassword: false,
@@ -144,9 +149,9 @@ export default defineComponent({
             // 设置按钮权限
             Session.set('permissions',res.data.permissions)
             // 1、请注意执行顺序(存储用户信息到vuex)
-            await store.dispatch('userInfos/setUserInfos', userInfos);
-            await store.dispatch('userInfos/setPermissions',res.data.permissions)
-            if (!store.state.themeConfig.themeConfig.isRequestRoutes) {
+            await userInfoStore.setUserInfos( userInfos);
+            await userInfoStore.setPermissions(res.data.permissions)
+            if (!themeConfig.value.isRequestRoutes) {
               // 前端控制路由，2、请注意执行顺序
               await initFrontEndControlRoutes();
               signInSuccess();
