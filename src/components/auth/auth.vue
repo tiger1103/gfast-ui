@@ -21,6 +21,10 @@ const { userInfos } = storeToRefs(stores);
 
 // 获取 pinia 中的用户权限
 const getUserAuthBtnList = computed(() => {
+	const allPermissions = "*/*/*"
+	if (stores.permissions.includes(allPermissions)) return true
+	if (stores.permissions.some((v: string) => v === props.value)) return true;
+
 	return userInfos.value.authBtnList.some((v: string) => v === props.value);
 });
 </script>
