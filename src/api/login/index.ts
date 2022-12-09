@@ -1,18 +1,6 @@
 import request from '/@/utils/request';
 
 /**
- * 登录api接口集合
- * @method signIn 用户登录
- */
-export function login(params: object){
-	return request({
-		url: '/api/v1/system/login',
-		method: 'post',
-		data: params,
-	});
-}
-
-/**
  * 获取验证码
  */
 export function captcha(){
@@ -23,12 +11,25 @@ export function captcha(){
 }
 
 /**
- * 退出登录
+ * 登录api接口集合
+ * @method signIn 用户登录
+ * @method signOut 用户退出登录
  */
-export function signOut(params: object){
-	return request({
-		url: '/api/v1/user/signOut',
-		method: 'post',
-		data: params,
-	});
+export function useLoginApi() {
+	return {
+		signIn: (params: object) => {
+			return request({
+				url: '/api/v1/system/login',
+				method: 'post',
+				data: params,
+			});
+		},
+		signOut: (params: object) => {
+			return request({
+				url: '/api/v1/user/signOut',
+				method: 'post',
+				data: params,
+			});
+		},
+	};
 }

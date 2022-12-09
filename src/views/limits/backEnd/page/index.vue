@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="layout-pd">
 		<el-alert
 			title="温馨提示：1、此页面无法模拟后端控制路由，因为 `gitee` 上所请求的 `json` 菜单数据线上会出现跨域的情况（json地址：
       https://gitee.com/lyt-top/vue-next-admin-images/raw/master/menu/adminMenu.json）。2、本地接口请求文件位置：`/src/api/menu/index.ts`。
@@ -17,21 +17,14 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts" name="limitsBackEndEndPage">
 import { useRouter } from 'vue-router';
 
-export default defineComponent({
-	name: 'limitsBackEndEndPage',
-	setup() {
-		const router = useRouter();
-		// 立即前往前端控制路由
-		const onGoToFrontEndPage = () => {
-			router.push('/limits/frontEnd/page');
-		};
-		return {
-			onGoToFrontEndPage,
-		};
-	},
-});
+// 定义变量内容
+const router = useRouter();
+
+// 立即前往前端控制路由
+const onGoToFrontEndPage = () => {
+	router.push('/limits/frontEnd/page');
+};
 </script>

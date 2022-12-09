@@ -52,7 +52,7 @@
               </el-icon>
               新增字典
             </el-button>
-            <el-button size="default" type="danger" class="ml10" @click="onRowDel(null)">
+            <el-button size="default" type="danger" class="ml10" @click="onRowDel()">
               <el-icon>
                 <ele-Delete />
               </el-icon>
@@ -95,12 +95,12 @@
 </template>
 
 <script lang="ts">
+import type { FormInstance, FormRules } from 'element-plus'
 import { toRefs, reactive, onMounted, ref, defineComponent } from 'vue';
-import { ElMessageBox, ElMessage,FormInstance} from 'element-plus';
+import { ElMessageBox, ElMessage} from 'element-plus';
 import EditDic from '/@/views/system/dict/component/editDicData.vue';
 import {getDataList,deleteData} from "/@/api/system/dict/data";
 import { useRoute } from 'vue-router';
-
 
 
 // 定义接口来定义对象的类型
@@ -137,7 +137,7 @@ export default defineComponent({
     const route = useRoute();
     const addDicRef = ref();
     const editDicRef = ref();
-    const queryRef = ref();
+    const queryRef = ref<FormInstance>();
     const state = reactive<TableDataState>({
       ids:[],
       tableData: {
@@ -172,7 +172,7 @@ export default defineComponent({
       editDicRef.value.openDialog(row);
     };
     // 删除字典
-    const onRowDel = (row: TableDataRow) => {
+    const onRowDel = (row: TableDataRow|undefined=undefined) => {
       let msg = '你确定要删除所选数据？';
       let ids:number[] = [] ;
       if(row){

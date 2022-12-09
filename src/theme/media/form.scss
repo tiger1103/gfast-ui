@@ -6,11 +6,14 @@
 	.el-form-item__label {
 		width: 100% !important;
 		text-align: left !important;
+		// 移动端 label 右对齐问题
+		justify-content: flex-start !important;
 	}
 	.el-form-item__content {
 		margin-left: 0 !important;
 	}
 	.el-form-item {
+		// 响应式表单时，登录页需要重新处理
 		display: unset !important;
 	}
 }

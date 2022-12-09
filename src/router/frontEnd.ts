@@ -18,7 +18,7 @@ const userInfoStore=useUserInfo(pinia)
  * @method  NextLoading 界面 loading 动画开始执行
  * @method useUserInfo(pinia).setUserInfos() 触发初始化用户信息 pinia
  * @method setAddRoute 添加动态路由
- * @method setFilterMenuAndCacheTagsViewRoutes 设置递归过滤有权限的路由到 vuex routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
+ * @method setFilterMenuAndCacheTagsViewRoutes 设置递归过滤有权限的路由到 pinia routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
  */
 export async function initFrontEndControlRoutes() {
 	// 界面 loading 动画开始执行
@@ -30,7 +30,7 @@ export async function initFrontEndControlRoutes() {
 	userInfoStore.setPermissions()
 	// 添加动态路由
 	await setAddRoute();
-	// 设置递归过滤有权限的路由到 vuex routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
+	// 设置递归过滤有权限的路由到 pinia routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
 	await setFilterMenuAndCacheTagsViewRoutes();
 }
 
@@ -66,6 +66,8 @@ export async function frontEndsResetRoute() {
  */
 export function setFilterRouteEnd() {
 	let filterRouteEnd: any = formatTwoStageRoutes(formatFlatteningRoutes(dynamicRoutes));
+	// notFoundAndNoPower 防止 404、401 不在 layout 布局中，不设置的话，404、401 界面将全屏显示
+	// 关联问题 No match found for location with path 'xxx'
 	filterRouteEnd[0].children = [...setFilterRoute(filterRouteEnd[0].children), ...notFoundAndNoPower];
 	return filterRouteEnd;
 }
@@ -84,7 +86,7 @@ export function setFilterRoute(chil: any) {
 	chil.forEach((route: any) => {
 		if (route.meta.roles) {
 			route.meta.roles.forEach((metaRoles: any) => {
-				userInfos.value.roles.forEach((roles: any) => {
+				(userInfos.value.roles||[]).forEach((roles: any) => {
 					if (metaRoles === roles) filterRoute.push({ ...route });
 				});
 			});
@@ -108,7 +110,7 @@ export function setCacheTagsViewRoutes() {
 }
 
 /**
- * 设置递归过滤有权限的路由到 vuex routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
+ * 设置递归过滤有权限的路由到 pinia routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
  * @description 用于左侧菜单、横向菜单的显示
  * @description 用于 tagsView、菜单搜索中：未过滤隐藏的(isHide)
  */

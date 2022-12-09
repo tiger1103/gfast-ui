@@ -1,6 +1,7 @@
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 import { defineConfig, loadEnv, ConfigEnv } from 'vite';
+import vueSetupExtend from 'vite-plugin-vue-setup-extend';
 
 const pathResolve = (dir: string): any => {
 	return resolve(__dirname, '.', dir);
@@ -14,7 +15,7 @@ const alias: Record<string, string> = {
 const viteConfig = defineConfig((mode: ConfigEnv) => {
 	const env = loadEnv(mode.mode, process.cwd());
 	return {
-		plugins: [vue()],
+		plugins: [vue(), vueSetupExtend()],
 		root: process.cwd(),
 		resolve: { alias },
 		base: mode.command === 'serve' ? './' : env.VITE_PUBLIC_PATH,
@@ -49,9 +50,9 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 			chunkSizeWarningLimit: 1500,
 			rollupOptions: {
 				output: {
-					entryFileNames: `assets/[name].${new Date().getTime()}.js`,
-					chunkFileNames: `assets/[name].${new Date().getTime()}.js`,
-					assetFileNames: `assets/[name].${new Date().getTime()}.[ext]`,
+					entryFileNames: `assets/[name].[hash].js`,
+					chunkFileNames: `assets/[name].[hash].js`,
+					assetFileNames: `assets/[name].[hash].[ext]`,
 					compact: true,
 					manualChunks: {
 						vue: ['vue', 'vue-router', 'pinia'],
@@ -65,6 +66,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 			__VUE_I18N_LEGACY_API__: JSON.stringify(false),
 			__VUE_I18N_FULL_INSTALL__: JSON.stringify(false),
 			__INTLIFY_PROD_DEVTOOLS__: JSON.stringify(false),
+			__VERSION__: JSON.stringify(process.env.npm_package_version),
 		},
 	};
 });

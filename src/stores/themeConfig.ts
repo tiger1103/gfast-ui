@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { ThemeConfigStates, ThemeConfigState } from './interface';
 
 /**
  * 布局配置
@@ -10,7 +9,7 @@ import { ThemeConfigStates, ThemeConfigState } from './interface';
  * 2、或者点击布局配置最底部 `一键恢复默认` 按钮即可看到效果
  */
 export const useThemeConfig = defineStore('themeConfig', {
-	state: (): ThemeConfigStates => ({
+	state: (): ThemeConfigState => ({
 		themeConfig: {
 			// 是否开启布局配置抽屉
 			isDrawer: false,
@@ -47,6 +46,8 @@ export const useThemeConfig = defineStore('themeConfig', {
 			columnsMenuBarColor: '#e6e6e6',
 			// 是否开启分栏菜单背景颜色渐变
 			isColumnsMenuBarColorGradual: false,
+			// 是否开启分栏菜单鼠标悬停预加载(预览菜单)
+			isColumnsMenuHoverPreload: false,
 
 			/**
 			 * 界面设置
@@ -54,7 +55,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启菜单水平折叠效果
 			isCollapse: false,
 			// 是否开启菜单手风琴效果
-			isUniqueOpened: false,
+			isUniqueOpened: true,
 			// 是否开启固定 Header
 			isFixedHeader: false,
 			// 初始化变量，用于更新菜单 el-scrollbar 的高度，请勿删除
@@ -132,6 +133,8 @@ export const useThemeConfig = defineStore('themeConfig', {
 			globalTitle: 'gfast3.0后台管理系统',
 			// 网站副标题（登录页顶部文字）
 			globalViceTitle: 'gfast3.0后台管理系统',
+			// 网站副标题（登录页顶部文字）
+			globalViceTitleMsg: '专注、免费、开源、维护、解疑',
 			// 默认初始语言，可选值"<zh-cn|en|zh-tw>"，默认 zh-cn
 			globalI18n: 'zh-cn',
 			// 默认全局组件大小，可选值"<large|'default'|small>"，默认 'large'
@@ -140,7 +143,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 	}),
 	actions: {
 		setThemeConfig(data: ThemeConfigState) {
-			this.themeConfig = data;
+			this.themeConfig = data.themeConfig;
 		},
 	},
 });
