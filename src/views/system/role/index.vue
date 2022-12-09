@@ -1,6 +1,6 @@
 <template>
-	<div class="system-role-container layout-padding">
-		<div class="system-role-padding layout-padding-auto layout-padding-view">
+	<div class="system-role-container">
+		<el-card shadow="hover">
 			<div class="system-user-search mb15">
 				<el-form :inline="true">
 					<el-form-item label="角色名称">
@@ -52,13 +52,13 @@
 			<pagination v-show="state.tableData.total > 0" :total="state.tableData.total"
 				v-model:page="state.tableData.param.pageNum" v-model:limit="state.tableData.param.pageSize"
 				@pagination="roleList" />
-			<AddRole ref="addRoleRef" @getRoleList="roleList" />
-			<EditRole ref="editRoleRef" @getRoleList="roleList" />
-		</div>
+		</el-card>
+		<AddRole ref="addRoleRef" @getRoleList="roleList" />
+		<EditRole ref="editRoleRef" @getRoleList="roleList" />
 	</div>
 </template>
 
-<script setup lang="ts" name="systemRole">
+<script setup lang="ts" name="apiV1SystemRoleList">
 import type { RoleListItem } from '/@/api/system/role/model'
 import { defineAsyncComponent, reactive, onMounted, ref } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';

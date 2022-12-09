@@ -55,7 +55,7 @@
 	</div>
 </template>
 
-<script setup lang="ts" name="systemDept">
+<script setup lang="ts" name="apiV1SystemDeptList">
 import { defineAsyncComponent, ref, reactive, onMounted } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 import { deleteDept, getDeptList } from "/@/api/system/dept";

@@ -137,7 +137,7 @@ interface TableDataState {
 }
 
 export default defineComponent({
-  name: 'apiV1SystemDictDataList',
+  name: 'apiV1SystemConfigList',
   components: { EditConfig },
   setup() {
     const {proxy} = getCurrentInstance() as any;

@@ -87,7 +87,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="systemDic">
+<script setup lang="ts" name="apiV1SystemDictTypeList">
 import type { FormInstance, FormRules } from 'element-plus'
 import { defineAsyncComponent, reactive, onMounted, ref } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
