@@ -1,5 +1,5 @@
 <template>
-	<div class="system-role-container">
+	<div class="system-role-container layout-pd">
 		<el-card shadow="hover">
 			<div class="system-user-search mb15">
 				<el-form :inline="true">
@@ -42,10 +42,10 @@
 				</el-table-column>
 				<el-table-column prop="remark" label="角色描述" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="createdAt" label="创建时间" show-overflow-tooltip></el-table-column>
-				<el-table-column label="操作" width="100">
+				<el-table-column label="操作" width="120">
 					<template #default="scope">
-						<el-button size="small" type="text" @click="onOpenEditRole(scope.row)">修改</el-button>
-						<el-button size="small" type="text" @click="onRowDel(scope.row)">删除</el-button>
+						<el-button size="small" link type="primary" @click="onOpenEditRole(scope.row)">修改</el-button>
+						<el-button size="small" link type="primary" @click="onRowDel(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -163,14 +163,3 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang="scss">
-.system-role-container {
-	.system-role-padding {
-		padding: 15px;
-
-		.el-table {
-			flex: 1;
-		}
-	}
-}
-</style>

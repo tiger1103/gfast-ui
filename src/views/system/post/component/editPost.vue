@@ -1,7 +1,7 @@
 <template>
 	<div class="system-edit-post-container">
 		<el-dialog v-model="isShowDialog" width="769px">
-      <template #title>
+      <template #header>
         <div v-drag="['.system-edit-post-container .el-dialog', '.system-edit-post-container .el-dialog__header']">{{(formData.postId===0?'添加':'修改')+'岗位'}}</div>
       </template>
 			<el-form ref="formRef" :model="formData" :rules="rules" size="default" label-width="90px">
