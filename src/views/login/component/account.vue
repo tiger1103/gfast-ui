@@ -151,7 +151,7 @@ const onSignIn = async (formEl: FormInstance | undefined) => {
         }
       }).catch(() => {
         state.loading.signIn = false;
-        state.captchaSrc = '';
+        state.ruleForm.verifyCode = '';
         getCaptcha()
       })
     }
