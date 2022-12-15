@@ -11,7 +11,6 @@ import { useRoutesList } from '/@/stores/routesList';
 import { useTagsViewRoutes } from '/@/stores/tagsViewRoutes';
 
 import { getUserMenus } from '/@/api/system/menu';
-const userInfoStore=useUserInfo()
 // 后端控制路由
 
 /**
@@ -37,6 +36,7 @@ export async function initBackEndControlRoutes() {
 	// 无 token 停止执行下一步
 	if (!Session.get('token')) return false;
 	// 触发初始化用户信息 pinia
+	const userInfoStore = useUserInfo(pinia)
 	userInfoStore.setUserInfos();
 	userInfoStore.setPermissions()
 	let menuRoute = Session.get('userMenu')
@@ -115,6 +115,7 @@ export function getBackEndControlRoutes() {
 	return getUserMenus().then((res:any)=>{
 		Session.set('userMenu',res.data.menuList)
 		Session.set('permissions',res.data.permissions)
+		const userInfoStore = useUserInfo(pinia)
 		userInfoStore.setPermissions(res.data.permissions)
 	})
 }
