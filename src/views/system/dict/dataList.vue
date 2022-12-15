@@ -1,5 +1,5 @@
 <template>
-  <div class="system-dic-container">
+  <div class="system-dic-container layout-pd">
     <el-card shadow="hover">
       <div class="system-user-search mb15">
         <el-form :model="tableData.param" ref="queryRef" :inline="true" label-width="68px">

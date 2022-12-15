@@ -1,5 +1,5 @@
 <template>
-	<div class="system-post-container">
+	<div class="system-post-container layout-pd">
 		<el-card shadow="hover">
 			<div class="system-user-search mb15">
 				<el-form :inline="true">

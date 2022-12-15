@@ -1,5 +1,5 @@
 <template>
-  <div class="system-user-container">
+  <div class="system-user-container layout-pd">
     <el-row :gutter="10">
       <el-col :span="4">
         <el-card shadow="hover">
