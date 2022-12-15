@@ -50,7 +50,7 @@
                   </el-icon>
                   重置
                 </el-button>
-                <el-button size="default" type="success" class="ml10" @click="onOpenAddUser">
+                <el-button size="default" type="success" class="ml10" @click="onOpenAddUser('add')">
                   <el-icon>
                     <ele-FolderAdd />
                   </el-icon>
@@ -87,7 +87,7 @@
             <el-table-column prop="createdAt" label="创建时间" show-overflow-tooltip></el-table-column>
             <el-table-column label="操作" width="150">
               <template #default="scope">
-                <el-button size="small" link type="primary" @click="onOpenEditUser(scope.row)">修改</el-button>
+                <el-button size="small" link type="primary" @click="onOpenEditUser('edit',scope.row)">修改</el-button>
                 <el-button size="small" link type="primary" @click="onRowDel(scope.row)">删除</el-button>
                 <el-button size="small" link type="primary" @click="handleResetPwd(scope.row)">重置</el-button>
               </template>
@@ -99,8 +99,7 @@
         </el-card>
       </el-col>
     </el-row>
-		<AddUer ref="addUserRef" :dept-data="state.deptData" :gender-data="sys_user_sex" @getUserList="userList" />
-    <EditUser ref="editUserRef" :dept-data="state.deptData" :gender-data="sys_user_sex" @getUserList="userList" />
+		<UserDialog ref="userDialogRef" :dept-data="state.deptData" :gender-data="sys_user_sex" @refresh="userList()" />
   </div>
 </template>
 <script setup lang="ts" name="apiV1SystemUserList">
@@ -133,12 +132,10 @@ interface TableDataState {
 
 const { sys_user_sex } = useDict('sys_user_sex')
 // 引入组件
-const AddUer = defineAsyncComponent(() => import('/@/views/system/user/component/addUser.vue'));
-const EditUser = defineAsyncComponent(() => import('/@/views/system/user/component/editUser.vue'));
+const UserDialog = defineAsyncComponent(() => import('/@/views/system/user/dialog.vue'));
 
 // 定义变量内容
-const addUserRef = ref();
-const editUserRef = ref();
+const userDialogRef = ref();
 const queryRef = ref<FormInstance>()
 const filterText = ref('');
 const treeRef = ref<InstanceType<typeof ElTree>>();
@@ -203,12 +200,12 @@ const userList = () => {
 };
 
 // 打开新增用户弹窗
-const onOpenAddUser = () => {
-  addUserRef.value.openDialog();
+const onOpenAddUser = (type:string) => {
+  userDialogRef.value.openDialog(type);
 };
 // 打开修改用户弹窗
-const onOpenEditUser = (row: UserListItem) => {
-  editUserRef.value.openDialog(row.id);
+const onOpenEditUser = (type:string,row: UserListItem) => {
+  userDialogRef.value.openDialog(type,row.id);
 };
 // 删除用户
 const onRowDel = (row: UserListItem | undefined=undefined) => {

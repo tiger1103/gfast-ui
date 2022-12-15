@@ -1,6 +1,6 @@
 <template>
 	<div class="system-edit-dept-container">
-		<el-dialog title="新增部门" v-model="state.isShowDialog" width="769px">
+		<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="769px">
 			<el-form ref="ruleFormRef" :model="state.ruleForm" :rules="rules" size="default" label-width="90px">
 				<el-row :gutter="35">
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
@@ -52,8 +52,8 @@
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="onCancel" size="default">取 消</el-button>
-					<el-button type="primary" @click="onSubmit(ruleFormRef)" size="default">{{ state.ruleForm.deptId !==
-							0 ? '修 改' : '添 加'
+					<el-button type="primary" @click="onSubmit(ruleFormRef)" size="default">{{
+							state.dialog.submitTxt
 					}}</el-button>
 				</span>
 			</template>
@@ -61,15 +61,16 @@
 	</div>
 </template>
 
-<script setup lang="ts" name="systemAddDept">
-import { ref, reactive } from 'vue';
+<script setup lang="ts" name="systemDeptDialog">
+import { ref, reactive, onMounted } from 'vue';
 import type { DeptTreeRow } from '/@/api/system/dept/model';
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from "element-plus";
-import { addDept, getDeptList } from "/@/api/system/dept";
+import { addDept, editDept, getDeptList } from "/@/api/system/dept";
 import { handleTree } from "/@/utils/gfast";
 
-const emit = defineEmits(['deptList'])
+// 定义子组件向父组件传值/事件
+const emit = defineEmits(['refresh']);
 
 const ruleFormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({
@@ -80,7 +81,6 @@ const rules = reactive<FormRules>({
 
 // 定义变量内容
 const state = reactive({
-	isShowDialog: false,
 	ruleForm: {
 		deptId: 0,
 		parentId: 0, // 上级部门
@@ -92,16 +92,38 @@ const state = reactive({
 		status: 1,
 	},
 	deptData: [] as DeptTreeType[], // 部门数据
+	dialog: {
+		isShowDialog: false,
+		type: '',
+		title: '',
+		submitTxt: '',
+	},
 });
 
 // 打开弹窗
-const openDialog = (row: DeptTreeRow) => {
+const openDialog = (type: string, row: DeptTreeRow) => {
 	resetForm()
-	state.isShowDialog = true;
+	if (row && typeof row === "object") {
+		state.ruleForm = row;
+	} else if (row && typeof row === 'number') {
+		state.ruleForm.parentId = row
+	}
+	if (type === 'edit') {
+		state.dialog.title = '修改部门';
+		state.dialog.submitTxt = '修 改';
+		getDeptList().then((res: any) => {
+			state.deptData = handleTree(res.data.deptList ?? [], "deptId", "parentId");
+		});
+	} else {
+		state.dialog.title = '新增部门';
+		state.dialog.submitTxt = '新 增';
+	}
+	state.dialog.type=type;
+	state.dialog.isShowDialog = true;
 };
 // 关闭弹窗
 const closeDialog = () => {
-	state.isShowDialog = false;
+	state.dialog.isShowDialog = false;
 };
 // 取消
 const onCancel = () => {
@@ -115,12 +137,21 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 			return;
 		}
 
-		//添加
-		addDept(state.ruleForm).then(() => {
-			ElMessage.success('部门添加成功');
-			closeDialog(); // 关闭弹窗
-			emit('deptList')
-		});
+		if (state.ruleForm.deptId > 0) {
+			//修改
+			editDept(state.ruleForm).then(() => {
+				ElMessage.success('部门修改成功');
+				closeDialog(); // 关闭弹窗
+				emit('refresh')
+			});
+		} else {
+			//添加
+			addDept(state.ruleForm).then(() => {
+				ElMessage.success('部门添加成功');
+				closeDialog(); // 关闭弹窗
+				emit('refresh')
+			});
+		}
 	})
 };
 

@@ -1,6 +1,7 @@
 <template>
 	<div class="system-edit-menu-container">
-		<el-dialog title="修改菜单" v-model="state.isShowDialog" width="769px" :close-on-click-modal="false">
+		<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="769px"
+			:close-on-click-modal="false">
 			<el-form :model="state.ruleForm" :rules="rules" ref="ruleFormRef" size="default" label-width="80px">
 				<el-row :gutter="35">
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
@@ -127,15 +128,16 @@
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="onCancel" size="default">取 消</el-button>
-					<el-button type="primary" @click="onSubmit(ruleFormRef)" size="default" :loading="state.loading">修
-						改</el-button>
+					<el-button type="primary" @click="onSubmit(ruleFormRef)" size="default" :loading="state.loading">{{
+							state.dialog.submitTxt
+					}}</el-button>
 				</span>
 			</template>
 		</el-dialog>
 	</div>
 </template>
 
-<script setup lang="ts" name="systemEditMenu">
+<script setup lang="ts" name="systemAddMenu">
 import type { SysDictDataMapItem } from '/@/api/system/dict/model';
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus';
@@ -143,13 +145,15 @@ import { defineAsyncComponent, ref, reactive, nextTick, PropType } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRoutesList } from '/@/stores/routesList';
 import { getBackEndControlRoutes } from '/@/router/backEnd';
-import { getMenuParams, getMenuInfo, updateMenu } from '/@/api/system/menu';
+import { getMenuParams, getMenuInfo, addMenu ,updateMenu} from '/@/api/system/menu';
 import { handleTree } from "/@/utils/gfast";
+
+// 定义子组件向父组件传值/事件
+const emit = defineEmits(['refresh']);
 
 // 引入组件
 const IconSelector = defineAsyncComponent(() => import('/@/components/iconSelector/index.vue'));
 
-const emit = defineEmits(['menuList'])
 const props = defineProps({
 	visibleOptions: {
 		type: Object as PropType<SysDictDataMapItem[]>,
@@ -159,10 +163,8 @@ const props = defineProps({
 
 // 定义变量内容
 const stores = useRoutesList();
-const { routesList } = storeToRefs(stores);
 const state = reactive({
 	loading: false,
-	isShowDialog: false,
 	roles: [] as Array<any>,
 	// 参数请参考 `/src/router/route.ts` 中的 `dynamicRoutes` 路由菜单格式
 	ruleForm: {
@@ -185,6 +187,12 @@ const state = reactive({
 		isIframe: 0, // 是否内嵌，开启条件，`1、isIframe:true 2、链接地址不为空`
 	},
 	menuData: [] as RouteItems, // 上级菜单数据
+	dialog: {
+		isShowDialog: false,
+		type: '',
+		title: '',
+		submitTxt: '',
+	},
 });
 
 const ruleFormRef = ref<FormInstance>()
@@ -197,7 +205,7 @@ const rules = reactive<FormRules>({
 })
 
 // 打开弹窗
-const openDialog = (row: any) => {
+const openDialog = (type: string, row: any) => {
 	initForm();
 	nextTick(() => {
 		//获取角色信息
@@ -207,37 +215,47 @@ const openDialog = (row: any) => {
 			menu.children = handleTree(res.data.menus, 'id', 'pid');
 			state.menuData = new Array(menu) as any;
 		});
+
 		if (row) {
-			getMenuInfo(row.id).then((res) => {
-				const data = res.data.rule;
-				state.ruleForm = {
-					id: data.id,
-					pid: data.pid, // 上级菜单
-					menuType: '' + data.menuType, // 菜单类型
-					menuName: data.title, // 菜单名称
-					name: data.name, // 接口规则
-					component: data.component, // 组件路径
-					isLink: data.isLink, // 是否外链
-					menuSort: data.weigh, // 菜单排序
-					path: data.path, // 路由路径
-					redirect: data.redirect, // 路由重定向，有子集 children 时
-					icon: data.icon, // 菜单图标
-					roles: res.data.roleIds, // 权限标识，取角色管理
-					isHide: '' + data.isHide, // 是否隐藏
-					isKeepAlive: data.isCached, // 是否缓存
-					isAffix: data.isAffix, // 是否固定
-					linkUrl: data.linkUrl, // 外链/内嵌时链接地址（http:xxx.com），开启外链条件，`1、isLink:true 2、链接地址不为空`
-					isIframe: data.isIframe, // 是否内嵌，开启条件，`1、isIframe:true 2、链接地址不为空`
-				};
-			});
+			if (type === 'edit') {
+				state.dialog.title = '修改菜单';
+				state.dialog.submitTxt = '修 改';
+				getMenuInfo(row.id).then((res) => {
+					const data = res.data.rule;
+					state.ruleForm = {
+						id: data.id,
+						pid: data.pid, // 上级菜单
+						menuType: '' + data.menuType, // 菜单类型
+						menuName: data.title, // 菜单名称
+						name: data.name, // 接口规则
+						component: data.component, // 组件路径
+						isLink: data.isLink, // 是否外链
+						menuSort: data.weigh, // 菜单排序
+						path: data.path, // 路由路径
+						redirect: data.redirect, // 路由重定向，有子集 children 时
+						icon: data.icon, // 菜单图标
+						roles: res.data.roleIds, // 权限标识，取角色管理
+						isHide: '' + data.isHide, // 是否隐藏
+						isKeepAlive: data.isCached, // 是否缓存
+						isAffix: data.isAffix, // 是否固定
+						linkUrl: data.linkUrl, // 外链/内嵌时链接地址（http:xxx.com），开启外链条件，`1、isLink:true 2、链接地址不为空`
+						isIframe: data.isIframe, // 是否内嵌，开启条件，`1、isIframe:true 2、链接地址不为空`
+					};
+				});
+			} else if (type === 'add') {
+				state.ruleForm.pid = row.id
+				state.dialog.title = '修改菜单';
+				state.dialog.submitTxt = '修 改';
+			}
 		}
-		state.isShowDialog = true;
+		state.dialog.isShowDialog = true;
+		state.dialog.type = type;
 		state.loading = false;
 	});
 };
 // 关闭弹窗
 const closeDialog = () => {
-	state.isShowDialog = false;
+	state.dialog.isShowDialog = false;
 };
 // 是否内嵌下拉改变
 const onSelectIframeChange = () => {
@@ -255,17 +273,31 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 		if (!valid) {
 			return
 		}
-		//修改
-		updateMenu(state.ruleForm)
-			.then(() => {
-				ElMessage.success('菜单修改成功');
-				closeDialog(); // 关闭弹窗
-				resetMenuSession();
-				emit('menuList');
-			})
-			.finally(() => {
-				state.loading = false;
-			});
+		if (state.dialog.type === 'edit') {
+			//修改
+			updateMenu(state.ruleForm)
+				.then(() => {
+					ElMessage.success('菜单修改成功');
+					closeDialog(); // 关闭弹窗
+					resetMenuSession();
+					emit('refresh');
+				})
+				.finally(() => {
+					state.loading = false;
+				});
+		} else {
+			//添加
+			addMenu(state.ruleForm)
+				.then(() => {
+					ElMessage.success('菜单添加成功');
+					closeDialog(); // 关闭弹窗
+					resetMenuSession();
+					emit('refresh');
+				})
+				.finally(() => {
+					state.loading = false;
+				});
+		}
 	})
 };
 
@@ -298,6 +330,5 @@ const initForm = () => {
 // 暴露变量
 defineExpose({
 	openDialog,
-	resetMenuSession,
 });
 </script>

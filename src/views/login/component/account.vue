@@ -140,14 +140,14 @@ const onSignIn = async (formEl: FormInstance | undefined) => {
 
         if (!themeConfig.value.isRequestRoutes) {
           // 前端控制路由，2、请注意执行顺序
-          await initFrontEndControlRoutes();
-          signInSuccess();
+		const isNoPower = await initFrontEndControlRoutes();
+          signInSuccess(isNoPower);
         } else {
           // 模拟后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
           // 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
-          await initBackEndControlRoutes();
+          const isNoPower=await initBackEndControlRoutes();
           // 执行完 initBackEndControlRoutes，再执行 signInSuccess
-          signInSuccess();
+          signInSuccess(isNoPower);
         }
       }).catch(() => {
         state.loading.signIn = false;
@@ -158,7 +158,14 @@ const onSignIn = async (formEl: FormInstance | undefined) => {
   }).catch(() => { })
 };
 // 登录成功后的跳转
-const signInSuccess = () => {
+const signInSuccess = (isNoPower: boolean | undefined) => {
+  if (isNoPower) {
+		ElMessage.warning('抱歉，您没有登录权限');
+		Session.clear();
+	state.loading.signIn = false;
+    return;
+	}
+
   // 初始化登录成功时间问候语
   let currentTimeInfo = currentTime.value;
   // 登录成功，跳到转首页
@@ -178,7 +185,8 @@ const signInSuccess = () => {
   ElMessage.success(`${currentTimeInfo}，${signInText}`);
   // 添加 loading，防止第一次进入界面时出现短暂空白
   NextLoading.start();
-};
+	state.loading.signIn = false;
+}
 </script>
 
 <style scoped lang="scss">

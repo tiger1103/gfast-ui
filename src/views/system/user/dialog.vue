@@ -1,7 +1,7 @@
 <template>
 	<div class="system-edit-user-container">
-		<el-dialog title="修改用户" v-model="state.isShowDialog" width="769px">
-			<el-form ref="formRef" :model="state.ruleForm" :rules="rules" size="default" label-width="90px">
+		<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="769px">
+			<el-form ref="userDialogFormRef" :model="state.ruleForm" :rules="rules" size="default" label-width="90px">
 				<el-row :gutter="35">
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="用户昵称" prop="nickName">
@@ -83,14 +83,15 @@
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="onCancel" size="default">取 消</el-button>
-					<el-button type="primary" @click="onSubmit(formRef)" size="default">修 改</el-button>
+					<el-button type="primary" @click="onSubmit(formRef)" size="default">{{ state.dialog.submitTxt
+					}}</el-button>
 				</span>
 			</template>
 		</el-dialog>
 	</div>
 </template>
 
-<script setup lang="ts" name="systemEditUser">
+<script setup lang="ts" name="systemUserDialog">
 import type { PostParamItem, RoleParamItem } from '/@/api/system/user/model';
 import type { DeptTreeRow } from '/@/api/system/dept/model';
 import type { SysDictDataMapItem } from '/@/api/system/dict/model';
@@ -98,7 +99,7 @@ import type { FormInstance, FormRules } from 'element-plus';
 
 import { ref, reactive, onMounted, PropType } from 'vue';
 import { ElMessage } from "element-plus";
-import { getParams, editUser, getEditUser } from "/@/api/system/user";
+import { getParams,addUser, editUser, getEditUser } from "/@/api/system/user";
 
 defineProps({
 	deptData: {
@@ -110,7 +111,9 @@ defineProps({
 		default: () => [] as SysDictDataMapItem[]
 	}
 })
-const emit = defineEmits(['getUserList'])
+
+// 定义子组件向父组件传值/事件
+const emit = defineEmits(['refresh'])
 const formRef = ref<FormInstance>()
 
 const rules = reactive<FormRules>({
@@ -143,8 +146,8 @@ const rules = reactive<FormRules>({
 	]
 })
 // 定义变量内容
+const userDialogFormRef = ref();
 const state = reactive({
-	isShowDialog: false,
 	ruleForm: {
 		userId: 0,
 		deptId: 0,
@@ -160,36 +163,50 @@ const state = reactive({
 		roleIds: [] as number[],
 		isAdmin: 0,
 	},
+	dialog: {
+		isShowDialog: false,
+		type: '',
+		title: '',
+		submitTxt: '',
+	},
 });
 const roleList = ref([] as RoleParamItem[]);
 const postList = ref([] as PostParamItem[]);
 
 // 打开弹窗
-const openDialog = (id: number) => {
+const openDialog = (type: string, id: number) => {
 	resetForm();
-	getEditUser(id).then((res: any) => {
-		const user = res.data.user;
-		state.ruleForm = {
-			userId: user.id,
-			deptId: user.deptId,
-			userName: user.userName,
-			nickName: user.userNickname,
-			password: '-',
-			mobile: user.mobile,
-			email: user.userEmail,
-			sex: String(user.sex),
-			status: user.userStatus,
-			remark: user.remark,
-			postIds: res.data.checkedPosts ?? [],
-			roleIds: res.data.checkedRoleIds ?? [],
-			isAdmin: user.isAdmin,
-		};
-	})
-	state.isShowDialog = true;
+	if (type === 'edit') {
+		getEditUser(id).then((res: any) => {
+			const user = res.data.user;
+			state.ruleForm = {
+				userId: user.id,
+				deptId: user.deptId,
+				userName: user.userName,
+				nickName: user.userNickname,
+				password: '-',
+				mobile: user.mobile,
+				email: user.userEmail,
+				sex: String(user.sex),
+				status: user.userStatus,
+				remark: user.remark,
+				postIds: res.data.checkedPosts ?? [],
+				roleIds: res.data.checkedRoleIds ?? [],
+				isAdmin: user.isAdmin,
+			};
+		})
+		state.dialog.title = '修改用户';
+		state.dialog.submitTxt = '修 改';
+	} else {
+		state.dialog.title = '新增用户';
+		state.dialog.submitTxt = '新 增';
+	}
+	state.dialog.isShowDialog = true;
+
 };
 // 关闭弹窗
 const closeDialog = () => {
-	state.isShowDialog = false;
+	state.dialog.isShowDialog = false;
 };
 // 取消
 const onCancel = () => {
@@ -204,12 +221,21 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 			return;
 		}
 
+		if(state.dialog.type=='edit'){
 		//修改
 		editUser(state.ruleForm).then(() => {
 			ElMessage.success('用户修改成功');
 			closeDialog(); // 关闭弹窗
-			emit('getUserList')
+			emit('refresh')
 		});
+	}else {
+		//添加
+		addUser(state.ruleForm).then(() => {
+			ElMessage.success('用户添加成功');
+			closeDialog(); // 关闭弹窗
+			emit('refresh')
+		});
+	}
 	})
 };
 

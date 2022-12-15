@@ -21,7 +21,7 @@
 							</el-icon>
 							查询
 						</el-button>
-						<el-button size="default" type="success" class="ml10" @click="onOpenAddRole">
+						<el-button size="default" type="success" class="ml10" @click="onOpenAddRole('add')">
 							<el-icon>
 								<ele-FolderAdd />
 							</el-icon>
@@ -30,7 +30,7 @@
 					</el-form-item>
 				</el-form>
 			</div>
-			<el-table :data="state.tableData.data" style="width: 100%">
+			<el-table :data="state.tableData.data" v-loading="state.tableData.loading" style="width: 100%">
 				<el-table-column type="index" label="序号" width="60" />
 				<el-table-column prop="name" label="角色名称" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="listOrder" label="排序" show-overflow-tooltip></el-table-column>
@@ -44,7 +44,7 @@
 				<el-table-column prop="createdAt" label="创建时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="操作" width="120">
 					<template #default="scope">
-						<el-button size="small" link type="primary" @click="onOpenEditRole(scope.row)">修改</el-button>
+						<el-button size="small" link type="primary" @click="onOpenEditRole('edit',scope.row)">修改</el-button>
 						<el-button size="small" link type="primary" @click="onRowDel(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
@@ -53,8 +53,7 @@
 				v-model:page="state.tableData.param.pageNum" v-model:limit="state.tableData.param.pageSize"
 				@pagination="roleList" />
 		</el-card>
-		<AddRole ref="addRoleRef" @getRoleList="roleList" />
-		<EditRole ref="editRoleRef" @getRoleList="roleList" />
+		<RoleDialog ref="roleDialogRef" @refresh="roleList" />
 	</div>
 </template>
 
@@ -88,12 +87,10 @@ interface TableDataState {
 }
 
 // 引入组件
-const AddRole = defineAsyncComponent(() => import('/@/views/system/role/component/addRole.vue'));
-const EditRole = defineAsyncComponent(() => import('/@/views/system/role/component/editRole.vue'));
+const RoleDialog = defineAsyncComponent(() => import('/@/views/system/role/dialog.vue'));
 
 // 定义变量内容
-const addRoleRef = ref();
-const editRoleRef = ref();
+const roleDialogRef = ref();
 const state = reactive<TableDataState>({
 	tableData: {
 		data: [],
@@ -133,12 +130,12 @@ const roleList = () => {
 };
 
 // 打开新增角色弹窗
-const onOpenAddRole = () => {
-	addRoleRef.value.openDialog();
+const onOpenAddRole = (type: string) => {
+	roleDialogRef.value.openDialog(type);
 };
 // 打开修改角色弹窗
-const onOpenEditRole = (row: Object) => {
-	editRoleRef.value.openDialog(row);
+const onOpenEditRole = (type: string, row: Object) => {
+	roleDialogRef.value.openDialog(type, row);
 };
 // 删除角色
 const onRowDel = (row: RoleListItem) => {
@@ -150,7 +147,7 @@ const onRowDel = (row: RoleListItem) => {
 		.then(() => {
 			deleteRole(row.id).then(() => {
 				ElMessage.success('删除成功');
-				editRoleRef.value.resetMenuSession();
+				roleDialogRef.value.resetMenuSession();
 				roleList();
 			})
 		})

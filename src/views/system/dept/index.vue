@@ -21,7 +21,7 @@
 							</el-icon>
 							查询
 						</el-button>
-						<el-button size="default" type="success" class="ml10" @click="onOpenAddDept">
+						<el-button size="default" type="success" class="ml10" @click="onOpenAddDept('add')">
 							<el-icon>
 								<ele-FolderAdd />
 							</el-icon>
@@ -43,15 +43,14 @@
 				<el-table-column prop="createdAt" label="创建时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="操作" show-overflow-tooltip width="140">
 					<template #default="scope">
-						<el-button size="small" text type="primary" @click="onOpenAddDept(scope.row)">新增</el-button>
-						<el-button size="small" text type="primary" @click="onOpenEditDept(scope.row)">修改</el-button>
-						<el-button size="small" text type="primary" @click="onTabelRowDel(scope.row)">删除</el-button>
+						<el-button size="small" link type="primary" @click="onOpenAddDept('add',scope.row)">新增</el-button>
+						<el-button size="small" link type="primary" @click="onOpenEditDept('edit',scope.row)">修改</el-button>
+						<el-button size="small" link type="primary" @click="onTabelRowDel(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 		</el-card>
-		<AddDept ref="addDeptRef" @deptList="deptList" />
-		<EditDept ref="editDeptRef" @deptList="deptList" />
+		<DeptDialog ref="deptDialogRef" @refresh="deptList()" />
 	</div>
 </template>
 
@@ -63,13 +62,11 @@ import { handleTree } from "/@/utils/gfast";
 import type { DeptTreeRow } from '/@/api/system/dept/model';
 
 // 引入组件
-const AddDept = defineAsyncComponent(() => import('/@/views/system/dept/component/addDept.vue'));
-const EditDept = defineAsyncComponent(() => import('/@/views/system/dept/component/editDept.vue'));
+const DeptDialog = defineAsyncComponent(() => import('/@/views/system/dept/dialog.vue'));
 
 
 // 定义变量内容
-const addDeptRef = ref();
-const editDeptRef = ref();
+const deptDialogRef = ref();
 const state = reactive({
 	tableData: {
 		data: [] as DeptTreeRow[],
@@ -96,12 +93,12 @@ const deptList = () => {
 };
 
 // 打开新增菜单弹窗
-const onOpenAddDept = (row?: DeptTreeRow) => {
-	addDeptRef.value.openDialog();
+const onOpenAddDept = (type: string,row?: DeptTreeRow) => {
+	deptDialogRef.value.openDialog(type,row?.parentId);
 };
 // 打开编辑菜单弹窗
-const onOpenEditDept = (row: DeptTreeRow) => {
-	editDeptRef.value.openDialog(row);
+const onOpenEditDept = (type: string,row: DeptTreeRow) => {
+	deptDialogRef.value.openDialog(type,row);
 };
 // 删除当前行
 const onTabelRowDel = (row: DeptTreeRow) => {
