@@ -31,7 +31,7 @@ export async function initFrontEndControlRoutes() {
 	await userInfoStore.setPermissions()
 	// 无登录权限时，添加判断
 	// https://gitee.com/lyt-top/vue-next-admin/issues/I64HVO
-	if (userInfoStore.userInfos.roles.length <= 0) return Promise.resolve(true);
+	if (userInfoStore.userInfos.roles && userInfoStore.userInfos.roles.length <= 0) return Promise.resolve(true);
 	// 添加动态路由
 	await setAddRoute();
 	// 设置递归过滤有权限的路由到 pinia routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
@@ -133,7 +133,7 @@ export function setFilterMenuAndCacheTagsViewRoutes() {
  * @returns 返回对比后有权限的路由项
  */
 export function hasRoles(roles: any, route: any) {
-	if (route.meta && route.meta.roles) return roles.some((role: any) => route.meta.roles.includes(role));
+	if (roles && route.meta && route.meta.roles) return roles.some((role: any) => route.meta.roles.includes(role));
 	else return true;
 }
 

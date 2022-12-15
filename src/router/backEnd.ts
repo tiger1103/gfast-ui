@@ -50,7 +50,7 @@ export async function initBackEndControlRoutes() {
 	const res = await getBackEndControlRoutes();
 	// 无登录权限时，添加判断
 	// https://gitee.com/lyt-top/vue-next-admin/issues/I64HVO
-	if (res.data.length <= 0) return Promise.resolve(true);
+	if (res && res.length <= 0) return Promise.resolve(true);
 	// 存储接口原始路由（未处理component），根据需求选择使用
 	useRequestOldRoutes().setRequestOldRoutes(JSON.parse(JSON.stringify(menuRoute)));
 	// 处理路由（component），替换 dynamicRoutes（/@/router/route）第一个顶级 children 的路由
@@ -117,6 +117,7 @@ export function getBackEndControlRoutes() {
 		Session.set('permissions',res.data.permissions)
 		const userInfoStore = useUserInfo(pinia)
 		userInfoStore.setPermissions(res.data.permissions)
+		return res.data.menuList
 	})
 }
 
