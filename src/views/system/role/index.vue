@@ -134,8 +134,8 @@ const onOpenAddRole = (type: string) => {
 	roleDialogRef.value.openDialog(type);
 };
 // 打开修改角色弹窗
-const onOpenEditRole = (type: string, row: Object) => {
-	roleDialogRef.value.openDialog(type, row);
+const onOpenEditRole = (type: string, row: TableData) => {
+	roleDialogRef.value.openDialog(type, row.id);
 };
 // 删除角色
 const onRowDel = (row: RoleListItem) => {

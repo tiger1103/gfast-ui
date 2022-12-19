@@ -194,8 +194,8 @@ const initTableData = () => {
 
 const userList = () => {
   getUserList(state.tableData.param).then((res: any) => {
-    state.tableData.data = res.data.userList ?? [];
-    state.tableData.total = res.data.total;
+    state.tableData.data = res.userList ?? [];
+    state.tableData.total = res.total;
   });
 };
 
