@@ -83,7 +83,8 @@
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="onCancel" size="default">取 消</el-button>
-					<el-button type="primary" @click="onSubmit(formRef)" size="default">{{ state.dialog.submitTxt
+					<el-button type="primary" @click="onSubmit(userDialogFormRef)" size="default">{{
+							state.dialog.submitTxt
 					}}</el-button>
 				</span>
 			</template>
@@ -99,7 +100,7 @@ import type { FormInstance, FormRules } from 'element-plus';
 
 import { ref, reactive, onMounted, PropType } from 'vue';
 import { ElMessage } from "element-plus";
-import { getParams,addUser, editUser, getEditUser } from "/@/api/system/user";
+import { getParams, addUser, editUser, getEditUser } from "/@/api/system/user";
 
 defineProps({
 	deptData: {
@@ -114,7 +115,6 @@ defineProps({
 
 // 定义子组件向父组件传值/事件
 const emit = defineEmits(['refresh'])
-const formRef = ref<FormInstance>()
 
 const rules = reactive<FormRules>({
 	userName: [
@@ -176,6 +176,7 @@ const postList = ref([] as PostParamItem[]);
 // 打开弹窗
 const openDialog = (type: string, id: number) => {
 	resetForm();
+	state.dialog.type = type;
 	if (type === 'edit') {
 		getEditUser(id).then((res: any) => {
 			const user = res.data.user;
@@ -221,21 +222,21 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 			return;
 		}
 
-		if(state.dialog.type=='edit'){
-		//修改
-		editUser(state.ruleForm).then(() => {
-			ElMessage.success('用户修改成功');
-			closeDialog(); // 关闭弹窗
-			emit('refresh')
-		});
-	}else {
-		//添加
-		addUser(state.ruleForm).then(() => {
-			ElMessage.success('用户添加成功');
-			closeDialog(); // 关闭弹窗
-			emit('refresh')
-		});
-	}
+		if (state.dialog.type == 'edit') {
+			//修改
+			editUser(state.ruleForm).then(() => {
+				ElMessage.success('用户修改成功');
+				closeDialog(); // 关闭弹窗
+				emit('refresh')
+			});
+		} else {
+			//添加
+			addUser(state.ruleForm).then(() => {
+				ElMessage.success('用户添加成功');
+				closeDialog(); // 关闭弹窗
+				emit('refresh')
+			});
+		}
 	})
 };
 
