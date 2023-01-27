@@ -3,6 +3,17 @@
 		<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="769px">
 			<el-form ref="userDialogFormRef" :model="state.ruleForm" :rules="rules" size="default" label-width="90px">
 				<el-row :gutter="35">
+					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" v-if="state.ruleForm.userId === 0">
+						<el-form-item label="用户名" prop="userName">
+							<el-input v-model="state.ruleForm.userName" placeholder="请输入账户名称" clearable></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20" v-if="state.ruleForm.userId === 0">
+						<el-form-item label="账户密码" prop="password">
+							<el-input v-model="state.ruleForm.password" placeholder="请输入" type="password"
+								clearable></el-input>
+						</el-form-item>
+					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="用户昵称" prop="nickName">
 							<el-input v-model="state.ruleForm.nickName" placeholder="请输入用户昵称" clearable></el-input>
@@ -84,7 +95,7 @@
 				<span class="dialog-footer">
 					<el-button @click="onCancel" size="default">取 消</el-button>
 					<el-button type="primary" @click="onSubmit(userDialogFormRef)" size="default">{{
-							state.dialog.submitTxt
+						state.dialog.submitTxt
 					}}</el-button>
 				</span>
 			</template>
