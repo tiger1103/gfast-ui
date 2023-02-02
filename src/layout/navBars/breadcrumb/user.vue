@@ -32,6 +32,9 @@
 		<div class="layout-navbars-breadcrumb-user-icon" @click="onLayoutSetingClick">
 			<i class="icon-skin iconfont" :title="$t('message.user.title3')"></i>
 		</div>
+    <div class="layout-navbars-breadcrumb-user-icon" @click="removeCacheClick">
+      <i class="fa-trash fa" title="清除缓存"></i>
+    </div>
 		<div class="layout-navbars-breadcrumb-user-icon">
 			<el-popover placement="bottom" trigger="click" transition="el-zoom-in-top" :width="300" :persistent="false">
 				<template #reference>
@@ -90,6 +93,7 @@ import { Session, Local } from '/@/utils/storage';
 import UserNews from '/@/layout/navBars/breadcrumb/userNews.vue';
 import Search from '/@/layout/navBars/breadcrumb/search.vue';
 import {logout} from "/@/api/login";
+import {removeCache} from "/@/api/system/cache";
 
 export default defineComponent({
 	name: 'layoutBreadcrumbUser',
@@ -133,6 +137,12 @@ export default defineComponent({
 		const onLayoutSetingClick = () => {
 			proxy.mittBus.emit('openSetingsDrawer');
 		};
+    //清除缓存
+    const removeCacheClick = ()=>{
+      removeCache().then(()=>{
+        ElMessage.success('缓存清除成功');
+      })
+    };
 		// 下拉菜单点击时
 		const onHandleCommandClick = (path: string) => {
 			if (path === 'logOut') {
@@ -171,7 +181,7 @@ export default defineComponent({
 					})
 					.catch(() => {});
 			} else if (path === 'wareHouse') {
-				window.open('https://gitee.com/lyt-top/vue-next-admin');
+				window.open('https://gitee.com/tiger1103/gfast');
 			} else {
 				router.push(path);
 			}
@@ -247,6 +257,7 @@ export default defineComponent({
 			onSearchClick,
 			onComponentSizeChange,
 			onLanguageChange,
+      removeCacheClick,
 			searchRef,
 			layoutUserFlexNum,
 			...toRefs(state),

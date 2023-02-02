@@ -1115,4 +1115,11 @@ export const staticRoutes: Array<RouteRecordRaw> = [
 			title: 'message.router.visualizingLinkDemo2',
 		},
 	},
+	{
+		path: '/:pathMatch(.*)*',
+		component: () => import('/@/layout/routerView/parent.vue'),
+		meta: {
+			title: '加载中',
+		},
+	}
 ];
