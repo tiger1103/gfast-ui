@@ -139,6 +139,9 @@ export default defineComponent({
 		});
 		// 登录
 		const onSignIn = async () => {
+      if(state.loading.signIn){
+        return
+      }
       const formWrap = unref(loginForm) as any;
       if (!formWrap) return;
       formWrap.validate((valid: boolean) => {
