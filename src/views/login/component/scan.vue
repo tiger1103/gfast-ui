@@ -17,7 +17,7 @@ export default defineComponent({
 		const initQrcode = () => {
 			(qrcodeRef.value as HTMLElement).innerHTML = '';
 			new QRCode(qrcodeRef.value, {
-				text: `https://qm.qq.com/cgi-bin/qm/qr?k=RdUY97Vx0T0vZ_1OOu-X1yFNkWgDwbjC&jump_from=webapi`,
+				text: `https://qm.qq.com/cgi-bin/qm/qr?k=CDO9yYdygFMKdQihlUXj4-Y0RDEhPTsh&authKey=vw/uQT5H4L/Kb0zT1gj7dd0PVtUDm9RdWqz4cztJb/QmPaSdyS/yeRHhjZaUj43v&noverify=0`,
 				width: 260,
 				height: 260,
 				colorDark: '#000000',

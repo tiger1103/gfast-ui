@@ -22,7 +22,7 @@ export default {
 		msgText: '* 温馨提示：建议使用谷歌、Microsoft Edge，版本 79.0.1072.62 及以上浏览器，360浏览器请使用极速模式',
 	},
 	scan: {
-		text: '打开手机扫一扫，快速登录/注册',
+		text: '打开手机扫一扫，快速加群交流',
 	},
 	signInText: '欢迎回来！',
 };
