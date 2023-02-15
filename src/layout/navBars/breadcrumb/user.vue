@@ -139,8 +139,12 @@ export default defineComponent({
 		};
     //清除缓存
     const removeCacheClick = ()=>{
+      //清除浏览器缓存
+      Session.remove('userMenu');
+      //清除后端缓存
       removeCache().then(()=>{
         ElMessage.success('缓存清除成功');
+        window.location.reload();
       })
     };
 		// 下拉菜单点击时
