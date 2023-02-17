@@ -118,7 +118,10 @@ export default defineComponent({
   .login-content-out {
     width: 100%;
     height: 100%;
-    padding-top: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   .login-content {
     width: 500px;
