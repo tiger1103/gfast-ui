@@ -102,7 +102,9 @@ export default defineComponent({
 			state.liOldPath = path;
 			state.liOldIndex = k;
 			state.liHoverIndex = k;
-			proxy.mittBus.emit('setSendColumnsChildren', setSendChildren(path));
+      if(v.children&&v.children.length>0){
+			  proxy.mittBus.emit('setSendColumnsChildren', setSendChildren(v.children[0].path));
+      }
 			stores.setColumnsMenuHover(false);
 			stores.setColumnsNavHover(true);
 		};
@@ -130,16 +132,21 @@ export default defineComponent({
 		};
 		// 传送当前子级数据到菜单中
 		const setSendChildren = (path: string) => {
-			const currentPathSplit = path.split('/');
 			let currentData: any = {};
-			state.columnsAsideList.map((v: any, k: number) => {
-				if (v.path === `/${currentPathSplit[1]}`) {
-					v['k'] = k;
-					currentData['item'] = [{ ...v }];
-					currentData['children'] = [{ ...v }];
-					if (v.children) currentData['children'] = v.children;
-				}
-			});
+      state.columnsAsideList.some((v:any,k:number)=>{
+        if(v.children){
+          v.children.some((sv:any)=>{
+            if(sv.path===path){
+              v['k'] = k;
+              currentData['item'] = [{ ...v }];
+              currentData['children'] = [{ ...v }];
+              if (v.children) currentData['children'] = v.children;
+              return true
+            }
+          })
+        }
+         return false
+      })
 			return currentData;
 		};
 		// 路由过滤递归函数
@@ -154,11 +161,17 @@ export default defineComponent({
 		};
 		// tagsView 点击时，根据路由查找下标 columnsAsideList，实现左侧菜单高亮
 		const setColumnsMenuHighlight = (path: string) => {
-			state.routeSplit = path.split('/');
-			state.routeSplit.shift();
-			const routeFirst = `/${state.routeSplit[0]}`;
-			const currentSplitRoute = state.columnsAsideList.find((v: any) => v.path === routeFirst);
-			if (!currentSplitRoute) return false;
+      const currentSplitRoute = state.columnsAsideList.some((v:any)=>{
+        if(v.children){
+          v.children.some((sv:any)=>{
+            if(sv.path===path){
+              return true
+            }
+          })
+        }
+        return false
+      })
+      if (!currentSplitRoute) return false;
 			// 延迟拿值，防止取不到
 			setTimeout(() => {
 				onColumnsAsideDown((<any>currentSplitRoute).k);

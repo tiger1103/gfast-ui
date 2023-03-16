@@ -142,6 +142,15 @@ export function setBackEndControlRefreshRoutes() {
 export function backEndComponent(routes: any) {
 	if (!routes) return;
 	return routes.map((item: any) => {
+		if(item.children&&item.children.length>0){
+			item.children.some((ci:any)=>{
+				if(!ci.meta.isHide){
+					item.redirect = ci
+					return true
+				}
+				return false
+			})
+		}
 		if (item.component) item.component = dynamicImport(dynamicViewsModules, item.component as string);
 		item.children && backEndComponent(item.children);
 		return item;
