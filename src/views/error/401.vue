@@ -1,13 +1,15 @@
 <template>
-	<div class="error">
-		<div class="error-flex">
-			<div class="left">
-				<div class="left-item">
-					<div class="left-item-animation left-item-num">401</div>
-					<div class="left-item-animation left-item-title">{{ $t('message.noAccess.accessTitle') }}</div>
-					<div class="left-item-animation left-item-msg">{{ $t('message.noAccess.accessMsg') }}</div>
-					<div class="left-item-animation left-item-btn">
-						<el-button type="primary" round @click="onSetAuth">{{ $t('message.noAccess.accessBtn') }}</el-button>
+	<div class="error layout-padding">
+		<div class="layout-padding-auto layout-padding-view">
+			<div class="error-flex">
+				<div class="left">
+					<div class="left-item">
+						<div class="left-item-animation left-item-num">401</div>
+						<div class="left-item-animation left-item-title">{{ $t('message.noAccess.accessTitle') }}</div>
+						<div class="left-item-animation left-item-msg">{{ $t('message.noAccess.accessMsg') }}</div>
+						<div class="left-item-animation left-item-btn">
+							<el-button type="primary" size="default" round @click="onSetAuth">{{ $t('message.noAccess.accessBtn') }}</el-button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -18,30 +20,21 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { useRouter } from 'vue-router';
+<script setup lang="ts" name="noPower">
 import { Session } from '/@/utils/storage';
-export default defineComponent({
-	name: '401',
-	setup() {
-		const router = useRouter();
-		const onSetAuth = () => {
-			Session.clear();
-			router.push('/login');
-		};
-		return {
-			onSetAuth,
-		};
-	},
-});
+
+const onSetAuth = () => {
+	// https://gitee.com/lyt-top/vue-next-admin/issues/I5C3JS
+	// 清除缓存/token等
+	Session.clear();
+	// 使用 reload 时，不需要调用 resetRoute() 重置路由
+	window.location.reload();
+};
 </script>
 
 <style scoped lang="scss">
 .error {
 	height: 100%;
-	background-color: var(--el-color-white);
-	display: flex;
 	.error-flex {
 		margin: auto;
 		display: flex;

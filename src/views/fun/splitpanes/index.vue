@@ -1,5 +1,5 @@
 <template>
-	<div class="splitpanes-container">
+	<div class="splitpanes-container layout-pd">
 		<el-card shadow="hover" header="splitpanes 窗格拆分器">
 			<el-alert
 				title="感谢优秀的 `splitpanes`，项目地址：https://github.com/antoniandre/splitpanes"
@@ -21,22 +21,13 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { toRefs, reactive, defineComponent } from 'vue';
+<script setup lang="ts" name="funSplitpanes">
+import { ref } from 'vue';
 import { Splitpanes, Pane } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
-export default defineComponent({
-	name: 'funSplitpanes',
-	components: { Splitpanes, Pane },
-	setup() {
-		const state = reactive({
-			paneSize: 50,
-		});
-		return {
-			...toRefs(state),
-		};
-	},
-});
+
+// 定义变量内容
+const paneSize = ref(50);
 </script>
 
 <style scoped lang="scss">

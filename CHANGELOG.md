@@ -2,6 +2,134 @@
 
 🎉🎉🔥 `vue-next-admin` 基于 vue3.x 、Typescript、vite、Element plus 等，适配手机、平板、pc 的后台开源免费模板库（vue2.x 请切换 vue-prev-admin 分支）
 
+## 2.4.21
+
+`2022.12.12`
+
+- 🌟 更新 依赖更新最新版本
+- 🎉 新增 菜单背景高亮颜色可自定义，通过 `布局配置 -> 菜单设置 -> 菜单高亮背景色` 进行设置
+- 🐞 修复 `分栏布局` 二级导航菜单内容多时，无法滚动问题，感谢群友@静雨轩主人
+- 🐞 修复 [!42 修复 工作流无法添加新节点问题](https://gitee.com/lyt-top/vue-next-admin/pulls/42)，感谢[@beta](https://gitee.com/beta_dz)
+- 🎯 优化 `/make/tableDemo` 表头很多时，无法滚动问题，感谢群友@糊涂涂涂
+
+## 2.4.2
+
+`2022.12.09`
+
+- 🌟 更新 依赖更新最新版本
+- 🎉 新增 国际化自动导入文件功能，只需在 `/src/i18n/pages` 下新建文件夹定义即可
+- 🎉 新增 `/make/tableDemo` 中 [搜索框展开，收缩功能，高级筛选组件 有计划做吗](https://gitee.com/lyt-top/vue-next-admin/issues/I6511L)
+- 🐞 修复 [!40 开启 TagsView 缓存后，刷新后所有的路由都变成组件缓存了](https://gitee.com/lyt-top/vue-next-admin/pulls/40)，感谢[@mrjimin](https://gitee.com/mrjimin)
+- 🐞 修复 [!41 修复 get 请求传递嵌套对象或数组时无法正常编码问题](https://gitee.com/lyt-top/vue-next-admin/pulls/41)，感谢[@随心](https://gitee.com/jiangqiang1996)
+- 🐞 修复 组件 wangEditor 回显值的问题
+- 🐞 修复 `/fun/echartsMap`（地理坐标/地图）、`visualizingDemo2`（数据可视化演示 2） 演示报错问题
+- 🎯 优化 版本升级提示
+- 🎯 优化 无权限登录时增加提示信息，[BUG：因前端加载路由(initFrontEndControlRoutes)中当前用户角色为一个陌生角色, 导致 router.beforeEach 会死循环 浏览器崩溃](https://gitee.com/lyt-top/vue-next-admin/issues/I64HVO)，感谢[@canroc](https://gitee.com/canroc)、[@随心](https://gitee.com/jiangqiang1996)
+- 🌈 重构 `/views/system` 新增修改组件合并。[可以把新增修改组件合并成一个吧](https://gitee.com/lyt-top/vue-next-admin/issues/I64WES)
+- 🌈 重构 图标选择器，[图标选择器没办法筛选，只能筛选 ali 的](https://gitee.com/lyt-top/vue-next-admin/issues/I64HZD)，感谢[@随心](https://gitee.com/jiangqiang1996)
+
+## 2.4.1
+
+`2022.11.30`
+
+- 🎉 新增 版本升级提示
+- 🐞 修复 [先打开 F12 再登录进去，然后改变浏览器大小 js 报错](https://gitee.com/lyt-top/vue-next-admin/issues/I63ZZT)，感谢[@Quber](https://gitee.com/quber)
+
+## 2.4.0
+
+`2022.11.29`
+
+⚡⚡⚡ 此版为破坏性更新，应群友建议 `script lang="ts"` 改 `script lang="ts" setup 语法糖`。
+
+- 🌟 更新 依赖更新最新版本
+- 🎉 新增 表格封装演示，路径：`组件封装 -> 表格封装演示`
+- 🎉 新增 master 分支 script lang="ts" 改成 script lang="ts" setup 语法糖，将同步基础分支
+- 🐞 修复 [v2.3.0 版本报错问题处理](https://gitee.com/lyt-top/vue-next-admin/issues/I623RP)
+- 🐞 修复 [el-backtop 滚动高度不触发（固定了 header）](https://gitee.com/lyt-top/vue-next-admin/issues/I63N0D)，感谢[@dejavuuuuu](https://gitee.com/zc19951010)
+- 🎯 优化 完善 ts 类型，删除根目录 `plugins.d.ts、shim.d.ts、source.d.ts`，移入到 `/src/types/global.d.ts`
+- 🎯 优化 代码 `watch` 移动到 `生命周期钩子` 最后，文字注释等
+
+## 2.3.0
+
+`2022.11.16`
+
+- 🌟 更新 依赖更新最新版本
+- 🎉 新增 新版登录页
+- 🎉 新增 tagsview 鼠标中键 `关闭当前 tagsview`
+- 🎉 新增 `分栏菜单鼠标悬停预加载`。[分栏模式如何去掉鼠标悬浮父级菜单，分栏菜单自动加载的功能啊](https://gitee.com/lyt-top/vue-next-admin/issues/I5RUY7)。操作路径：`布局配置 -> 分栏设置`
+- 🐞 修复 [vue-i18n](https://vue-i18n.intlify.dev/api/general.html#createi18n) 报错，[!39 修复 i18n 兼容性问题](https://toscode.gitee.com/lyt-top/vue-next-admin/pulls/39/files)，感谢[@随心](https://toscode.gitee.com/jiangqiang1996)
+- 🐞 修复 顶栏搜索功能点击蒙蔽弹窗不关闭
+- 🐞 修复 [!38 fix: bug refreshRouterViewKey 值为 null 导致路由缓存第一次无效](https://toscode.gitee.com/lyt-top/vue-next-admin/pulls/38/files)，感谢[@P)](https://toscode.gitee.com/foxp8y)
+- 🐞 修复 `路由参数 -> 普通路由/动态路由` 国际化演示时，`tagsView` 和 `浏览器标题` 显示异常。[演示中：路由参数界面 -> 动态路由，国际化显示时面包屑、浏览器标题有 bug](https://gitee.com/lyt-top/vue-next-admin/issues/I5JRJG)
+- 🐞 修复 `路由参数 -> 普通路由/动态路由` 动态设置 `tagsViewName` 时，`tagsView 右键菜单刷新` 功能失效（也就是路由后面有参数时，query、params）。[普通或动态路由新建页面后点击 tagview 刷新无效](https://gitee.com/lyt-top/vue-next-admin/issues/I5K3YO)，感谢[@dejavuuuuu](https://gitee.com/zc19951010)
+- 🐞 修复 [表单（el-form）中，字体图标偏移问题](https://gitee.com/lyt-top/vue-next-admin/issues/I5K1PM)
+- 🐞 修复 路由 `router.addRoute` 时，一直提示 `No match found for location with path 'xxx'`
+- 🎯 优化 全局 `getCurrentInstance` 替换成 [`provide/inject`](https://cn.vuejs.org/api/application.html#app-provide) 或通过 `ref` 处理
+- 🎯 优化 引入组件方式 `(import xxx from xxx)` 改成 `defineAsyncComponent(() => import(xxx))`
+- 🎯 优化 页面高度 100% 问题，重写布局配置 `界面设置 -> 固定 Header` 多余的 `el-scrollbar` 逻辑、重写各界面需 `计算属性 computed` 设置动态高度问题（改为 css `flex` 设置自适应高度，具体查看文档：[设置可视区高度 100%](https://lyt-top.gitee.io/vue-next-admin-doc-preview/config/otherIssues/#%E8%AE%BE%E7%BD%AE%E5%8F%AF%E8%A7%86%E5%8C%BA%E9%AB%98%E5%BA%A6-100)。[!31 修复页面样式无法通过百分比设置的问题](https://toscode.gitee.com/lyt-top/vue-next-admin/pulls/31)，感谢[@LostDeer](https://toscode.gitee.com/lyt-top/vue-next-admin/pulls/31/files)。`（改动较大，删除多余代码）`
+- 🎯 优化 [wangeditor](https://www.wangeditor.com/) 组件，`@wangeditor/editor-for-vue`。可自行修改，组件位置：`/src/components/editor`。相关 Issues：[wangeditor 编辑器多个菜单不能回弹](https://gitee.com/lyt-top/vue-next-admin/issues/I5M5H7)
+- 🌈 重构 外链、内嵌 iframe 逻辑 + 美化，iframe 支持缓存
+
+## 2.2.0
+
+`2022.07.10`
+
+⚡⚡⚡ [/sec/stores/userInfo.ts](https://gitee.com/lyt-top/vue-next-admin/blob/master/src/stores/userInfo.ts) 下添加了 `getApiUserInfo` 接口模拟数据 `setTimeout` 为 3 秒
+
+- 🌟 更新 依赖更新最新版本
+- 🐞 修复 [主界面重新授权按钮点击卡死不跳转登录界面#I5C3JS](https://gitee.com/lyt-top/vue-next-admin/issues/I5C3JS)，感谢[@Hero-Typ](https://gitee.com/tian_yu_peng)
+- 🐞 修复 编译警告[#I5CVSB](https://gitee.com/lyt-top/vue-next-admin/issues/I5CVSB)，全局替换成 `:deep(attr)`，感谢[@Linvas](https://gitee.com/linvas)。参考文档：[vue3 sfc-style](https://v3.cn.vuejs.org/api/sfc-style.html#style-scoped)。`node_modules\print-js\dist\print.js` 需 `print-js` 作者适配或去除 `package.json` 中的 `"print-js": "^1.6.0"`
+- 🐞 修复 [vue-next-admin-template-js 版本前端控制路由：userInfo.js 请求用户信息接口报错，加载不到路由 可以写个定时器模拟一下接口 一样的报错#I5F1HP](https://gitee.com/lyt-top/vue-next-admin/issues/I5F1HP)，感谢[@白开水](https://gitee.com/libin951223)
+
+## 2.1.1
+
+`2022.05.27`
+
+- 🌟 更新 依赖更新最新版本
+- 🎯 优化 深色模式下，`<el-button text></el-button>` 时，`:active` 样式
+- 🎯 优化 [页面缓存在刷新之后失效 #I58U75](https://gitee.com/lyt-top/vue-next-admin/issues/I58U75))，感谢[@ls0428](https://gitee.com/ls0428)
+- 🎯 优化 [SvgIcon 对下载的 Svg 图像设置颜色无效 #I59ND0](https://gitee.com/lyt-top/vue-next-admin/issues/I59ND0))，感谢[@elus_z](https://gitee.com/elus_z)
+- 🎯 优化 `/src/utils/toolsValidate.ts` 工具类
+- 🐞 修复 [布局切换，TagsView 显示的 tab 会多一个出来 #I58WGM](https://gitee.com/lyt-top/vue-next-admin/issues/I58WGM)，感谢[@lg_boy](https://gitee.com/lg_boy)
+- 🐞 修复 [如果设置顶部面包屑导航开启图标 isBreadcrumbIcon=true 后，样式有点问题 如果不开启就是正常的 #I58VB8](https://gitee.com/lyt-top/vue-next-admin/issues/I58VB8)
+- 🐞 修复 地址栏路由地址输入错误时，返回首页后，再次输入路由地址错误时，不跳转 404 问题
+- 🐞 修复 [2.1.0 版本的图标选择组件多次点击后功能失效 #I590TH](https://gitee.com/lyt-top/vue-next-admin/issues/I590TH)，感谢[@quber](https://gitee.com/quber)
+
+## 2.1.0
+
+`2022.04.18`
+
+⚡⚡⚡ 此版本为破环性更新，优化内容如下：（谨慎更新！谨慎更新！！谨慎更新！！！）。因为 `vuex` 替换成 `pinia`
+
+- 🌟 更新 依赖更新最新版本
+- 🎯 优化 部分界面图片不显示问题（更换 gitee 在线图片地址源）
+- 🎯 优化 各界面方法引入与逻辑之间添加一行空行，方便区分内容
+- 🎯 优化 图标选择器 [#I4YAHB](https://gitee.com/lyt-top/vue-next-admin/issues/I4YAHB)，感谢[@真有你的](https://gitee.com/sunliusen)
+- 🎯 优化 图标选择器 icon type 类型为 all 时，类型 ali、ele、awe 回显问题
+- 🎯 优化 去掉开发环境 i18n 控制台警告，页面代码：[i18n/index.ts](https://gitee.com/lyt-top/vue-next-admin/blob/master/src/i18n/index.ts)
+- 🎯 优化 `NextLoading.start()` 方法，防止第一次进入界面时出现短暂空白
+- 🎯 优化 地址栏有参数退出登录，再次登录不跳之前界面问题 `src/layout/navBars/breadcrumb/user.vue`
+- 🎯 优化 `SvgIcon` 组件，防止 `开启 Tagsview 图标` 时，`tagsView 右键菜单关闭` 报错问题，工作流不可连线、全屏时关闭按钮消失问题
+- 🎯 优化 [如果 url 中有中文等特殊字符，第一次切换该 tab 时 keep-alive 失效#I55JS7](https://gitee.com/lyt-top/vue-next-admin/issues/I55JS7),感谢[yuyong1566](https://gitee.com/yuyong1566)
+- 🎯 优化 [wangEditor](https://www.wangeditor.com/) 更新到 v5，[vue3 版本线上示例中 wangeditor 富文本编辑器 demo 实例,无法换行#I5565B](https://gitee.com/lyt-top/vue-next-admin/issues/I5565B)，感谢@[jenchih](https://gitee.com/jenchih)
+- 🎯 优化 [在关闭 tagview 时，高度刷新时会会变化，出现滚动条](https://gitee.com/lyt-top/vue-next-admin/issues/I55FHM)，感谢[张松](https://gitee.com/zs310071113)
+- 🎯 优化 [路由参数](https://lyt-top.gitee.io/vue-next-admin-preview/#/params/common)演示
+- 🎉 新增 [vuex](https://vuex.vuejs.org/) 替换成 [pinia](https://pinia.vuejs.org/getting-started.html)
+- 🎉 新增 tagsView 支持自定义 tagsView 名称（文章详情时有用），前往体验：[路由参数/普通路由](https://lyt-top.gitee.io/vue-next-admin-preview/#/params/common)。新增 tagsView 支持自定义名称国际化，感谢[@q7but](https://gitee.com/q7but)、[!22 add 添加自定义 tagVIewName 拓展,支持国际化](https://gitee.com/lyt-top/vue-next-admin/pulls/22/files)、感谢[@tony_tong_xin](https://gitee.com/tony_tong_xin)
+- 🐞 修复 适配 `"element-plus": "^2.1.9"，2.2.0` 版本
+- 🐞 修复 [导航栏横向布局后，一级菜单显示问题#I4Z3M3](https://gitee.com/lyt-top/vue-next-admin/issues/I4Z3M3)
+- 🐞 修复 横向布局三级及以上导航菜单高亮、导航高度不统一问题
+- 🐞 修复 分栏模式下,选中的菜单是 primary 样式,鼠标移入字也变成 primary 色了，感谢群友@孤夜-流殇
+- 🐞 修复 [vuex 里面改了颜色 但是不生效 #I4WFMA](https://gitee.com/lyt-top/vue-next-admin/issues/I4WFMA)
+- 🐞 修复 全局主题 primary 清空颜色后报错，[#I4X0LG](https://gitee.com/lyt-top/vue-next-admin/issues/I4X0LG)，感谢[面向 BUG 编程](https://gitee.com/fhtfy)
+- 🐞 修复 [.eslintrc.js 文件 rules 标签名错误 #I53IPK](https://gitee.com/lyt-top/vue-next-admin/issues/I53IPK)，感谢[yuyong1566](https://gitee.com/yuyong1566)
+- 🐞 修复 `开启 Tagsview 图标` 时，`tagsView 右键菜单关闭` 报错问题
+- 🐞 修复 `router.push` 路径找不到时报错问题，`404、401 界面` 已移入到 `main` 主布局里（之前全屏）
+- 🐞 修复 [全局修改组件大小失效了](https://gitee.com/lyt-top/vue-next-admin/issues/I551RP)，感谢[lg_boy](https://gitee.com/lg_boy)
+- 🐞 修复 [修改一下配置时，需要每次都清理 `window.localStorage` 浏览器永久缓存，配置才会生效，问题解决#I567R1](https://gitee.com/lyt-top/vue-next-admin/issues/I567R1),感谢[@lanbao123](https://gitee.com/lanbao123)
+- 🐞 修复 [标记为需要缓存的 tab 页后，再次从左侧菜单打开，还是显示被缓存的页面内容#I4UY3G](https://gitee.com/lyt-top/vue-next-admin/issues/I4UY3G)，感谢@axcc1234、特别感谢群友@华仔
+- 🌈 重构 路由（`/src/router/index.ts`）解决 No match found for location with path "xxx"(前端控制，后端控制未解决) 问题
+
 ## 2.0.2
 
 `2022.03.04`

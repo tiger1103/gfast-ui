@@ -1,32 +1,18 @@
 <template>
-	<el-header class="layout-header" :height="setHeaderHeight" v-show="!isTagsViewCurrenFull">
+	<el-header class="layout-header" v-show="!isTagsViewCurrenFull">
 		<NavBarsIndex />
 	</el-header>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
-import { useStore } from '/@/store/index';
-import NavBarsIndex from '/@/layout/navBars/index.vue';
-export default defineComponent({
-	name: 'layoutHeader',
-	components: { NavBarsIndex },
-	setup() {
-		const store = useStore();
-		// 设置 header 的高度
-		const setHeaderHeight = computed(() => {
-			let { isTagsview, layout } = store.state.themeConfig.themeConfig;
-			if (isTagsview && layout !== 'classic') return '84px';
-			else return '50px';
-		});
-		// 获取卡片全屏信息
-		const isTagsViewCurrenFull = computed(() => {
-			return store.state.tagsViewRoutes.isTagsViewCurrenFull;
-		});
-		return {
-			setHeaderHeight,
-			isTagsViewCurrenFull,
-		};
-	},
-});
+<script setup lang="ts" name="layoutHeader">
+import { defineAsyncComponent } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useTagsViewRoutes } from '/@/stores/tagsViewRoutes';
+
+// 引入组件
+const NavBarsIndex = defineAsyncComponent(() => import('/@/layout/navBars/index.vue'));
+
+// 定义变量内容
+const storesTagsViewRoutes = useTagsViewRoutes();
+const { isTagsViewCurrenFull } = storeToRefs(storesTagsViewRoutes);
 </script>

@@ -1,13 +1,15 @@
 <template>
-	<div class="error">
-		<div class="error-flex">
-			<div class="left">
-				<div class="left-item">
-					<div class="left-item-animation left-item-num">404</div>
-					<div class="left-item-animation left-item-title">{{ $t('message.notFound.foundTitle') }}</div>
-					<div class="left-item-animation left-item-msg">{{ $t('message.notFound.foundMsg') }}</div>
-					<div class="left-item-animation left-item-btn">
-						<el-button type="primary" round @click="onGoHome">{{ $t('message.notFound.foundBtn') }}</el-button>
+	<div class="error layout-padding">
+		<div class="layout-padding-auto layout-padding-view">
+			<div class="error-flex">
+				<div class="left">
+					<div class="left-item">
+						<div class="left-item-animation left-item-num">404</div>
+						<div class="left-item-animation left-item-title">{{ $t('message.notFound.foundTitle') }}</div>
+						<div class="left-item-animation left-item-msg">{{ $t('message.notFound.foundMsg') }}</div>
+						<div class="left-item-animation left-item-btn">
+							<el-button type="primary" size="default" round @click="onGoHome">{{ $t('message.notFound.foundBtn') }}</el-button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -18,28 +20,21 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts" name="notFound">
 import { useRouter } from 'vue-router';
-export default defineComponent({
-	name: '404',
-	setup() {
-		const router = useRouter();
-		const onGoHome = () => {
-			router.push('/');
-		};
-		return {
-			onGoHome,
-		};
-	},
-});
+
+// 定义变量内容
+const router = useRouter();
+
+// 返回首页
+const onGoHome = () => {
+	router.push('/');
+};
 </script>
 
 <style scoped lang="scss">
 .error {
 	height: 100%;
-	background-color: var(--el-color-white);
-	display: flex;
 	.error-flex {
 		margin: auto;
 		display: flex;

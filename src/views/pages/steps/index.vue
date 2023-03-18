@@ -1,20 +1,20 @@
 <template>
-	<div class="steps-container">
+	<div class="steps-container layout-pd">
 		<el-card shadow="hover" header="element-plus 步骤条">
 			<el-steps :active="stepsActive">
 				<el-step title="第一步">
 					<template #icon>
-						<SvgIcon name="iconfont icon-0_round_solid" :size="20" />
+						<SvgIcon name="iconfont icon-0_round_solid" :size="40" />
 					</template>
 				</el-step>
 				<el-step title="第二步">
 					<template #icon>
-						<SvgIcon name="iconfont icon-2_round_solid" :size="20" />
+						<SvgIcon name="iconfont icon-2_round_solid" :size="40" />
 					</template>
 				</el-step>
 				<el-step title="第三步">
 					<template #icon>
-						<SvgIcon name="iconfont icon-3_round_solid" :size="20" />
+						<SvgIcon name="iconfont icon-3_round_solid" :size="40" />
 					</template>
 				</el-step>
 			</el-steps>
@@ -29,22 +29,14 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { toRefs, reactive, defineComponent } from 'vue';
-export default defineComponent({
-	name: 'pagesSteps',
-	setup() {
-		const state = reactive({
-			stepsActive: 1,
-		});
-		// 下一步点击
-		const onNextSteps = () => {
-			if (state.stepsActive++ > 2) state.stepsActive = 1;
-		};
-		return {
-			onNextSteps,
-			...toRefs(state),
-		};
-	},
-});
+<script setup lang="ts" name="pagesSteps">
+import { ref } from 'vue';
+
+// 定义变量内容
+const stepsActive = ref(1);
+
+// 下一步点击
+const onNextSteps = () => {
+	if (stepsActive.value++ > 2) stepsActive.value = 1;
+};
 </script>

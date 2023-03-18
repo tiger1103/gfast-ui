@@ -1,5 +1,5 @@
 <template>
-	<div class="layout-footer mt15" v-show="isDelayFooter">
+	<div class="layout-footer pb15">
 		<div class="layout-footer-warp">
 			<div>Copyright © 2021-2023 g-fast.cn All Rights Reserved.</div>
 			<div class="mt5">云南奇讯科技有限公司版权所有</div>
@@ -7,29 +7,8 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { toRefs, reactive, defineComponent } from 'vue';
-import { onBeforeRouteUpdate } from 'vue-router';
-export default defineComponent({
-	name: 'layoutFooter',
-	setup() {
-		const state = reactive({
-			isDelayFooter: true,
-		});
-		// 路由改变时，等主界面动画加载完毕再显示 footer
-		onBeforeRouteUpdate(() => {
-			setTimeout(() => {
-				state.isDelayFooter = false;
-				setTimeout(() => {
-					state.isDelayFooter = true;
-				}, 800);
-			}, 0);
-		});
-		return {
-			...toRefs(state),
-		};
-	},
-});
+<script setup lang="ts" name="layoutFooter">
+// 此处需有内容（注释也得），否则缓存将失败
 </script>
 
 <style scoped lang="scss">
@@ -40,7 +19,7 @@ export default defineComponent({
 		margin: auto;
 		color: var(--el-text-color-secondary);
 		text-align: center;
-		animation: error-num 1s ease-in-out;
+		animation: error-num 0.3s ease;
 	}
 }
 </style>

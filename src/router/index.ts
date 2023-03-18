@@ -1,31 +1,46 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
-import { store } from '/@/store/index.ts';
+import pinia from '/@/stores/index';
+import { storeToRefs } from 'pinia';
+import { useKeepALiveNames } from '/@/stores/keepAliveNames';
+import { useRoutesList } from '/@/stores/routesList';
+import { useThemeConfig } from '/@/stores/themeConfig';
 import { Session } from '/@/utils/storage';
-import { NextLoading } from '/@/utils/loading';
-import { staticRoutes, dynamicRoutes } from '/@/router/route';
+import { staticRoutes, notFoundAndNoPower } from '/@/router/route';
 import { initFrontEndControlRoutes } from '/@/router/frontEnd';
 import { initBackEndControlRoutes } from '/@/router/backEnd';
+
+/**
+ * 1、前端控制路由时：isRequestRoutes 为 false，需要写 roles，需要走 setFilterRoute 方法。
+ * 2、后端控制路由时：isRequestRoutes 为 true，不需要写 roles，不需要走 setFilterRoute 方法），
+ * 相关方法已拆解到对应的 `backEnd.ts` 与 `frontEnd.ts`（他们互不影响，不需要同时改 2 个文件）。
+ * 特别说明：
+ * 1、前端控制：路由菜单由前端去写（无菜单管理界面，有角色管理界面），角色管理中有 roles 属性，需返回到 userInfo 中。
+ * 2、后端控制：路由菜单由后端返回（有菜单管理界面、有角色管理界面）
+ */
+
+// 读取 `/src/stores/themeConfig.ts` 是否开启后端控制路由配置
+const storesThemeConfig = useThemeConfig(pinia);
+const { themeConfig } = storeToRefs(storesThemeConfig);
+const { isRequestRoutes } = themeConfig.value;
+if (isRequestRoutes) initFrontEndControlRoutes();
 
 /**
  * 创建一个可以被 Vue 应用程序使用的路由实例
  * @method createRouter(options: RouterOptions): Router
  * @link 参考：https://next.router.vuejs.org/zh/api/#createrouter
  */
-const router = createRouter({
+export const router = createRouter({
 	history: createWebHashHistory(),
-	routes: staticRoutes,
+	/**
+	 * 说明：
+	 * 1、notFoundAndNoPower 默认添加 404、401 界面，防止一直提示 No match found for location with path 'xxx'
+	 * 2、backEnd.ts(后端控制路由)、frontEnd.ts(前端控制路由) 中也需要加 notFoundAndNoPower 404、401 界面。
+	 *    防止 404、401 不在 layout 布局中，不设置的话，404、401 界面将全屏显示
+	 */
+	routes: [...notFoundAndNoPower, ...staticRoutes],
 });
-
-/**
- * 定义404界面
- * @link 参考：https://next.router.vuejs.org/zh/guide/essentials/history-mode.html#netlify
- */
-const pathMatch = {
-	path: '/:path(.*)*',
-	redirect: '/404',
-};
 
 /**
  * 路由多级嵌套数组处理成一维数组
@@ -68,123 +83,15 @@ export function formatTwoStageRoutes(arr: any) {
 			// 路径：/@/layout/routerView/parent.vue
 			if (newArr[0].meta.isKeepAlive && v.meta.isKeepAlive) {
 				cacheList.push(v.name);
-				store.dispatch('keepAliveNames/setCacheKeepAlive', cacheList);
+				const stores = useKeepALiveNames(pinia);
+				stores.setCacheKeepAlive(cacheList);
 			}
 		}
 	});
 	return newArr;
 }
 
-/**
- * 缓存多级嵌套数组处理后的一维数组
- * @description 用于 tagsView、菜单搜索中：未过滤隐藏的(isHide)
- */
-export function setCacheTagsViewRoutes() {
-	// 获取有权限的路由，否则 tagsView、菜单搜索中无权限的路由也将显示
-	let rolesRoutes = dynamicRoutes
-	// 添加到 vuex setTagsViewRoutes 中
-	store.dispatch('tagsViewRoutes/setTagsViewRoutes', formatTwoStageRoutes(formatFlatteningRoutes(rolesRoutes))[0].children);
-}
-
-/**
- * 判断路由 `meta.roles` 中是否包含当前登录用户权限字段
- * @param roles 用户权限标识，在 userInfos（用户信息）的 roles（登录页登录时缓存到浏览器）数组
- * @param route 当前循环时的路由项
- * @returns 返回对比后有权限的路由项
- */
-export function hasRoles(roles: any, route: any) {
-	if (route.meta && route.meta.roles) return roles.some((role: any) => route.meta.roles.includes(role));
-	else return true;
-}
-
-/**
- * 获取当前用户权限标识去比对路由表，设置递归过滤有权限的路由
- * @param routes 当前路由 children
- * @param roles 用户权限标识，在 userInfos（用户信息）的 roles（登录页登录时缓存到浏览器）数组
- * @returns 返回有权限的路由数组 `meta.roles` 中控制
- */
-export function setFilterHasRolesMenu(routes: any, roles: any) {
-	const menu: any = [];
-	routes.forEach((route: any) => {
-		const item = { ...route };
-		if (hasRoles(roles, item)) {
-			menu.push(item);
-		}
-	});
-	return menu;
-}
-
-/**
- * 设置递归过滤有权限的路由到 vuex routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
- * @description 用于左侧菜单、横向菜单的显示
- * @description 用于 tagsView、菜单搜索中：未过滤隐藏的(isHide)
- */
-export function setFilterMenuAndCacheTagsViewRoutes() {
-	store.dispatch('routesList/setRoutesList', dynamicRoutes[0].children);
-	setCacheTagsViewRoutes();
-}
-
-/**
- * 获取当前用户权限标识去比对路由表（未处理成多级嵌套路由）
- * @description 这里主要用于动态路由的添加，router.addRoute
- * @link 参考：https://next.router.vuejs.org/zh/api/#addroute
- * @param chil dynamicRoutes（/@/router/route）第一个顶级 children 的下路由集合
- * @returns 返回有当前用户权限标识的路由数组
- */
-export function setFilterRoute(chil: any) {
-	let filterRoute: any = [];
-	chil.forEach((route: any) => {
-		if (route.meta.roles) {
-			route.meta.roles.forEach((metaRoles: any) => {
-				store.state.userInfos.userInfos.roles.forEach((roles: any) => {
-					if (metaRoles === roles) filterRoute.push({ ...route });
-				});
-			});
-		}
-	});
-	return filterRoute;
-}
-
-/**
- * 获取有当前用户权限标识的路由数组，进行对原路由的替换
- * @description 替换 dynamicRoutes（/@/router/route）第一个顶级 children 的路由
- * @returns 返回替换后的路由数组
- */
-export function setFilterRouteEnd() {
-	let filterRouteEnd: any = formatTwoStageRoutes(formatFlatteningRoutes(dynamicRoutes));
-	filterRouteEnd[0].children = [...filterRouteEnd[0].children, { ...pathMatch }];
-	return filterRouteEnd;
-}
-
-/**
- * 添加动态路由
- * @method router.addRoute
- * @description 此处循环为 dynamicRoutes（/@/router/route）第一个顶级 children 的路由一维数组，非多级嵌套
- * @link 参考：https://next.router.vuejs.org/zh/api/#addroute
- */
-export async function setAddRoute() {
-	await setFilterRouteEnd().forEach((route: RouteRecordRaw) => {
-		const routeName: any = route.name;
-		if (!router.hasRoute(routeName)) router.addRoute(route);
-	});
-}
-
-/**
- * 删除/重置路由
- * @method router.removeRoute
- * @description 此处循环为 dynamicRoutes（/@/router/route）第一个顶级 children 的路由一维数组，非多级嵌套
- * @link 参考：https://next.router.vuejs.org/zh/api/#push
- */
-export async function resetRoute() {
-	await setFilterRouteEnd().forEach((route: RouteRecordRaw) => {
-		const routeName: any = route.name;
-		router.hasRoute(routeName) && router.removeRoute(routeName);
-	});
-}
-
-// isRequestRoutes 为 true，则开启后端控制路由，路径：`/src/store/modules/themeConfig.ts`
-const { isRequestRoutes } = store.state.themeConfig.themeConfig;
-// 前端控制路由：初始化方法，防止刷新时路由丢失
+// isRequestRoutes 为 true，则开启后端控制路由，路径：`/src/stores/themeConfig.ts`
 if (!isRequestRoutes) initFrontEndControlRoutes();
 
 
@@ -227,19 +134,24 @@ router.beforeEach(async (to, from, next) => {
 		if (!token) {
 			next(`/login?redirect=${to.path}&params=${JSON.stringify(to.query ? to.query : to.params)}`);
 			Session.clear();
-			resetRoute();
 			NProgress.done();
 		} else if (token && to.path === '/login') {
 			next('/home');
 			NProgress.done();
 		} else {
-			if (store.state.routesList.routesList.length === 0) {
+			const storesRoutesList = useRoutesList(pinia);
+			const { routesList } = storeToRefs(storesRoutesList);
+			if (routesList.value.length === 0) {
 				if (isRequestRoutes) {
 					// 后端控制路由：路由数据初始化，防止刷新时丢失
 					await initBackEndControlRoutes();
-					// 动态添加路由：防止非首页刷新时跳转回首页的问题
-					// 确保 addRoute() 时动态添加的路由已经被完全加载上去
-					next({ ...to, replace: true });
+					// 解决刷新时，一直跳 404 页面问题，关联问题 No match found for location with path 'xxx'
+					// to.query 防止页面刷新时，普通路由带参数时，参数丢失。动态路由（xxx/:id/:name"）isDynamic 无需处理
+					next({ path: to.path, query: to.query });
+				} else {
+					// https://gitee.com/lyt-top/vue-next-admin/issues/I5F1HP
+					await initFrontEndControlRoutes();
+					next({ path: to.path, query: to.query });
 				}
 			} else {
 				next();
@@ -251,7 +163,6 @@ router.beforeEach(async (to, from, next) => {
 // 路由加载后
 router.afterEach(() => {
 	NProgress.done();
-	NextLoading.done();
 });
 
 // 导出路由

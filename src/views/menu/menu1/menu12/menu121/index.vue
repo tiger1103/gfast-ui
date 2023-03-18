@@ -1,20 +1,12 @@
 <template>
-	<div>
+	<div class="layout-pd">
 		<el-input v-model="val" placeholder="menu121：请输入内容测试路由缓存"></el-input>
 	</div>
 </template>
 
-<script lang="ts">
-import { toRefs, reactive, defineComponent } from 'vue';
-export default defineComponent({
-	name: 'menu121',
-	setup() {
-		const state = reactive({
-			val: '',
-		});
-		return {
-			...toRefs(state),
-		};
-	},
-});
+<script setup lang="ts" name="menu121">
+import { ref } from 'vue';
+
+// 定义变量内容
+const val = ref('');
 </script>

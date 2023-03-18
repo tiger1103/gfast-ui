@@ -2,26 +2,29 @@
 	<slot v-if="getUserAuthBtnList" />
 </template>
 
-<script lang="ts">
-import { computed, defineComponent } from 'vue';
-import { useStore } from '/@/store/index';
-export default defineComponent({
-	name: 'auth',
-	props: {
-		value: {
-			type: String,
-			default: () => '',
-		},
+<script setup lang="ts" name="auth">
+import { computed } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useUserInfo } from '/@/stores/userInfo';
+
+// 定义父组件传过来的值
+const props = defineProps({
+	value: {
+		type: String,
+		default: () => '',
 	},
-	setup(props) {
-		const store = useStore();
-		// 获取 vuex 中的用户权限
-		const getUserAuthBtnList = computed(() => {
-			return store.state.userInfos.userInfos.authBtnList.some((v: string) => v === props.value);
-		});
-		return {
-			getUserAuthBtnList,
-		};
-	},
+});
+
+// 定义变量内容
+const stores = useUserInfo();
+const { userInfos } = storeToRefs(stores);
+
+// 获取 pinia 中的用户权限
+const getUserAuthBtnList = computed(() => {
+	const allPermissions = "*/*/*"
+	if (stores.permissions.includes(allPermissions)) return true
+	if (stores.permissions.some((v: string) => v === props.value)) return true;
+
+	return userInfos.value.authBtnList.some((v: string) => v === props.value);
 });
 </script>

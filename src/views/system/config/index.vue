@@ -1,5 +1,5 @@
 <template>
-  <div class="system-dic-container">
+  <div class="system-dic-container layout-pd">
     <el-card shadow="hover">
       <div class="system-user-search mb15">
         <el-form :model="tableData.param" ref="queryRef" :inline="true" label-width="68px">
@@ -66,7 +66,7 @@
               </el-icon>
               新增参数
             </el-button>
-            <el-button size="default" type="danger" class="ml10" @click="onRowDel(null)">
+            <el-button size="default" type="danger" class="ml10" @click="onRowDel()">
               <el-icon>
                 <ele-Delete />
               </el-icon>
@@ -86,8 +86,8 @@
         <el-table-column label="创建时间" align="center" prop="createdAt" width="180" />
         <el-table-column label="操作" width="100">
           <template #default="scope">
-            <el-button size="small" type="text" @click="onOpenEditDic(scope.row)">修改</el-button>
-            <el-button size="small" type="text" @click="onRowDel(scope.row)">删除</el-button>
+            <el-button size="small" text type="primary" @click="onOpenEditDic(scope.row)">修改</el-button>
+            <el-button size="small" text type="primary" @click="onRowDel(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -108,8 +108,6 @@ import {toRefs,reactive,onMounted,ref,defineComponent,unref,getCurrentInstance} 
 import { ElMessageBox, ElMessage,FormInstance} from 'element-plus';
 import EditConfig from '/@/views/system/config/component/editConfig.vue';
 import {deleteConfig, getConfigList} from "/@/api/system/config";
-
-
 
 // 定义接口来定义对象的类型
 interface TableDataRow {
@@ -139,7 +137,7 @@ interface TableDataState {
 }
 
 export default defineComponent({
-  name: 'apiV1SystemDictDataList',
+  name: 'apiV1SystemConfigList',
   components: { EditConfig },
   setup() {
     const {proxy} = getCurrentInstance() as any;
@@ -182,11 +180,11 @@ export default defineComponent({
       editDicRef.value.openDialog(row);
     };
     // 删除字典
-    const onRowDel = (row: TableDataRow) => {
+    const onRowDel = (row?: TableDataRow) => {
       let msg = '你确定要删除所选数据？';
       let ids:number[] = [] ;
       if(row){
-        msg = `此操作将永久删除用户：“${row.configName}”，是否继续?`
+        msg = `此操作将永久删除该数据：“${row.configName}”，是否继续?`
         ids = [row.configId]
       }else{
         ids = state.ids

@@ -1,7 +1,7 @@
 <template>
 	<div class="workflow-tool-help">
 		<el-dialog v-model="isShow" width="769px">
-			<template #title>
+			<template #header>
 				<div v-drag="['.workflow-tool-help .el-dialog', '.workflow-tool-help .el-dialog__header']">使用帮助</div>
 			</template>
 			<div>1、拖入：鼠标移入左侧导航中，鼠标形状改变时拖动到右侧网格状的视图中。</div>
@@ -13,27 +13,24 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { defineComponent, reactive, toRefs } from 'vue';
-export default defineComponent({
-	name: 'pagesWorkflowToolHelp',
-	setup() {
-		const state = reactive({
-			isShow: false,
-		});
-		// 打开弹窗
-		const open = () => {
-			state.isShow = true;
-		};
-		// 关闭弹窗
-		const close = () => {
-			state.isShow = false;
-		};
-		return {
-			open,
-			close,
-			...toRefs(state),
-		};
-	},
+<script setup lang="ts" name="pagesWorkflowToolHelp">
+import { ref } from 'vue';
+
+// 定义变量内容
+const isShow = ref(false);
+
+// 打开弹窗
+const open = () => {
+	isShow.value = true;
+};
+// 关闭弹窗
+const close = () => {
+	isShow.value = false;
+};
+
+// 暴露变量
+defineExpose({
+	open,
+	close,
 });
 </script>

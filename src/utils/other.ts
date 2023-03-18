@@ -1,11 +1,16 @@
-import { nextTick } from 'vue';
+import { nextTick, defineAsyncComponent } from 'vue';
 import type { App } from 'vue';
 import * as svg from '@element-plus/icons-vue';
 import router from '/@/router/index';
-import { store } from '/@/store/index';
+import pinia from '/@/stores/index';
+import { storeToRefs } from 'pinia';
+import { useThemeConfig } from '/@/stores/themeConfig';
 import { i18n } from '/@/i18n/index';
 import { Local } from '/@/utils/storage';
-import SvgIcon from '/@/components/svgIcon/index.vue';
+import { verifyUrl } from '/@/utils/toolsValidate';
+
+// 引入组件
+const SvgIcon = defineAsyncComponent(() => import('/@/components/svgIcon/index.vue'));
 
 
 /**
@@ -26,14 +31,43 @@ export function elSvg(app: App) {
  * @method const title = useTitle(); ==> title()
  */
 export function useTitle() {
+	const stores = useThemeConfig(pinia);
+	const { themeConfig } = storeToRefs(stores);
 	nextTick(() => {
 		let webTitle = '';
-		let globalTitle: string = store.state.themeConfig.themeConfig.globalTitle;
-		router.currentRoute.value.path === '/login'
-			? (webTitle = router.currentRoute.value.meta.title as any)
-			: (webTitle = i18n.global.t(router.currentRoute.value.meta.title as any));
+		let globalTitle: string = themeConfig.value.globalTitle;
+		const { path, meta } = router.currentRoute.value;
+		if (path === '/login') {
+			webTitle = <string>meta.title;
+		} else {
+			webTitle = setTagsViewNameI18n(router.currentRoute.value);
+		}
 		document.title = `${webTitle} - ${globalTitle}` || globalTitle;
 	});
+}
+
+/**
+ * 设置 自定义 tagsView 名称、 自定义 tagsView 名称国际化
+ * @param params 路由 query、params 中的 tagsViewName
+ * @returns 返回当前 tagsViewName 名称
+ */
+export function setTagsViewNameI18n(item: any) {
+	let tagsViewName: string = '';
+	const { query, params, meta } = item;
+	if (query?.tagsViewName || params?.tagsViewName) {
+		if (/\/zh-cn|en|zh-tw\//.test(query?.tagsViewName) || /\/zh-cn|en|zh-tw\//.test(params?.tagsViewName)) {
+			// 国际化
+			const urlTagsParams = (query?.tagsViewName && JSON.parse(query?.tagsViewName)) || (params?.tagsViewName && JSON.parse(params?.tagsViewName));
+			tagsViewName = urlTagsParams[i18n.global.locale.value];
+		} else {
+			// 非国际化
+			tagsViewName = query?.tagsViewName || params?.tagsViewName;
+		}
+	} else {
+		// 非自定义 tagsView 名称
+		tagsViewName = i18n.global.t(meta.title);
+	}
+	return tagsViewName;
 }
 
 /**
@@ -42,7 +76,7 @@ export function useTitle() {
  * @param arr 列表数据
  * @description data-xxx 属性用于存储页面或应用程序的私有自定义数据
  */
-export const lazyImg = (el: any, arr: any) => {
+export const lazyImg = (el: string, arr: EmptyArrayType) => {
 	const io = new IntersectionObserver((res) => {
 		res.forEach((v: any) => {
 			if (v.isIntersecting) {
@@ -64,22 +98,26 @@ export const lazyImg = (el: any, arr: any) => {
  * 全局组件大小
  * @returns 返回 `window.localStorage` 中读取的缓存值 `globalComponentSize`
  */
-export const globalComponentSize: string = Local.get('themeConfig')?.globalComponentSize || store.state.themeConfig.themeConfig?.globalComponentSize;
+export const globalComponentSize = (): string => {
+	const stores = useThemeConfig(pinia);
+	const { themeConfig } = storeToRefs(stores);
+	return Local.get('themeConfig')?.globalComponentSize || themeConfig.value?.globalComponentSize;
+};
 
 /**
  * 对象深克隆
  * @param obj 源对象
  * @returns 克隆后的对象
  */
-export function deepClone(obj: any) {
-	let newObj: any;
+export function deepClone(obj: EmptyObjectType) {
+	let newObj: EmptyObjectType;
 	try {
 		newObj = obj.push ? [] : {};
 	} catch (error) {
 		newObj = {};
 	}
 	for (let attr in obj) {
-		if (typeof obj[attr] === 'object') {
+		if (obj[attr] && typeof obj[attr] === 'object') {
 			newObj[attr] = deepClone(obj[attr]);
 		} else {
 			newObj[attr] = obj[attr];
@@ -109,7 +147,7 @@ export function isMobile() {
  * @param list 数组对象
  * @returns 删除空值后的数组对象
  */
-export function handleEmpty(list: any) {
+export function handleEmpty(list: EmptyArrayType) {
 	const arr = [];
 	for (const i in list) {
 		const d = [];
@@ -125,14 +163,27 @@ export function handleEmpty(list: any) {
 }
 
 /**
+ * 打开外部链接
+ * @param val 当前点击项菜单
+ */
+export function handleOpenLink(val: RouteItem) {
+	const { origin, pathname } = window.location;
+	router.push(val.path);
+	if (verifyUrl(<string>val.meta?.isLink)) window.open(val.meta?.isLink);
+	else window.open(`${origin}${pathname}#${val.meta?.isLink}`);
+}
+
+/**
  * 统一批量导出
  * @method elSvg 导出全局注册 element plus svg 图标
  * @method useTitle 设置浏览器标题国际化
+ * @method setTagsViewNameI18n 设置 自定义 tagsView 名称、 自定义 tagsView 名称国际化
  * @method lazyImg 图片懒加载
- * @method globalComponentSize element plus 全局组件大小
+ * @method globalComponentSize() element plus 全局组件大小
  * @method deepClone 对象深克隆
  * @method isMobile 判断是否是移动端
  * @method handleEmpty 判断数组对象中所有属性是否为空，为空则删除当前行对象
+ * @method handleOpenLink 打开外部链接
  */
 const other = {
 	elSvg: (app: App) => {
@@ -141,18 +192,26 @@ const other = {
 	useTitle: () => {
 		useTitle();
 	},
-	lazyImg: (el: any, arr: any) => {
+	setTagsViewNameI18n(route: RouteToFrom) {
+		return setTagsViewNameI18n(route);
+	},
+	lazyImg: (el: string, arr: EmptyArrayType) => {
 		lazyImg(el, arr);
 	},
-	globalComponentSize,
-	deepClone: (obj: any) => {
-		deepClone(obj);
+	globalComponentSize: () => {
+		return globalComponentSize();
+	},
+	deepClone: (obj: EmptyObjectType) => {
+		return deepClone(obj);
 	},
 	isMobile: () => {
 		return isMobile();
 	},
-	handleEmpty: (list: any) => {
+	handleEmpty: (list: EmptyArrayType) => {
 		return handleEmpty(list);
+	},
+	handleOpenLink: (val: RouteItem) => {
+		handleOpenLink(val);
 	},
 };
 

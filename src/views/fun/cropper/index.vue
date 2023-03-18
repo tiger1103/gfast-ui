@@ -1,5 +1,5 @@
 <template>
-	<div class="croppers-container">
+	<div class="croppers-container layout-pd">
 		<el-card shadow="hover" header="cropper 图片裁剪">
 			<el-alert
 				title="感谢优秀的 `cropperjs`，项目地址：https://github.com/fengyuanchen/cropperjs"
@@ -9,7 +9,7 @@
 			></el-alert>
 			<div class="cropper-img-warp">
 				<div class="mb15 mt15">
-					<img class="cropper-img" :src="cropperImg" />
+					<img class="cropper-img" :src="state.cropperImg" />
 				</div>
 				<el-button type="primary" size="default" @click="onCropperDialogOpen">
 					<el-icon>
@@ -23,28 +23,22 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { ref, toRefs, reactive, defineComponent } from 'vue';
-import CropperDialog from '/@/components/cropper/index.vue';
-export default defineComponent({
-	name: 'funCropper',
-	components: { CropperDialog },
-	setup() {
-		const cropperDialogRef = ref();
-		const state = reactive({
-			cropperImg: 'https://img1.baidu.com/it/u=2813520958,2218166536&fm=26&fmt=auto&gp=0.jpg',
-		});
-		// 打开裁剪弹窗
-		const onCropperDialogOpen = () => {
-			cropperDialogRef.value.openDialog(state.cropperImg);
-		};
-		return {
-			cropperDialogRef,
-			onCropperDialogOpen,
-			...toRefs(state),
-		};
-	},
+<script setup lang="ts" name="funCropper">
+import { defineAsyncComponent, ref, reactive } from 'vue';
+
+// 引入组件
+const CropperDialog = defineAsyncComponent(() => import('/@/components/cropper/index.vue'));
+
+// 定义变量内容
+const cropperDialogRef = ref();
+const state = reactive({
+	cropperImg: 'https://img2.baidu.com/it/u=1978192862,2048448374&fm=253&fmt=auto&app=138&f=JPEG?w=504&h=500',
 });
+
+// 打开裁剪弹窗
+const onCropperDialogOpen = () => {
+	cropperDialogRef.value.openDialog(state.cropperImg);
+};
 </script>
 
 <style scoped lang="scss">

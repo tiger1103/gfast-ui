@@ -27,7 +27,7 @@ export function getUpFileUrl(url:string){
  * @param {*} children 孩子节点字段 默认 'children'
  * @param {*} rootId 根Id 默认 0
  */
-export function handleTree(data:[], id:string, parentId:string, children:string, rootId:number) {
+export function handleTree(data:[], id:string, parentId:string, children:string|undefined=undefined, rootId:number|undefined=undefined) {
     id = id || 'id'
     parentId = parentId || 'parentId'
     children = children || 'children'

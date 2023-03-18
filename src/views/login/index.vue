@@ -1,76 +1,70 @@
 <template>
 	<div class="login-container">
-    <div class="login-content-out">
-     <div class="login-content">
-        <div class="login-content-main">
-          <div class="login-icon-group">
-            <div class="login-icon-group-title">
-              <img :src="logoMini" />
-              <div class="login-icon-group-title-text font25">{{ getThemeConfig.globalViceTitle }}</div>
-            </div>
-          </div>
-          <div v-if="!isScan">
-            <el-tabs v-model="tabsActiveName">
-              <el-tab-pane :label="$t('message.label.one1')" name="account">
-                <Account />
-              </el-tab-pane>
-              <el-tab-pane :label="$t('message.label.two2')" name="mobile">
-                <Mobile />
-              </el-tab-pane>
-            </el-tabs>
-          </div>
-          <Scan v-if="isScan" />
-          <div class="login-content-main-sacn" @click="isScan = !isScan">
-            <i class="iconfont" :class="isScan ? 'icon-diannao1' : 'icon-barcode-qr'"></i>
-            <div class="login-content-main-sacn-delta"></div>
-          </div>
-        </div>
-      </div>
+		<div class="login-content-out">
+			<div class="login-content">
+				<div class="login-content-main">
+					<div class="login-icon-group">
+						<div class="login-icon-group-title">
+							<img :src="logoMini" />
+							<div class="login-icon-group-title-text font25">{{ getThemeConfig.globalViceTitle }}</div>
+						</div>
+					</div>
+					<div v-if="!state.isScan">
+						<el-tabs v-model="state.tabsActiveName">
+							<el-tab-pane :label="$t('message.label.one1')" name="account">
+								<Account />
+							</el-tab-pane>
+							<el-tab-pane :label="$t('message.label.two2')" name="mobile">
+								<Mobile />
+							</el-tab-pane>
+						</el-tabs>
+					</div>
+					<Scan v-if="state.isScan" />
+					<div class="login-content-main-sacn" @click="state.isScan = !state.isScan">
+						<i class="iconfont" :class="state.isScan ? 'icon-diannao1' : 'icon-barcode-qr'"></i>
+						<div class="login-content-main-sacn-delta"></div>
+					</div>
+				</div>
+			</div>
 		</div>
-    <div class="login-footer">
-      <div class="login-footer-content mt15">
-        <div class="login-footer-content-warp">
-          <div>Copyright © 2021-2023 g-fast.cn All Rights Reserved.</div>
-          <div class="mt5">云南奇讯科技有限公司版权所有</div>
-        </div>
-      </div>
-    </div>
+		<div class="login-footer">
+			<div class="login-footer-content mt15">
+				<div class="login-footer-content-warp">
+					<div>Copyright © 2021-2023 g-fast.cn All Rights Reserved.</div>
+					<div class="mt5">云南奇讯科技有限公司版权所有</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
-<script lang="ts">
-import { toRefs, reactive, computed, defineComponent } from 'vue';
-import Account from '/@/views/login/component/account.vue';
-import Mobile from '/@/views/login/component/mobile.vue';
-import Scan from '/@/views/login/component/scan.vue';
-import { useStore } from '/@/store/index';
+<script setup lang="ts" name="loginIndex">
+import { defineAsyncComponent, onMounted, reactive, computed } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useThemeConfig } from '/@/stores/themeConfig';
+import { NextLoading } from '/@/utils/loading';
 import logoMini from '/@/assets/logo-mini.svg';
 
-// 定义接口来定义对象的类型
-interface LoginState {
-	tabsActiveName: string;
-	isScan: boolean;
-}
+// 引入组件
+const Account = defineAsyncComponent(() => import('/@/views/login/component/account.vue'));
+const Mobile = defineAsyncComponent(() => import('/@/views/login/component/mobile.vue'));
+const Scan = defineAsyncComponent(() => import('/@/views/login/component/scan.vue'));
 
-export default defineComponent({
-	name: 'loginIndex',
-	components: { Account, Mobile, Scan },
-	setup() {
-		const store = useStore();
-		const state = reactive<LoginState>({
-			tabsActiveName: 'account',
-			isScan: false,
-		});
-		// 获取布局配置信息
-		const getThemeConfig = computed(() => {
-			return store.state.themeConfig.themeConfig;
-		});
-		return {
-			logoMini,
-			getThemeConfig,
-			...toRefs(state),
-		};
-	},
+// 定义变量内容
+const storesThemeConfig = useThemeConfig();
+const { themeConfig } = storeToRefs(storesThemeConfig);
+const state = reactive({
+	tabsActiveName: 'account',
+	isScan: false,
+});
+
+// 获取布局配置信息
+const getThemeConfig = computed(() => {
+	return themeConfig.value;
+});
+// 页面加载时
+onMounted(() => {
+	NextLoading.done();
 });
 </script>
 

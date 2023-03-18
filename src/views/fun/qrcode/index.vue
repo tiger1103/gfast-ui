@@ -1,5 +1,5 @@
 <template>
-	<div class="qrcode-container">
+	<div class="qrcode-container layout-pd">
 		<el-card shadow="hover" header="qrcodejs2 二维码生成">
 			<el-alert
 				title="感谢优秀的 `qrcodejs2`，项目地址：https://github.com/davidshimjs/qrcodejs"
@@ -22,40 +22,31 @@
 	</div>
 </template>
 
-<script lang="ts">
-import { toRefs, reactive, onMounted, getCurrentInstance, defineComponent } from 'vue';
+<script setup lang="ts" name="funQrcode">
+import { onMounted, ref } from 'vue';
 import QRCode from 'qrcodejs2-fixes';
-export default defineComponent({
-	name: 'funQrcode',
-	setup() {
-		const { proxy } = getCurrentInstance() as any;
-		const state = reactive({
-			qrcode: '',
-		});
-		// 初始化生成二维码
-		const initQrcode = () => {
-			new QRCode(proxy.$refs.qrcodeRef, {
-				text: `https://lyt-top.gitee.io/vue-next-admin-preview/#/login?t=${new Date().getTime()}`,
-				width: 125,
-				height: 125,
-				colorDark: '#000000',
-				colorLight: '#ffffff',
-			});
-		};
-		// 重新生成
-		const onInitQrcode = () => {
-			proxy.$refs.qrcodeRef.innerHTML = '';
-			initQrcode();
-		};
-		// 页面加载时
-		onMounted(() => {
-			initQrcode();
-		});
-		return {
-			onInitQrcode,
-			...toRefs(state),
-		};
-	},
+
+// 定义变量内容
+const qrcodeRef = ref();
+
+// 初始化生成二维码
+const initQrcode = () => {
+	new QRCode(qrcodeRef.value, {
+		text: `https://lyt-top.gitee.io/vue-next-admin-preview/#/login?t=${new Date().getTime()}`,
+		width: 125,
+		height: 125,
+		colorDark: '#000000',
+		colorLight: '#ffffff',
+	});
+};
+// 重新生成
+const onInitQrcode = () => {
+	qrcodeRef.value.innerHTML = '';
+	initQrcode();
+};
+// 页面加载时
+onMounted(() => {
+	initQrcode();
 });
 </script>
 
