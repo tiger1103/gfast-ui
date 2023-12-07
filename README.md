@@ -38,7 +38,7 @@
 > 由于 Vue3 不再支持 IE11，故而 ElementPlus 也不支持 IE11 及之前版本。
 #### ⚡ 使用说明
 
-建议使用 cnpm，因为 yarn 有时会报错。<a href="http://nodejs.cn/" target="_blank">node 版本 > 12xx.xx.x</a>
+建议使用 cnpm，因为 yarn 有时会报错。<a href="http://nodejs.cn/" target="_blank">node 版本[v16.x ~  v20.x)</a>
 
 ```bash
 # 克隆项目
@@ -46,11 +46,11 @@ git clone -b v3.2 https://gitee.com/tiger1103/gfast-ui.git
 # 进入项目
 cd gfast-ui
 # 安装依赖
-cnpm install
+npm install --registry=https://registry.npmmirror.com
 # 运行项目
-cnpm run dev
+npm run dev
 # 打包发布
-cnpm run build
+npm run build
 ```
 ## ❤特别鸣谢
 
