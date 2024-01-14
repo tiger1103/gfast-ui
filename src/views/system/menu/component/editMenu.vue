@@ -38,7 +38,7 @@
 					</el-col>
           <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
             <el-form-item label="接口规则" prop="name">
-              <el-input v-model="ruleForm.name" placeholder="后端 aip 地址" clearable></el-input>
+              <el-input v-model="ruleForm.name" placeholder="后端 api 地址" clearable></el-input>
             </el-form-item>
           </el-col>
 					<template v-if="ruleForm.menuType === '0'||ruleForm.menuType === '1'">
