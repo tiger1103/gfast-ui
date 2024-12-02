@@ -223,7 +223,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@use '../../theme/mixins/index.scss';
+@use '../../theme/mixins/index.scss as *';
 .personal {
 	.personal-user {
 		height: 130px;
